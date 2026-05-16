@@ -593,7 +593,7 @@ def generate_json_report(garch_results, granger_results, harrv_results, df):
     
     json_path = os.path.join(OUTPUT_DIR, "mdh_report.json")
     with open(json_path, 'w', encoding='utf-8') as f:
-        json.dump(report, f, ensure_ascii=False, indent=2)
+        json.dump(report, f, ensure_ascii=False, indent=2, default=str)
     print(f"✅ JSON 报告已保存: {json_path}")
     
     return report
