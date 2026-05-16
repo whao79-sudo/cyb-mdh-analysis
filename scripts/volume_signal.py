@@ -15,6 +15,7 @@ warnings.filterwarnings('ignore')
 
 DB_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "cyb_data.db")
 OUTPUT_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "output")
+CSV_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "option_pcr.csv")
 
 def load_data():
     conn = sqlite3.connect(DB_PATH)
@@ -254,9 +255,74 @@ def generate_signal_report(df, granger_trend, full_lag):
     for s in signals:
         lines.append(f"- {s}\n")
     
+    # PCR 数据段落
+    lines.append(pcr_report_section())
+    
     lines.append("\n---\n")
     lines.append("*免责：本信号基于统计模型，不构成投资建议*\n")
     
+    return "".join(lines)
+
+def load_latest_pcr():
+    """从 CSV 加载最新的 PCR 数据"""
+    try:
+        if os.path.exists(CSV_PATH):
+            df = pd.read_csv(CSV_PATH)
+            if len(df) > 0:
+                latest = df.iloc[-1]
+                return latest.to_dict() if isinstance(latest, pd.Series) else latest
+    except:
+        pass
+    return None
+
+def pcr_report_section():
+    """生成 PCR 数据报告段落"""
+    pcr = load_latest_pcr()
+    if not pcr:
+        return ""
+    
+    lines = []
+    lines.append("\n## 期权 PCR 数据\n")
+    lines.append(f"*数据来源: 深交所 创业板ETF(159915)*\n\n")
+    lines.append(f"| 指标 | 数值 |\n")
+    lines.append(f"|------|------|\n")
+    lines.append(f"| 日期 | {pcr.get('date', '-')} |\n")
+    lines.append(f"| 认购成交量 | {int(pcr.get('call_vol', 0)):,} 张 |\n")
+    lines.append(f"| 认沽成交量 | {int(pcr.get('put_vol', 0)):,} 张 |\n")
+    lines.append(f"| PCR(成交量) | {float(pcr.get('vol_pcr', 0)):.3f} |\n")
+    lines.append(f"| 认购未平仓 | {int(pcr.get('call_oi', 0)):,} 张 |\n")
+    lines.append(f"| 认沽未平仓 | {int(pcr.get('put_oi', 0)):,} 张 |\n")
+    lines.append(f"| PCR(持仓) | {float(pcr.get('oi_pcr', 0)):.3f} |\n")
+    
+    # 简单信号
+    vol_pcr = float(pcr.get('vol_pcr', 0))
+    oi_pcr = float(pcr.get('oi_pcr', 0))
+    
+    vol_signal = ""
+    if vol_pcr > 1.0:
+        vol_signal = "认沽>认购，情绪偏空"
+    elif vol_pcr > 0.85:
+        vol_signal = "认沽略多，中性偏空"
+    elif vol_pcr > 0.7:
+        vol_signal = "认购偏多，情绪中性"
+    else:
+        vol_signal = "认购明显偏多，情绪乐观"
+    
+    oi_signal = ""
+    if oi_pcr > 1.2:
+        oi_signal = "⚠️ 持仓PCR极高，市场对冲需求旺盛"
+    elif oi_pcr > 1.0:
+        oi_signal = "持仓PCR超过1.0，多头开始对冲"
+    elif oi_pcr > 0.8:
+        oi_signal = "持仓PCR中性略偏多"
+    else:
+        oi_signal = "持仓PCR低位，市场偏多"
+    
+    lines.append(f"\n### PCR 信号判断\n")
+    lines.append(f"- **成交量PCR**: {vol_signal}\n")
+    lines.append(f"- **持仓量PCR**: {oi_signal}\n")
+    
+    lines.append("\n")
     return "".join(lines)
 
 def main():
