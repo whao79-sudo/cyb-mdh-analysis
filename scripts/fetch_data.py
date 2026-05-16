@@ -108,7 +108,7 @@ def fetch_and_store(start_date="2024-01-01", end_date=None):
     bs.logout()
     return True
 
-def get_data_from_db(start_date="2024-01-01", end_date=None):
+def get_data_from_db(start_date="2010-06-01", end_date=None):
     """从数据库读取数据"""
     if end_date is None:
         end_date = datetime.now().strftime("%Y-%m-%d")
@@ -128,6 +128,6 @@ def get_data_from_db(start_date="2024-01-01", end_date=None):
 
 if __name__ == "__main__":
     init_db()
-    start = sys.argv[1] if len(sys.argv) > 1 else "2024-01-01"
+    start = sys.argv[1] if len(sys.argv) > 1 else "2010-06-01"
     end = sys.argv[2] if len(sys.argv) > 2 else None
     fetch_and_store(start, end)
