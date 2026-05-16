@@ -1,0 +1,91 @@
+{
+  "metadata": {
+    "index": "创业板指 (sz.399006)",
+    "data_start": "2024-01-31",
+    "data_end": "2026-05-15",
+    "trading_days": 543,
+    "generated_at": "2026-05-16 11:57:47"
+  },
+  "latest_price": {
+    "date": "2026-05-15",
+    "close": 3929.0642,
+    "daily_change_pct": -0.5587298289881175
+  },
+  "correlation": {
+    "volume_abs_return": 0.3380180785106201,
+    "turnover_abs_return": 0.23560708429412985
+  },
+  "garch_analysis": {
+    "garch": {
+      "omega": 9530.041225543455,
+      "alpha": 0.2610473495636257,
+      "beta": 0.5065358851785611,
+      "persistence": 0.7675832347421867,
+      "aic": 7200.740769689931,
+      "bic": 7217.921833695689
+    },
+    "mdh_verification": {
+      "garch_persistence": 0.7675832347421867,
+      "garch_x_persistence": 0.7675832347421867,
+      "persistence_change": 0.0,
+      "mdh_supported": false,
+      "volume_coefficient": 23095.389613332456,
+      "volume_r2": 0.08762075884812537
+    },
+    "garch_x": {
+      "omega": 9530.041225543455,
+      "alpha": 0.2610473495636257,
+      "beta": 0.5065358851785611,
+      "persistence": 0.7675832347421867,
+      "volume_coef": 23095.389613332456,
+      "volume_r2": 0.08762075884812537,
+      "aic": 7200.740769689931,
+      "bic": 7217.921833695689
+    },
+    "garch_turnover": {
+      "persistence": 0.7675832347421867,
+      "turnover_coef": 12847.420514402946,
+      "turnover_r2": 0.027114982679405708,
+      "aic": 7200.740769689931,
+      "bic": 7217.921833695689
+    },
+    "volume_vs_turnover": {
+      "better_predictor": "成交量",
+      "volume_r2": 0.08762075884812537,
+      "turnover_r2": 0.027114982679405708
+    }
+  },
+  "granger_causality": {
+    "volume→volatility": {
+      "best_lag": 6,
+      "best_p_value": 0.010173461319931137,
+      "significant": "True"
+    },
+    "volatility→volume": {
+      "best_lag": 1,
+      "best_p_value": 0.11010182323331826,
+      "significant": "False"
+    }
+  },
+  "harrv_analysis": {
+    "basic_r2": -0.05452412033946086,
+    "basic_rmse": 0.00013730257763629406,
+    "full_r2": -0.07471294758616986,
+    "full_rmse": 0.00013861067297224185,
+    "r2_improvement_pct": -37.02733234578698,
+    "rmse_improvement_pct": -0.9527099625273261,
+    "volume_coefficient": 5.510094286054201e-05,
+    "volume_significant": "False",
+    "model_basic_coefs": [
+      0.39414832016782897,
+      0.20351725143111601,
+      0.11187377998344587
+    ],
+    "model_full_coefs": [
+      0.3867747980391446,
+      0.19976017894364792,
+      0.08200206348778469,
+      5.510094286054201e-05
+    ]
+  }
+}
