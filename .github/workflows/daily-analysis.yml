@@ -44,6 +44,10 @@ jobs:
       run: |
         python scripts/mdh_analysis.py
     
+    - name: Run volume signal analysis
+      run: |
+        python scripts/volume_signal.py
+    
     - name: Copy outputs to docs for GitHub Pages
       run: |
         mkdir -p docs/output
