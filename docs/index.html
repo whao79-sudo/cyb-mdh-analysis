@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>创业板指数 MDH 假说验证 - 成交量与波动率分析</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+         background: #0f172a; color: #e2e8f0; line-height: 1.6; }
+  .container { max-width: 960px; margin: 0 auto; padding: 20px; }
+  header { text-align: center; padding: 40px 0; }
+  h1 { font-size: 2em; color: #60a5fa; margin-bottom: 8px; }
+  h2 { font-size: 1.3em; color: #93c5fd; border-bottom: 1px solid #334155; padding-bottom: 8px; margin: 30px 0 15px; }
+  .subtitle { color: #94a3b8; font-size: 0.9em; }
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0; }
+  .stat-card { background: #1e293b; border-radius: 12px; padding: 20px; text-align: center; }
+  .stat-value { font-size: 1.8em; font-weight: bold; color: #60a5fa; }
+  .stat-label { font-size: 0.85em; color: #94a3b8; margin-top: 5px; }
+  .stat-card.success .stat-value { color: #4ade80; }
+  .stat-card.partial .stat-value { color: #facc15; }
+  .stat-card.fail .stat-value { color: #f87171; }
+  .finding { background: #1e293b; border-radius: 12px; padding: 20px; margin: 15px 0; border-left: 4px solid; }
+  .finding.green { border-color: #4ade80; }
+  .finding.yellow { border-color: #facc15; }
+  .finding.red { border-color: #f87171; }
+  .finding h3 { margin-bottom: 8px; }
+  .btn { display: inline-block; background: #2563eb; color: white; padding: 12px 24px;
+         border-radius: 8px; text-decoration: none; margin: 20px 0; font-weight: bold; }
+  .btn:hover { background: #1d4ed8; }
+  footer { text-align: center; padding: 30px; color: #475569; font-size: 0.85em; }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.75em; margin-left: 6px; }
+  .tag.green { background: #14532d; color: #4ade80; }
+  .tag.yellow { background: #422006; color: #facc15; }
+  .tag.red { background: #450a0a; color: #f87171; }
+  table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+  td, th { padding: 10px; text-align: left; border-bottom: 1px solid #334155; }
+  th { color: #93c5fd; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>🦞 创业板指数 MDH 假说验证</h1>
+    <p class="subtitle">成交量对波动率的预测性分析 · sz.399006 · 2024.01 ~ 2026.05 · 543 个交易日</p>
+  </header>
+
+  <h2>📊 核心结论</h2>
+
+  <div class="stats-grid">
+    <div class="stat-card partial">
+      <div class="stat-value">8.8%</div>
+      <div class="stat-label">成交量解释的波动率方差 (GARCH-X R²)</div>
+    </div>
+    <div class="stat-card success">
+      <div class="stat-value">p=0.010</div>
+      <div class="stat-label">Granger 因果检验 (成交量→波动率) ✅</div>
+    </div>
+    <div class="stat-card fail">
+      <div class="stat-value">p=0.110</div>
+      <div class="stat-label">Granger 因果检验 (波动率→成交量) ❌</div>
+    </div>
+    <div class="stat-card success">
+      <div class="stat-value">0.34</div>
+      <div class="stat-label">量价相关系数 (成交量 vs 波动率)</div>
+    </div>
+  </div>
+
+  <div class="finding yellow">
+    <h3>📈 MDH 假说：成交量对波动率有解释力，但 GARCH 持续率变化不显著</h3>
+    <p>GRACH-X 模型中成交量对条件方差的 R² = 0.088，说明成交量能解释约 8.8% 的波动率方差。</p>
+    <p>但 GARCH(1,1) 持续率在加入成交量后几乎未下降 (0.7676 → 0.7676)，未完全支持 MDH 的核心预测（成交量吸收波动率聚集信息后持续率应显著下降）。</p>
+  </div>
+
+  <div class="finding green">
+    <h3>🔗 成交量→波动率 Granger 因果显著 (滞后6期)</h3>
+    <p>成交量能预测未来 6 个交易日的波动率走势 (p=0.010)，呈单向因果关系。</p>
+    <p>而波动率→成交量的反向检验不显著 (p=0.110)，表明成交量的信息领先于波动率变化。</p>
+  </div>
+
+  <div class="finding green">
+    <h3>💡 成交量预测力优于换手率</h3>
+    <p>成交量 R² = 0.088 > 换手率 R² = 0.027，原始成交量含有的波动率预测信息多于换手率。</p>
+  </div>
+
+  <div class="finding red">
+    <h3>📉 HAR-RV 模型：成交量预测贡献有限</h3>
+    <p>加入成交量后模型 R² 反而下降（-37%），说明创业板指数的波动率驱动因素超出纯量价范围。</p>
+  </div>
+
+  <h2>📋 详细分析结果</h2>
+  <table>
+    <tr><th>指标</th><th>数值</th><th>评估</th></tr>
+    <tr><td>GARCH(1,1) 持续率 (α+β)</td><td>0.768</td><td><span class="tag yellow">中等持续</span></td></tr>
+    <tr><td>成交量对条件方差 R²</td><td>0.088</td><td><span class="tag green">有一定解释力</span></td></tr>
+    <tr><td>换手率对条件方差 R²</td><td>0.027</td><td><span class="tag red">解释力弱</span></td></tr>
+    <tr><td>Granger: volume→volatility</td><td>p=0.010 (lag=6)</td><td><span class="tag green">✅ 显著</span></td></tr>
+    <tr><td>Granger: volatility→volume</td><td>p=0.110 (lag=1)</td><td><span class="tag red">❌ 不显著</span></td></tr>
+    <tr><td>成交量-波动率相关系数</td><td>0.338</td><td><span class="tag yellow">中等正相关</span></td></tr>
+    <tr><td>换手率-波动率相关系数</td><td>0.236</td><td><span class="tag yellow">弱正相关</span></td></tr>
+    <tr><td>最新收盘价 (2026-05-15)</td><td>3929.06</td><td></td></tr>
+  </table>
+
+  <div style="text-align: center;">
+    <a class="btn" href="output/cyb_mdh_analysis.html" target="_blank">📈 查看完整交互式图表</a>
+    <a class="btn" href="https://github.com/whao79-sudo/cyb-mdh-analysis" target="_blank" style="background:#334155;">📂 GitHub 仓库</a>
+  </div>
+
+  <div style="background:#1e293b; border-radius:12px; padding:20px; margin:30px 0;">
+    <h3 style="color:#facc15; margin-bottom:10px;">⚠️ 方法说明</h3>
+    <ul style="color:#94a3b8; font-size:0.9em; padding-left:20px;">
+      <li><b>GARCH-X 方法</b>：先拟合 GARCH(1,1) 提取条件方差，再用线性回归检验成交量对条件方差的解释力</li>
+      <li><b>Granger 因果</b>：使用 AIC 确定最优滞后阶数，检验双向因果关系</li>
+      <li><b>HAR-RV</b>：用日/周/月已实现波动率和成交量预测次日波动率</li>
+      <li><b>数据来源</b>：baostock (sz.399006)</li>
+    </ul>
+  </div>
+
+  <footer>
+    自动生成于 2026-05-16 · 每天 17:30 北京时间自动更新 · 🤖 claw-mdh-analysis
+  </footer>
+</div>
+</body>
+</html>
