@@ -44,10 +44,19 @@ def get_existing_dates():
     conn.close()
     return set(df['date'].tolist())
 
-def fetch_and_store(start_date="2024-01-01", end_date=None):
+def fetch_and_store(start_date="2024-01-01", end_date=None, force_rebuild=False):
     """从 baostock 下载数据并存入数据库"""
     if end_date is None:
         end_date = datetime.now().strftime("%Y-%m-%d")
+    
+    # 如果 start_date 早于 2020 年，说明要做全周期分析，清空数据库重新下载
+    if start_date < "2020-01-01":
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM daily")
+        conn.commit()
+        conn.close()
+        print(f"🔄 检测到全周期分析模式 (start={start_date})，已清空旧数据")
     
     # 登录
     lg = bs.login()
