@@ -1,10 +1,10 @@
 {
   "metadata": {
     "index": "创业板指 (sz.399006)",
-    "data_start": "2024-01-31",
+    "data_start": "2018-03-05",
     "data_end": "2026-05-15",
-    "trading_days": 543,
-    "generated_at": "2026-05-16 12:35:20"
+    "trading_days": 1973,
+    "generated_at": "2026-05-16 14:46:42"
   },
   "latest_price": {
     "date": "2026-05-15",
@@ -12,80 +12,80 @@
     "daily_change_pct": -0.5587298289881175
   },
   "correlation": {
-    "volume_abs_return": 0.3380180785106201,
-    "turnover_abs_return": 0.23560708429412985
+    "volume_abs_return": 0.13823171696913192,
+    "turnover_abs_return": 0.09443695549582279
   },
   "garch_analysis": {
     "garch": {
-      "omega": 9530.041225543455,
-      "alpha": 0.2610473495636257,
-      "beta": 0.5065358851785611,
-      "persistence": 0.7675832347421867,
-      "aic": 7200.740769689931,
-      "bic": 7217.921833695689
+      "omega": 2186.532670791107,
+      "alpha": 0.09978391709645884,
+      "beta": 0.8329780495459375,
+      "persistence": 0.9327619666423963,
+      "aic": 25878.98005778573,
+      "bic": 25901.32727192638
     },
     "mdh_verification": {
-      "garch_persistence": 0.7675832347421867,
-      "garch_x_persistence": 0.7675832347421867,
+      "garch_persistence": 0.9327619666423963,
+      "garch_x_persistence": 0.9327619666423963,
       "persistence_change": 0.0,
       "mdh_supported": false,
-      "volume_coefficient": 23095.389613332456,
-      "volume_r2": 0.08762075884812537
+      "volume_coefficient": 6828.676933832918,
+      "volume_r2": 0.044442256310795236
     },
     "garch_x": {
-      "omega": 9530.041225543455,
-      "alpha": 0.2610473495636257,
-      "beta": 0.5065358851785611,
-      "persistence": 0.7675832347421867,
-      "volume_coef": 23095.389613332456,
-      "volume_r2": 0.08762075884812537,
-      "aic": 7200.740769689931,
-      "bic": 7217.921833695689
+      "omega": 2186.532670791107,
+      "alpha": 0.09978391709645884,
+      "beta": 0.8329780495459375,
+      "persistence": 0.9327619666423963,
+      "volume_coef": 6828.676933832918,
+      "volume_r2": 0.044442256310795236,
+      "aic": 25878.98005778573,
+      "bic": 25901.32727192638
     },
     "garch_turnover": {
-      "persistence": 0.7675832347421867,
-      "turnover_coef": 12847.420514402946,
-      "turnover_r2": 0.027114982679405708,
-      "aic": 7200.740769689931,
-      "bic": 7217.921833695689
+      "persistence": 0.9327619666423963,
+      "turnover_coef": 3151.9934650527093,
+      "turnover_r2": 0.009478192141251118,
+      "aic": 25878.98005778573,
+      "bic": 25901.32727192638
     },
     "volume_vs_turnover": {
       "better_predictor": "成交量",
-      "volume_r2": 0.08762075884812537,
-      "turnover_r2": 0.027114982679405708
+      "volume_r2": 0.044442256310795236,
+      "turnover_r2": 0.009478192141251118
     }
   },
   "granger_causality": {
     "volume→volatility": {
-      "best_lag": 6,
-      "best_p_value": 0.010173461319931137,
+      "best_lag": 1,
+      "best_p_value": 0.0007867120650125141,
       "significant": "True"
     },
     "volatility→volume": {
       "best_lag": 1,
-      "best_p_value": 0.11010182323331826,
+      "best_p_value": 0.06675055206890976,
       "significant": "False"
     }
   },
   "harrv_analysis": {
-    "basic_r2": -0.05452412033946086,
-    "basic_rmse": 0.00013730257763629406,
-    "full_r2": -0.07471294758616986,
-    "full_rmse": 0.00013861067297224185,
-    "r2_improvement_pct": -37.02733234578698,
-    "rmse_improvement_pct": -0.9527099625273261,
-    "volume_coefficient": 5.510094286054201e-05,
+    "basic_r2": 0.2556634172035178,
+    "basic_rmse": 0.0004269439245702507,
+    "full_r2": 0.25325302703359487,
+    "full_rmse": 0.00042763465351759776,
+    "r2_improvement_pct": -0.9427982291280206,
+    "rmse_improvement_pct": -0.16178446573336924,
+    "volume_coefficient": -1.1420163834596764e-05,
     "volume_significant": "False",
     "model_basic_coefs": [
-      0.39414832016782897,
-      0.20351725143111601,
-      0.11187377998344587
+      0.18880924326229304,
+      0.2813248002906891,
+      0.23646287837322674
     ],
     "model_full_coefs": [
-      0.3867747980391446,
-      0.19976017894364792,
-      0.08200206348778469,
-      5.510094286054201e-05
+      0.19060736013818072,
+      0.2826251022606,
+      0.23540174855816212,
+      -1.1420163834596764e-05
     ]
   }
 }
