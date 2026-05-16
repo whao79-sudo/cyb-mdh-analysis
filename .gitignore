@@ -7,3 +7,4 @@ __pycache__/
 
 # 敏感信息
 *.db  # SQLite 数据库超过 100MB 时注意 Git LFS
+.github/workflows/
