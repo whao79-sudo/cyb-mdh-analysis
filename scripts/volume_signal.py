@@ -140,6 +140,52 @@ def generate_signal_report(df, granger_trend, full_lag):
     lines.append(f"*生成时间: {datetime.now().strftime('%Y-%m-%d %H:%M')}*\n")
     lines.append(f"*数据截至: {latest.name.strftime('%Y-%m-%d')}*\n\n")
     
+    # ===== 全周期历史概况 =====
+    first_date = df.index[0].strftime('%Y-%m-%d')
+    last_date = df.index[-1].strftime('%Y-%m-%d')
+    total_days = len(df)
+    avg_vol = df['volume'].mean() / 1e8
+    max_vol = df['volume'].max() / 1e8
+    max_vol_date = df['volume'].idxmax().strftime('%Y-%m-%d')
+    min_vol = df['volume'].min() / 1e8
+    min_vol_date = df['volume'].idxmin().strftime('%Y-%m-%d')
+    vol_90p = df['volume'].quantile(0.9) / 1e8
+    vol_10p = df['volume'].quantile(0.1) / 1e8
+    
+    # 缩量极值 vs 放量极值
+    extremes = []
+    for window in [5, 20, 60]:
+        ratio = df[f'vol_ratio_{window}']
+        max_r = ratio.max()
+        max_r_date = ratio.idxmax().strftime('%Y-%m-%d')
+        min_r = ratio.min()
+        min_r_date = ratio.idxmin().strftime('%Y-%m-%d')
+        over_2x = (ratio > 2.0).sum()
+        under_half = (ratio < 0.5).sum()
+        extremes.append(f"  {window}日均: 量比最高 {max_r:.2f}x（{max_r_date}），最低 {min_r:.2f}x（{min_r_date}），"
+                        f"超2x={over_2x}次，不足半量={under_half}次")
+    
+    # 全历史近期对比
+    recent_252 = df.tail(252)['volume'].mean() / 1e8
+    recent_60 = df.tail(60)['volume'].mean() / 1e8
+    
+    lines.append("## 全周期量价概况\n")
+    lines.append(f"| 指标 | 数值 |\n")
+    lines.append(f"|------|------|\n")
+    lines.append(f"| 数据范围 | {first_date} ~ {last_date}（{total_days} 个交易日） |\n")
+    lines.append(f"| 日均成交量 | {avg_vol:.1f}亿 |\n")
+    lines.append(f"| 近1年（252日）均量 | {recent_252:.1f}亿 |\n")
+    lines.append(f"| 近3月（60日）均量 | {recent_60:.1f}亿 |\n")
+    lines.append(f"| 历史最大成交量 | {max_vol:.1f}亿（{max_vol_date}） |\n")
+    lines.append(f"| 历史最小成交量 | {min_vol:.1f}亿（{min_vol_date}） |\n")
+    lines.append(f"| 90分位成交量 | {vol_90p:.1f}亿 |\n")
+    lines.append(f"| 10分位成交量 | {vol_10p:.1f}亿 |\n\n")
+    
+    lines.append("### 各周期量比极值\n\n")
+    for e in extremes:
+        lines.append(f"{e}\n")
+    lines.append("\n")
+    
     # 今日概况
     vol_billion = latest['volume'] / 1e8
     ma20 = latest.get('vol_ma20', 0) / 1e8
