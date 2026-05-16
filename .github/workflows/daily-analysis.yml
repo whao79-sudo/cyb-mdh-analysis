@@ -44,10 +44,15 @@ jobs:
       run: |
         python scripts/mdh_analysis.py
     
+    - name: Copy outputs to docs for GitHub Pages
+      run: |
+        mkdir -p docs/output
+        cp -r output/* docs/output/
+    
     - name: Commit and push results
       run: |
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
-        git add data/cyb_data.db output/
+        git add data/cyb_data.db output/ docs/
         git diff --quiet && git diff --staged --quiet || \
           (git commit -m "🦞 Auto-update: $(date '+%Y-%m-%d %H:%M') CYB MDH analysis" && git push)
