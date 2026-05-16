@@ -4,7 +4,7 @@
     "data_start": "2018-03-05",
     "data_end": "2026-05-15",
     "trading_days": 1973,
-    "generated_at": "2026-05-16 14:49:18"
+    "generated_at": "2026-05-16 14:51:38"
   },
   "latest_price": {
     "date": "2026-05-15",
@@ -12,80 +12,80 @@
     "daily_change_pct": -0.5587298289881175
   },
   "correlation": {
-    "volume_abs_return": 0.13823171696913192,
-    "turnover_abs_return": 0.09443695549582279
+    "volume_abs_return": 0.13823171696913186,
+    "turnover_abs_return": 0.09443695549582283
   },
   "garch_analysis": {
     "garch": {
-      "omega": 2186.532670791107,
-      "alpha": 0.09978391709645884,
-      "beta": 0.8329780495459375,
-      "persistence": 0.9327619666423963,
-      "aic": 25878.98005778573,
-      "bic": 25901.32727192638
+      "omega": 2185.9491504852485,
+      "alpha": 0.0996196666586145,
+      "beta": 0.8331489767128855,
+      "persistence": 0.9327686433715,
+      "aic": 25878.979855550788,
+      "bic": 25901.327069691437
     },
     "mdh_verification": {
-      "garch_persistence": 0.9327619666423963,
-      "garch_x_persistence": 0.9327619666423963,
+      "garch_persistence": 0.9327686433715,
+      "garch_x_persistence": 0.9327686433715,
       "persistence_change": 0.0,
       "mdh_supported": false,
-      "volume_coefficient": 6828.676933832918,
-      "volume_r2": 0.044442256310795236
+      "volume_coefficient": 6822.915512589156,
+      "volume_r2": 0.04446173485650107
     },
     "garch_x": {
-      "omega": 2186.532670791107,
-      "alpha": 0.09978391709645884,
-      "beta": 0.8329780495459375,
-      "persistence": 0.9327619666423963,
-      "volume_coef": 6828.676933832918,
-      "volume_r2": 0.044442256310795236,
-      "aic": 25878.98005778573,
-      "bic": 25901.32727192638
+      "omega": 2185.9491504852485,
+      "alpha": 0.0996196666586145,
+      "beta": 0.8331489767128855,
+      "persistence": 0.9327686433715,
+      "volume_coef": 6822.915512589156,
+      "volume_r2": 0.04446173485650107,
+      "aic": 25878.979855550788,
+      "bic": 25901.327069691437
     },
     "garch_turnover": {
-      "persistence": 0.9327619666423963,
-      "turnover_coef": 3151.9934650527093,
-      "turnover_r2": 0.009478192141251118,
-      "aic": 25878.98005778573,
-      "bic": 25901.32727192638
+      "persistence": 0.9327686433715,
+      "turnover_coef": 3148.7252282041454,
+      "turnover_r2": 0.009478680186464139,
+      "aic": 25878.979855550788,
+      "bic": 25901.327069691437
     },
     "volume_vs_turnover": {
       "better_predictor": "成交量",
-      "volume_r2": 0.044442256310795236,
-      "turnover_r2": 0.009478192141251118
+      "volume_r2": 0.04446173485650107,
+      "turnover_r2": 0.009478680186464139
     }
   },
   "granger_causality": {
     "volume→volatility": {
       "best_lag": 1,
-      "best_p_value": 0.0007867120650125141,
+      "best_p_value": 0.0007867120650133032,
       "significant": "True"
     },
     "volatility→volume": {
       "best_lag": 1,
-      "best_p_value": 0.06675055206890976,
+      "best_p_value": 0.06675055206890977,
       "significant": "False"
     }
   },
   "harrv_analysis": {
     "basic_r2": 0.2556634172035178,
     "basic_rmse": 0.0004269439245702507,
-    "full_r2": 0.25325302703359487,
-    "full_rmse": 0.00042763465351759776,
-    "r2_improvement_pct": -0.9427982291280206,
-    "rmse_improvement_pct": -0.16178446573336924,
-    "volume_coefficient": -1.1420163834596764e-05,
+    "full_r2": 0.25325302703361563,
+    "full_rmse": 0.0004276346535175918,
+    "r2_improvement_pct": -0.9427982291199001,
+    "rmse_improvement_pct": -0.16178446573197255,
+    "volume_coefficient": -1.1420163834524009e-05,
     "volume_significant": "False",
     "model_basic_coefs": [
       0.18880924326229304,
       0.2813248002906891,
-      0.23646287837322674
+      0.2364628783732267
     ],
     "model_full_coefs": [
-      0.19060736013818072,
-      0.2826251022606,
-      0.23540174855816212,
-      -1.1420163834596764e-05
+      0.19060736013817656,
+      0.2826251022605985,
+      0.23540174855816223,
+      -1.1420163834524009e-05
     ]
   }
 }
