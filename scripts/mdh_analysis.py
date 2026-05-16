@@ -456,7 +456,7 @@ def generate_report(garch_results, granger_results, harrv_results, df):
     
     return report_content
 
-def generate_plotly_chart(df, garch_results, harrv_results):
+def generate_plotly_chart(df, garch_results, harrv_results, segment_results=None):
     """生成交互式 HTML 图表"""
     import plotly.graph_objects as go
     from plotly.subplots import make_subplots
@@ -598,10 +598,181 @@ def generate_json_report(garch_results, granger_results, harrv_results, df):
     
     return report
 
+def define_segments(df):
+    """
+    定义创业板主要牛熊周期分段
+    基于历史复盘：大牛市、大熊市、震荡市的标志性区间
+    """
+    segments = [
+        {
+            'name': '2010-2012 震荡下跌',
+            'start': '2010-06-01',
+            'end': '2012-11-30',
+            'regime': '熊市/震荡'
+        },
+        {
+            'name': '2012-2015 创业板大牛市',
+            'start': '2012-12-01',
+            'end': '2015-06-15',
+            'regime': '大牛市'
+        },
+        {
+            'name': '2015 股灾',
+            'start': '2015-06-16',
+            'end': '2015-12-31',
+            'regime': '暴跌'
+        },
+        {
+            'name': '2016 熔断+震荡',
+            'start': '2016-01-01',
+            'end': '2018-12-31',
+            'regime': '震荡/慢熊'
+        },
+        {
+            'name': '2019-2021 结构性牛市',
+            'start': '2019-01-01',
+            'end': '2021-12-31',
+            'regime': '结构性牛市'
+        },
+        {
+            'name': '2022-2024 调整期',
+            'start': '2022-01-01',
+            'end': '2024-09-30',
+            'regime': '调整'
+        },
+        {
+            'name': '2024 Q4 至今',
+            'start': '2024-10-01',
+            'end': df.index.max().strftime('%Y-%m-%d'),
+            'regime': '反弹'
+        }
+    ]
+    
+    # 过滤出有数据的分段
+    valid_segments = []
+    for seg in segments:
+        mask = (df.index >= seg['start']) & (df.index <= seg['end'])
+        subset = df[mask]
+        if len(subset) >= 60:  # 至少需要 60 个交易日才够 garch 拟合
+            seg['trading_days'] = len(subset)
+            seg['subset'] = subset
+            valid_segments.append(seg)
+    
+    return valid_segments
+
+def run_segmented_analysis(df):
+    """
+    按牛熊分段分别运行 MDH 分析
+    """
+    print("\n" + "="*60)
+    print("📂 分段 MDH 分析 (按牛熊周期)")
+    print("="*60)
+    
+    segments = define_segments(df)
+    segment_results = []
+    
+    for seg in segments:
+        print(f"\n{'='*50}")
+        print(f"📌 {seg['name']} ({seg['regime']})")
+        print(f"   交易日: {seg['trading_days']}")
+        print(f"{'='*50}")
+        
+        subset = seg['subset']
+        subset = calc_returns(subset.copy())
+        subset = subset.dropna()
+        
+        # 基础相关性
+        vol_corr = subset['log_volume'].corr(subset['abs_return'])
+        to_corr = subset['log_turnover'].corr(subset['abs_return'])
+        
+        print(f"   成交量-波动率相关系数: {vol_corr:.4f}")
+        print(f"   换手率-波动率相关系数: {to_corr:.4f}")
+        
+        # Granger 因果
+        granger = run_granger_causality(subset)
+        
+        # GARCH-X
+        garch = run_garchx_analysis(subset)
+        
+        # 摘要
+        vol_granger_sig = granger.get('volume→volatility', {}).get('significant', False)
+        vol_granger_p = granger.get('volume→volatility', {}).get('best_p_value', 1.0)
+        mdh_supported = garch.get('mdh_verification', {}).get('mdh_supported', False)
+        vol_r2 = garch.get('mdh_verification', {}).get('volume_r2', 0)
+        persistence = garch.get('garch', {}).get('persistence', 0)
+        
+        result = {
+            'name': seg['name'],
+            'regime': seg['regime'],
+            'trading_days': seg['trading_days'],
+            'vol_corr': float(vol_corr),
+            'to_corr': float(to_corr),
+            'granger_volume_sig': vol_granger_sig,
+            'granger_volume_p': float(vol_granger_p),
+            'mdh_supported': mdh_supported,
+            'vol_r2': float(vol_r2),
+            'persistence': float(persistence),
+            'granger_detail': granger,
+            'garch_detail': garch
+        }
+        segment_results.append(result)
+        
+        print(f"\n   📊 分段摘要:")
+        print(f"     量价相关系数: {vol_corr:.4f}")
+        print(f"     Granger 因果: {'✅' if vol_granger_sig else '❌'} (p={vol_granger_p:.4f})")
+        print(f"     MDH 支持: {'✅' if mdh_supported else '❌'}")
+        print(f"     成交量R²: {vol_r2:.4f}")
+        print(f"     GARCH持续率: {persistence:.4f}")
+    
+    return segment_results
+
+def generate_segment_report(segment_results):
+    """生成分段分析的文本报告"""
+    lines = []
+    lines.append("\n\n## 📂 分段分析：MDH 假说在不同市况下的表现\n")
+    lines.append("| 周期 | 市况 | 交易日 | 量价相关性 | Granger因果 | p值 | MDH支持 | 成交量R² | 持续率 |\n")
+    lines.append("|------|------|--------|-----------|-------------|------|---------|----------|--------|\n")
+    
+    for sr in segment_results:
+        granger_mark = "✅" if sr['granger_volume_sig'] else "❌"
+        mdh_mark = "✅" if sr['mdh_supported'] else "❌"
+        lines.append(
+            f"| {sr['name']} | {sr['regime']} | {sr['trading_days']} "
+            f"| {sr['vol_corr']:.3f} | {granger_mark} | {sr['granger_volume_p']:.4f} "
+            f"| {mdh_mark} | {sr['vol_r2']:.4f} | {sr['persistence']:.4f} |\n"
+        )
+    
+    lines.append("\n### 关键发现\n")
+    
+    # 找出 Granger 最显著的周期
+    best = min(segment_results, key=lambda x: x['granger_volume_p'] if x['granger_volume_p'] > 0 else 1)
+    lines.append(f"- **Granger 因果最显著周期**: {best['name']} (p={best['granger_volume_p']:.4f})\n")
+    
+    mdh_best = [s for s in segment_results if s['mdh_supported']]
+    if mdh_best:
+        lines.append(f"- **MDH 得到支持的周期数**: {len(mdh_best)}/{len(segment_results)}\n")
+        for s in mdh_best:
+            lines.append(f"  - {s['name']}: 成交量R²={s['vol_r2']:.4f}\n")
+    
+    # 量价相关性最高
+    best_corr = max(segment_results, key=lambda x: abs(x['vol_corr']))
+    lines.append(f"- **量价相关性最强**: {best_corr['name']} (r={best_corr['vol_corr']:.3f})\n")
+    
+    # 总体趋势
+    r2_trend = [s['vol_r2'] for s in segment_results if s['vol_r2'] > 0]
+    if r2_trend:
+        avg_r2 = sum(r2_trend) / len(r2_trend)
+        lines.append(f"- **平均成交量R² (正值的周期)**: {avg_r2:.4f}\n")
+    else:
+        lines.append(f"- **所有周期成交量R²均为负值**: MDH在创业板全周期表现有限\n")
+    
+    return "".join(lines)
+
 def main():
     print("="*60)
     print("🦞 创业板指数 MDH 假说验证")
     print("成交量对波动率的预测性分析")
+    print(f"分析时间: {datetime.now().strftime('%Y-%m-%d %H:%M')}")
     print("="*60)
     
     # 1. 加载数据
@@ -621,7 +792,7 @@ def main():
     print(f"   成交量-波动率 (绝对收益) 相关系数: {df['log_volume'].corr(df['abs_return']):.4f}")
     print(f"   换手率-波动率 (绝对收益) 相关系数: {df['log_turnover'].corr(df['abs_return']):.4f}")
     
-    # 4. GARCH 检验
+    # 4. 全周期 GARCH 检验
     garch_results = run_garchx_analysis(df)
     
     # 5. Granger 因果
@@ -630,21 +801,34 @@ def main():
     # 6. HAR-RV 模型
     harrv_results = run_harrv_analysis(df)
     
-    # 7. 生成报告
+    # 7. 分段分析（新增！）
+    segment_results = run_segmented_analysis(df)
+    segment_report = generate_segment_report(segment_results)
+    
+    # 8. 生成报告
     print("\n" + "="*60)
     print("📝 生成报告...")
     report_md = generate_report(garch_results, granger_results, harrv_results, df)
+    
+    # 追加分段分析报告
+    report_full = report_md + segment_report
+    report_path = os.path.join(OUTPUT_DIR, "mdh_report.md")
+    with open(report_path, 'w', encoding='utf-8') as f:
+        f.write(report_full)
+    print(f"✅ 完整报告已保存: {report_path} (含分段分析)")
+    
     generate_json_report(garch_results, granger_results, harrv_results, df)
     
-    # 8. 生成图表
+    # 9. 生成图表
     print("\n📈 生成图表...")
-    chart_path = generate_plotly_chart(df, garch_results, harrv_results)
+    chart_path = generate_plotly_chart(df, garch_results, harrv_results, segment_results)
     
     print("\n" + "="*60)
     print("🎉 分析完成!")
     print(f"   报告: {os.path.join(OUTPUT_DIR, 'mdh_report.md')}")
     print(f"   图表: {chart_path}")
     print(f"   JSON: {os.path.join(OUTPUT_DIR, 'mdh_report.json')}")
+    print(f"   全周期分段: {len(segment_results)} 段")
     print("="*60)
 
 if __name__ == "__main__":
