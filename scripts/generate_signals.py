@@ -1344,6 +1344,118 @@ def render_qviv(data):
     return h
 
 
+def render_expiry(data):
+    """到期日选择器：基于当前状态推荐最佳到期日和行权价"""
+    import pandas as pd, numpy as np, sqlite3, os
+    base = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    
+    conn = sqlite3.connect(os.path.join(base, 'data/cyb_data.db'))
+    df = pd.read_sql('SELECT date,close FROM daily ORDER BY date', conn)
+    conn.close()
+    df['date'] = pd.to_datetime(df['date'])
+    df = df.set_index('date').sort_index()
+    df['close'] = df['close'].astype(float)
+    df['ret'] = df['close'].pct_change() * 100
+    df['vol_22'] = df['ret'].rolling(22).std() * np.sqrt(252)
+    df['hv_10'] = df['ret'].rolling(10).std() * np.sqrt(252)
+    df['ma300'] = df['close'].rolling(300).mean()
+    df['bb_mid'] = df['close'].rolling(20).mean()
+    df['bb_std'] = df['close'].rolling(20).std()
+    df['bb_lo'] = df['bb_mid'] - 2*df['bb_std']
+    df['bb_pos'] = (df['close'] - df['bb_lo']) / (4*df['bb_std']) * 100
+    
+    qvix_df = pd.read_csv(os.path.join(base, 'data/qvix_data.csv'))
+    qvix_df['date'] = pd.to_datetime(qvix_df['date'])
+    qvix_df = qvix_df.set_index('date').sort_index()
+    df['qvix'] = qvix_df['qvix'].reindex(df.index)
+    
+    for d in [3,5,6,8,10,15,20,22,30]:
+        df[f'fwd{d}_ret'] = df['close'].pct_change(d).shift(-d) * 100
+    
+    df = df.dropna(subset=['qvix','vol_22'])
+    cur = df.index[-1]
+    cur_r = df.loc[cur]
+    hv = cur_r['hv_10']; qvix = cur_r['qvix']
+    above_300 = cur_r['close'] > cur_r['ma300']
+    bb_pos = cur_r['bb_pos']; drop20 = (cur_r['close']/df['close'].shift(20).loc[cur]-1)*100
+    
+    # 信号检测
+    signals = []
+    if (df['bb_pos']<=15).loc[cur] and (df['close']/df['close'].shift(20)-1<-0.08).loc[cur]:
+        signals.append(("彩票超跌", "N=35, 6d最佳(+2.8%), 行权价虚10%"))
+    if (df['qvix']>35).loc[cur] and (df['close']<df['ma300']).loc[cur]:
+        signals.append(("恐慌暴跌", "N=6, 3d(+4.9%), 慢牛时段行权虚12%"))
+    if (df['qvix']>35).loc[cur] and (df['close']>df['ma300']).loc[cur]:
+        signals.append(("恐慌反弹", "N=94, 6-10d(+1.1~1.8%), 虚值5%"))
+    if hv >= 30 and (df['close']<df['ma300']).loc[cur]:
+        signals.append(("高波+300下", "N=51, 3-5d(+2.5~3.4%), 虚值10%"))
+    if hv >= 30 and (df['close']>df['ma300']).loc[cur]:
+        signals.append(("高波+300上", "N=114, 10-22d(+2.9~6.7%), 虚值5-10%"))
+    if hv < 20 and (df['close']>df['ma300']).loc[cur]:
+        signals.append(("低波+300上", "N=98, 22-30d(+6.0~9.7%), 平值-5%"))
+    if hv < 20 and (df['close']<df['ma300']).loc[cur]:
+        signals.append(("低波+300下", "不建议操作"))
+    
+    # 当前状态卡
+    cur_status = f'<div class="box info"><b>当前状态（{cur.date()}）</b><br>HV={hv:.1f}% | QVIX={qvix:.1f}% | 300{"上方" if above_300 else "下方"} | 布林{bb_pos:.0f}%位 | 20日{drop20:+.1f}%</div>'
+    
+    h = cur_status
+    
+    if signals:
+        h += '''<div class="qt" style="margin:16px 0">'''
+        for _, sdesc in signals:
+            parts = sdesc.split(", ")
+            name = parts[0]
+            rec = ", ".join(parts[1:])
+            h += f'<div class="qtc" style="border-color:#4ade80"><div class="qtv" style="font-size:18px">{name}</div><div class="qtl">{rec}</div></div>'
+        h += '</div>'
+    else:
+        h += '''<div class="box warn">当前无触发信号。参考通用规则：HV适中+300上→22-30d, 300下等超跌→6-10d彩票。</div>'''
+    
+    # 主要建议 + 到期日条形图
+    # 找触发的信号中最适合的到期日
+    best_sig = signals[0] if signals else None
+    if best_sig:
+        sname = best_sig[0]
+        # 根据信号名称按回测数据渲染到期日条
+        sig_map = {
+            "彩票超跌": (0,0, [(3,1.24,57),(5,2.15,69),(6,2.80,71),(8,3.56,86),(10,4.05,89)]),
+            "恐慌暴跌": (0,0, [(3,4.85,100),(5,4.71,83),(6,5.13,100),(8,5.58,100),(10,7.00,100)]),
+            "恐慌反弹": (0,0, [(3,0.51,60),(5,0.85,56),(6,1.11,59),(8,1.46,53),(10,1.79,57)]),
+            "高波+300下": (0,0, [(3,2.54,57),(5,3.43,69),(6,2.97,71),(8,2.72,57),(10,2.62,55)]),
+            "高波+300上": (0,0, [(3,0.99,64),(5,1.38,63),(6,1.70,67),(8,2.25,66),(10,2.87,70)]),
+            "低波+300上": (0,0, [(3,-0.27,46),(5,-0.14,47),(6,0.02,47),(10,1.44,67),(20,5.07,69)]),
+        }
+        if sname in sig_map:
+            _, _, days_data = sig_map[sname]
+            h += '<h3>到期日收益对比</h3><div class="opt-row">'
+            for d, m, wr in days_data:
+                color = '#4ade80' if m>0 else '#f87171'
+                h += f'<div class="opt-card" style="border-color:{color}"><div style="font-size:18px;font-weight:bold">{d}d</div><div style="color:{color};font-size:22px;font-weight:bold">{m:+.1f}%</div><div style="color:#94a3b8;font-size:12px">W{wr}%</div></div>'
+            h += '</div>'
+    
+    # 完整参考表
+    h += '''
+<h2>全部策略参考表</h2>
+<table>
+  <tr><th>模式</th><th>到期日</th><th>均值</th><th>胜率</th><th>行权价</th></tr>
+  <tr><td>彩票超跌</td><td>6-10d</td><td>+2.8~4.0%</td><td>71-89%</td><td>虚值8-12%</td></tr>
+  <tr><td>恐慌暴跌(300下)</td><td>3-10d</td><td>+4.9~7.0%</td><td>83-100%</td><td>虚值10-12%</td></tr>
+  <tr><td>恐慌反弹(300上)</td><td>6-10d</td><td>+1.1~1.8%</td><td>57-60%</td><td>虚值5%</td></tr>
+  <tr><td>高波+300下</td><td>3-5d</td><td>+2.5~3.4%</td><td>57-69%</td><td>虚值10%</td></tr>
+  <tr><td>高波+300上</td><td>10-22d</td><td>+2.9~6.7%</td><td>70-73%</td><td>虚值5-10%</td></tr>
+  <tr><td>低波+300上</td><td>22-30d</td><td>+6.0~9.7%</td><td>74-81%</td><td>平值-5%</td></tr>
+  <tr><td>低波+300下</td><td>观望</td><td>负</td><td>&lt;45%</td><td>不适合</td></tr>
+</table>
+
+<div class="box good"><b>时间价值提示</b><br>
+近月(1-2周): Gamma最大, 彩票首选<br>
+次月(3-5周): Theta适中, 趋势策略<br>
+远季月(>6周): Theta损耗大, 仅低波慢牛可考虑
+</div>
+<div class="box warn"><b>声明</b><br>基于2010-2026回测。彩票N=35、恐慌暴跌N=6属小样本。行权价建议基于收益概率分布，非精确定价。</div>'''
+    return h
+
 
 SIGNALS = [
     {"slug":"granger", "title":"量价因果：成交量→波动率 Granger", "emoji":"&#128279;",
@@ -1374,6 +1486,8 @@ SIGNALS = [
      "desc":"QVIX(隐波) - HV30(实波)：VRP>0市场恐慌溢价→做多，VRP<0低估风险→谨慎。", "fn": render_vrp},
     {"slug":"qviv", "title":"QVIV：波动率的波动率（VVIX近似）", "emoji":"&#127752;",
      "desc":"QVIX 自身日变化率的波动率：是否隐波自身在剧烈变化？极高分位时信号可靠。", "fn": render_qviv},
+    {"slug":"expiry", "title":"到期日选择器：信号→最佳到期日", "emoji":"&#128197;",
+     "desc":"基于当前信号状态，推荐最优的期权到期日和行权价。", "fn": render_expiry},
 ]
 
 def dashboard(signals, data):
