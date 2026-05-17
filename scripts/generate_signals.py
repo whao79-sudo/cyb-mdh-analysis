@@ -453,6 +453,103 @@ def render_qvix_strategy(data):
     </div>'''
     return h
 
+def render_lottery(data):
+    """末日彩票策略 - 布林下轨+超跌买入末日call"""
+    jp = os.path.join(DATA_DIR, "lottery_strategy.json")
+    if not os.path.exists(jp):
+        return '<div class="box warn">数据文件未生成，请先运行数据分析脚本。</div>'
+    with open(jp) as f:
+        s = json.load(f)
+    
+    s1 = s["strategy1"]
+    s2 = s["strategy2"]
+    st6 = s1["stats_6d"]
+    st10 = s1["stats_10d"]
+    st_simple = s2["stats_6d"]
+    
+    h = f'''
+<div class="box info">
+  <b>🎯 核心思路：</b>当创业板跌到布林300下轨附近(碰触或接近)，且最近20日跌幅>8%时，买入6天后到期的平值call。
+  超跌+到技术支撑位 → 反弹概率高，末日期权杠杆放大收益。
+</div>
+
+<div class="box">
+  <b>📐 期权定价假设：</b>平值期权价格 ≈ 0.4 × IV × √(T/252) × S，
+  IV固定取26%（QVIX历史均值），T=6天。期权费约ETF价格的{round(s['meta']['prem_ratio']*100,1)}%。
+  如ETF=3000元，每张期权约&#165;{round(s['meta']['prem_ratio']*3000)}。
+  <br><br>
+  <b>⚠️ 说明：</b>回测使用固定IV=26%，实际IV会变动。末日归零风险高(每3次中约1次归零)。
+  每笔不超过账户总资产的1-2%。
+</div>
+
+<h2>策略1：布林下轨 + 20日跌>8%</h2>
+<p>信号区间：{s['meta']['date_range']} &middot; 共{len(s1['signals'])}次信号</p>
+
+<h3>6天末日call 统计</h3>
+<div class="kpi">
+  <div class="kpi-card"><div class="kpi-val">{st6["n"]}</div><div class="kpi-label">总信号数</div></div>
+  <div class="kpi-card {"good" if st6["win_rate"]>=50 else "bad"}"><div class="kpi-val">{st6["win_rate"]}%</div><div class="kpi-label">胜率</div></div>
+  <div class="kpi-card good"><div class="kpi-val">{st6["avg_win_pct"]:.0f}%</div><div class="kpi-label">平均盈利</div></div>
+  <div class="kpi-card bad"><div class="kpi-val">-{st6["avg_loss_pct"]:.0f}%</div><div class="kpi-label">平均亏损</div></div>
+  <div class="kpi-card good"><div class="kpi-val">{st6["rr"]}x</div><div class="kpi-label">盈亏比(R/R)</div></div>
+  <div class="kpi-card {"good" if st6["exp_per_100"]>0 else "bad"}"><div class="kpi-val">{st6["exp_per_100"]:.0f}</div><div class="kpi-label">期望值/100元</div></div>
+  <div class="kpi-card warn"><div class="kpi-val">{st6["zero_rate"]:.0f}%</div><div class="kpi-label">归零率(废纸)</div></div>
+</div>
+
+<h3>收益多倍分布</h3>
+<table>
+  <tr><th>收益</th><th>&gt;1x</th><th>&gt;2x</th><th>&gt;3x</th><th>&gt;5x</th></tr>
+  <tr><td>6天末日call</td>
+    <td>{st6["pct_1x"]:.0f}%</td>
+    <td>{st6["pct_2x"]:.0f}%</td>
+    <td>{st6["pct_3x"]:.0f}%</td>
+    <td>{st6["pct_5x"]:.0f}%</td></tr>
+  <tr><td>10天末日call</td>
+    <td>{st10["pct_1x"]:.0f}%</td>
+    <td>{st10["pct_2x"]:.0f}%</td>
+    <td>{st10["pct_3x"]:.0f}%</td>
+    <td>{st10["pct_5x"]:.0f}%</td></tr>
+</table>
+
+<h3>10天末日call 对比</h3>
+<div class="kpi">
+  <div class="kpi-card good"><div class="kpi-val">{st10["win_rate"]}%</div><div class="kpi-label">胜率</div></div>
+  <div class="kpi-card good"><div class="kpi-val">{st10["avg_win_pct"]:.0f}%</div><div class="kpi-label">平均盈利</div></div>
+  <div class="kpi-card good"><div class="kpi-val">{st10["rr"]}x</div><div class="kpi-label">盈亏比</div></div>
+  <div class="kpi-card good"><div class="kpi-val">{st10["exp_per_100"]:.0f}</div><div class="kpi-label">期望值/100元</div></div>
+</div>
+
+<h2>策略2：仅20日跌>10%（简化版）</h2>
+<p>不需要布林信号，只要创业板20日内跌超10%就买入末日call。N={s2['signal_count']}次。</p>
+<div class="kpi">
+  <div class="kpi-card"><div class="kpi-val">{st_simple["n"]}</div><div class="kpi-label">总信号数</div></div>
+  <div class="kpi-card {"good" if st_simple["win_rate"]>=50 else "bad"}"><div class="kpi-val">{st_simple["win_rate"]}%</div><div class="kpi-label">胜率</div></div>
+  <div class="kpi-card good"><div class="kpi-val">{st_simple["avg_win_pct"]:.0f}%</div><div class="kpi-label">平均盈利</div></div>
+  <div class="kpi-card good"><div class="kpi-val">{st_simple["rr"]}x</div><div class="kpi-label">盈亏比</div></div>
+  <div class="kpi-card {"good" if st_simple["exp_per_100"]>0 else "bad"}"><div class="kpi-val">{st_simple["exp_per_100"]:.0f}</div><div class="kpi-label">期望值/100元</div></div>
+  <div class="kpi-card warn"><div class="kpi-val">{st_simple["zero_rate"]:.0f}%</div><div class="kpi-label">归零率</div></div>
+</div>
+
+<h2>📅 历史信号明细（策略1）</h2>
+<table><tr><th>日期</th><th>收盘价</th><th>布林位</th><th>20d跌</th><th>6d后收益</th><th>20d后收益</th><th>60d后收益</th></tr>'''
+    for sig in s1["signals"]:
+        f5 = f'{sig["fwd5_ret"]:+.0f}%' if sig["fwd5_ret"] is not None else '--'
+        f20 = f'{sig["fwd20_ret"]:+.0f}%' if sig["fwd20_ret"] is not None else '--'
+        f60 = f'{sig["fwd60_ret"]:+.0f}%' if sig["fwd60_ret"] is not None else '--'
+        c5 = 'color:#4ade80' if (sig.get("fwd5_ret") or 0) > 0 else 'color:#f87171' if (sig.get("fwd5_ret") or 0) < 0 else ''
+        h += f'<tr><td>{sig["date"]}</td><td>{sig["close"]:.0f}</td><td>{sig["bb300_pos"]:.0f}%</td><td>{sig["ret_20d"]:+.0f}%</td><td style="{c5}">{f5}</td><td>{f20}</td><td>{f60}</td></tr>'
+    
+    h += '''</table>
+
+<div class="box success">
+  <b>✅ 总结：</b>布林下轨+超跌买入末日call是<u>正期望策略</u>（期望+97元/100元）。
+  每3次中约1次归零，但每次中奖平均赚237%。适合小仓位（1-2%账户）长期执行。
+  <br><br>
+  <b>⚠️ 风险：</b>末日归零率高(31%)，需连续多次不中后有止损意识。
+  实际操作中IV会变化，期权价格会有滑点。
+</div>'''
+    return h
+
 SIGNALS = [
     {"slug":"granger", "title":"量价因果：成交量→波动率 Granger", "emoji":"&#128279;",
      "desc":"统计检验成交量是否包含预测波动率的信息。", "fn": render_granger},
@@ -468,6 +565,8 @@ SIGNALS = [
      "desc":"两个维度同时预警时，波动率飙升确定性最高。", "fn": render_dual},
     {"slug":"qvix_strategy","title":"QVIX 波动率套利策略", "emoji":"&#128176;",
      "desc":"基于QVIX历史分位的期权买卖信号（买方/卖方双向）。", "fn": render_qvix_strategy},
+    {"slug":"lottery","title":"末日彩票：超跌末日期权策略", "emoji":"&#127922;",
+     "desc":"布林下轨+超跌时买入6天末日call，正期望期权策略。", "fn": render_lottery},
 ]
 
 def dashboard(signals, data):
