@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🌡️ ❹ QVIX：隐含波动率 — 最好的波动率预测器 — CYB MDH Analysis</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+       background:#0f172a; color:#e2e8f0; line-height:1.6; }
+.container { max-width:800px; margin:0 auto; padding:20px; }
+header { text-align:center; padding:30px 0 20px; }
+h1 { font-size:1.8em; color:#60a5fa; margin-bottom:4px; }
+h2 { font-size:1.2em; color:#93c5fd; border-bottom:1px solid #334155; padding-bottom:8px; margin:25px 0 12px; }
+.subtitle { color:#94a3b8; font-size:0.9em; }
+.back { display:inline-block; color:#60a5fa; text-decoration:none; margin-bottom:10px; font-size:0.9em; }
+.back:hover { text-decoration:underline; }
+.kpi { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin:15px 0; }
+.kpi-card { background:#1e293b; border-radius:10px; padding:15px; text-align:center; }
+.kpi-val { font-size:1.6em; font-weight:bold; color:#60a5fa; }
+.kpi-label { font-size:0.8em; color:#94a3b8; margin-top:4px; }
+.kpi-card.good .kpi-val { color:#4ade80; }
+.kpi-card.bad .kpi-val { color:#f87171; }
+.kpi-card.warn .kpi-val { color:#facc15; }
+table { width:100%; border-collapse:collapse; margin:10px 0; font-size:0.85em; }
+th { background:#1e293b; color:#94a3b8; padding:8px; text-align:left; border-bottom:2px solid #334155; }
+td { padding:8px; border-bottom:1px solid #1e293b; }
+tr:hover td { background:#1e293b; }
+.badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:0.8em; font-weight:bold; }
+.badge.green { background:rgba(74,222,128,0.2); color:#4ade80; }
+.badge.red { background:rgba(248,113,113,0.2); color:#f87171; }
+.badge.yellow { background:rgba(250,204,21,0.2); color:#facc15; }
+.box { background:#1e293b; border-radius:10px; padding:15px; margin:15px 0; border-left:4px solid #334155; }
+.box.info { border-left-color:#60a5fa; }
+.box.warn { border-left-color:#facc15; }
+.box.danger { border-left-color:#f87171; }
+.box.success { border-left-color:#4ade80; }
+ul { margin-left:20px; }
+li { margin:4px 0; }
+footer { text-align:center; color:#64748b; padding:30px 0; font-size:0.8em; }
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+  <a href="../index.html" class="back">← 返回仪表盘</a>
+  <h1>🌡️ ❹ QVIX：隐含波动率 — 最好的波动率预测器</h1>
+  <p class="subtitle">QVIX 是159915期权的隐含波动率指数（类似 VIX）。它反映市场对未来30天波动率的集体预期。</p>
+</header>
+
+<div class='kpi'><div class="kpi-card"><div class="kpi-val" style="color:#4ade80">0.48</div><div class="kpi-label">QVIX vs 实际波动 r</div></div><div class="kpi-card"><div class="kpi-val" style="color:#facc15">2.32%</div><div class="kpi-label">高QVIX(>36)次日波动</div></div><div class="kpi-card"><div class="kpi-val" style="color:#f87171">1.8x</div><div class="kpi-label">高QVIX vs 均值倍数</div></div><div class="kpi-card"><div class="kpi-val" style="color:#4ade80">35.3 (89%分位)</div><div class="kpi-label">当前QVIX</div></div></div><div class="box info">
+      <b>与成交量对比：</b>QVIX 与波动率的相关系数 r=0.48，远高于成交量的历史均值（约 r=0.14）。
+      高QVIX (>90%分位, >36) 后，次日波动率跳升至 2.32%（均值的 1.8x）。
+    </div><h2>🔎 注意事项</h2>
+    <ul>
+      <li><b>QVIX 只测幅不测向</b> — 高QVIX后上涨概率仅51%（抛硬币水平）</li>
+      <li><b>数据仅从2022年9月开始</b>（874个交易日），统计可靠性低于量价信号</li>
+      <li><b>与 vol_ratio 联合使用效果最佳</b>（参见"双重信号"）</li>
+    </ul>
+
+<footer>
+  CYB MDH Analysis · 数据来源: baostock + 深交所 + 中证指数 ·
+  生成时间: 2026-05-17 10:49
+</footer>
+</div>
+</body>
+</html>

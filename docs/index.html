@@ -2,271 +2,136 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>创业板指数 MDH 假说验证 - 成交量与波动率分析</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CYB MDH 信号仪表盘</title>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-         background: #0f172a; color: #e2e8f0; line-height: 1.6; }
-  .container { max-width: 960px; margin: 0 auto; padding: 20px; }
-  header { text-align: center; padding: 40px 0; }
-  h1 { font-size: 2em; color: #60a5fa; margin-bottom: 8px; }
-  h2 { font-size: 1.3em; color: #93c5fd; border-bottom: 1px solid #334155; padding-bottom: 8px; margin: 30px 0 15px; }
-  .subtitle { color: #94a3b8; font-size: 0.9em; }
-  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0; }
-  .stat-card { background: #1e293b; border-radius: 12px; padding: 20px; text-align: center; }
-  .stat-value { font-size: 1.8em; font-weight: bold; color: #60a5fa; }
-  .stat-label { font-size: 0.85em; color: #94a3b8; margin-top: 5px; }
-  .stat-card.success .stat-value { color: #4ade80; }
-  .stat-card.partial .stat-value { color: #facc15; }
-  .stat-card.fail .stat-value { color: #f87171; }
-  .finding { background: #1e293b; border-radius: 12px; padding: 20px; margin: 15px 0; border-left: 4px solid; }
-  .finding.green { border-color: #4ade80; }
-  .finding.yellow { border-color: #facc15; }
-  .finding.red { border-color: #f87171; }
-  .finding h3 { margin-bottom: 8px; }
-  .btn { display: inline-block; background: #2563eb; color: white; padding: 12px 24px;
-         border-radius: 8px; text-decoration: none; margin: 20px 0; font-weight: bold; }
-  .btn:hover { background: #1d4ed8; }
-  footer { text-align: center; padding: 30px; color: #475569; font-size: 0.85em; }
-  .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.75em; margin-left: 6px; }
-  .tag.green { background: #14532d; color: #4ade80; }
-  .tag.yellow { background: #422006; color: #facc15; }
-  .tag.red { background: #450a0a; color: #f87171; }
-  table { width: 100%; border-collapse: collapse; margin: 15px 0; }
-  td, th { padding: 10px; text-align: left; border-bottom: 1px solid #334155; }
-  th { color: #93c5fd; }
+
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+       background:#0f172a; color:#e2e8f0; line-height:1.6; }
+.container { max-width:800px; margin:0 auto; padding:20px; }
+header { text-align:center; padding:30px 0 20px; }
+h1 { font-size:1.8em; color:#60a5fa; margin-bottom:4px; }
+h2 { font-size:1.2em; color:#93c5fd; border-bottom:1px solid #334155; padding-bottom:8px; margin:25px 0 12px; }
+.subtitle { color:#94a3b8; font-size:0.9em; }
+.back { display:inline-block; color:#60a5fa; text-decoration:none; margin-bottom:10px; font-size:0.9em; }
+.back:hover { text-decoration:underline; }
+.kpi { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin:15px 0; }
+.kpi-card { background:#1e293b; border-radius:10px; padding:15px; text-align:center; }
+.kpi-val { font-size:1.6em; font-weight:bold; color:#60a5fa; }
+.kpi-label { font-size:0.8em; color:#94a3b8; margin-top:4px; }
+.kpi-card.good .kpi-val { color:#4ade80; }
+.kpi-card.bad .kpi-val { color:#f87171; }
+.kpi-card.warn .kpi-val { color:#facc15; }
+table { width:100%; border-collapse:collapse; margin:10px 0; font-size:0.85em; }
+th { background:#1e293b; color:#94a3b8; padding:8px; text-align:left; border-bottom:2px solid #334155; }
+td { padding:8px; border-bottom:1px solid #1e293b; }
+tr:hover td { background:#1e293b; }
+.badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:0.8em; font-weight:bold; }
+.badge.green { background:rgba(74,222,128,0.2); color:#4ade80; }
+.badge.red { background:rgba(248,113,113,0.2); color:#f87171; }
+.badge.yellow { background:rgba(250,204,21,0.2); color:#facc15; }
+.box { background:#1e293b; border-radius:10px; padding:15px; margin:15px 0; border-left:4px solid #334155; }
+.box.info { border-left-color:#60a5fa; }
+.box.warn { border-left-color:#facc15; }
+.box.danger { border-left-color:#f87171; }
+.box.success { border-left-color:#4ade80; }
+ul { margin-left:20px; }
+li { margin:4px 0; }
+footer { text-align:center; color:#64748b; padding:30px 0; font-size:0.8em; }
+
+.signal-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:15px; margin:20px 0; }
+.signal-card { background:#1e293b; border-radius:12px; padding:18px; text-decoration:none; color:#e2e8f0; display:block; transition:transform 0.15s, box-shadow 0.15s; border:1px solid #334155; }
+.signal-card:hover { transform:translateY(-2px); box-shadow:0 4px 15px rgba(96,165,250,0.15); border-color:#60a5fa; }
+.signal-emoji { font-size:2em; margin-bottom:6px; }
+.signal-title { font-size:1em; font-weight:bold; color:#60a5fa; margin-bottom:4px; }
+.signal-desc { font-size:0.82em; color:#94a3b8; }
+.quick-stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; margin:20px 0; }
+.quick-card { background:#1e293b; border-radius:10px; padding:15px; text-align:center; border-left:3px solid; }
+.quick-card.q-good { border-color:#4ade80; }
+.quick-card.q-warn { border-color:#facc15; }
+.quick-card.q-bad { border-color:#f87171; }
+.quick-val { font-size:1.4em; font-weight:bold; }
+.quick-label { font-size:0.8em; color:#94a3b8; }
 </style>
 </head>
 <body>
 <div class="container">
-  <header>
-    <h1>🦞 创业板指数 MDH 假说验证</h1>
-    <p class="subtitle">成交量对波动率的预测性分析 · sz.399006 · 2018.03 ~ 2026.05 · 1973 个交易日</p>
-  </header>
+<header>
+  <h1>🦞 创业板(159915) 信号仪表盘</h1>
+  <p class="subtitle">数据截至 2026-05-15 · 基于全量 MDH 分析框架</p>
+</header>
 
-  <h2>📊 核心结论</h2>
+<div class="box danger">
+          <h3 style="margin-bottom:10px;">⚠️ 当前活跃预警</h3>
+          <ul>
+            <li>PCR(量) = 0.000 (<0.7) — 期权市场极度乐观，警惕反转</li>
+          </ul>
+        </div>
 
-  <div class="stats-grid">
-    <div class="stat-card partial">
-      <div class="stat-value">4.4%</div>
-      <div class="stat-label">成交量解释的波动率方差 (GARCH-X R²)</div>
+<div class="quick-stats">
+  <div class="quick-card q-warn">
+    <div class="quick-val" style="color:#facc15">
+      ❌ 无效
     </div>
-    <div class="stat-card success">
-      <div class="stat-value">p=0.001</div>
-      <div class="stat-label">Granger 因果检验 (成交量→波动率) ✅</div>
-    </div>
-    <div class="stat-card success">
-      <div class="stat-value">p=0.067</div>
-      <div class="stat-label">Granger 因果检验 (波动率→成交量) ✅</div>
-    </div>
-    <div class="stat-card success">
-      <div class="stat-value">0.14</div>
-      <div class="stat-label">量价相关系数 (成交量 vs 波动率)</div>
-    </div>
+    <div class="quick-label">量→波动 Granger 因果</div>
   </div>
-
-  <div class="finding yellow">
-    <h3>📈 MDH 假说：成交量对波动率有解释力，但 GARCH 持续率变化不显著</h3>
-    <p>GARCH-X 模型中成交量对条件方差的 R² = 0.044，说明成交量能解释约 4.4% 的波动率方差。</p>
-    <p>GARCH(1,1) 持续率 在加入成交量后几乎未下降 (0.9326 → 0.9326)，未完全支持 MDH 的核心预测（成交量吸收波动率聚集信息后持续率应显著下降）。</p>
+  <div class="quick-card q-good">
+    <div class="quick-val" style="color:#4ade80">35</div>
+    <div class="quick-label">当前 QVIX (89%分位)</div>
   </div>
-
-  <div class="finding green">
-    <h3>🔗 成交量→波动率 Granger 因果显著 (滞后1)</h3>
-    <p>成交量能预测未来 1 个交易日的波动率走势 (p=0.001)，呈单向因果关系。</p>
-    <p>波动率→成交量的反向检验 显著 (p=0.067)，表明成交量的信息领先于波动率变化。</p>
+  <div class="quick-card q-good">
+    <div class="quick-val" style="color:#4ade80">0.00</div>
+    <div class="quick-label">当前 PCR(量)</div>
   </div>
-
-  <div class="finding green">
-    <h3>💡 成交量预测力优于换手率</h3>
-    <p>成交量 R² = 0.044 > 换手率 R² = 0.009，原始成交量含有的波动率预测信息多于换手率。</p>
+  <div class="quick-card q-good">
+    <div class="quick-val" style="color:#60a5fa">6</div>
+    <div class="quick-label">总信号数</div>
   </div>
+</div>
 
-  <div class="finding red">
-    <h3>📉 HAR-RV 模型：成交量预测贡献有限</h3>
-    <p>加入成交量后模型 R² 反而下降（1%），说明创业板指数的波动率驱动因素超出纯量价范围。</p>
-  </div>
-
-  <h2>🔬 方法对比：哪种波动率预测模型最有效？</h2>
-
-  <div class="stats-grid">
-    <div class="stat-card partial">
-      <div class="stat-value">0.09</div>
-      <div class="stat-label">Lasso 回归 R² (最佳)</div>
-    </div>
-    <div class="stat-card fail">
-      <div class="stat-value">0.07</div>
-      <div class="stat-label">线性回归 R²</div>
-    </div>
-    <div class="stat-card fail">
-      <div class="stat-value">&lt;0</div>
-      <div class="stat-label">随机森林 (过拟合, R²为负)</div>
-    </div>
-    <div class="stat-card partial">
-      <div class="stat-value">1.4x</div>
-      <div class="stat-label">高量(>90%分位)后波动 vs 均值</div>
-    </div>
-  </div>
-
-  <div class="finding yellow">
-    <h3>🧠 Lasso 多特征预测：效果最好的方法</h3>
-    <p><b>核心发现：</b>成交量对波动率的预测本质是<b>"阈值触发型"</b>而非"线性相关型"。超过 90% 分位的极端高量后，次日波动率显著放大（1.67% vs 1.28%, p=0.013），但在日常量能区间内几乎没有线性预测力（全样本 R² = 0.0004, p=0.35）。</p>
-    <p><b>最佳模型：Lasso 回归</b>（L1 正则化线性回归），在 22 个候选特征中自动筛选出最重要的 5 个 —— 全部是<b>已实现波动率（RV）</b>的滞后项（rv_2d, rv_3d, rv_5d, rv_10d, rv_22d）。成交量、换手率及其交互项均未被选中。预测未来 5 日波动率的测试集 R² = 0.05~0.10，远优于普通线性回归（R² &lt; 0.03）。</p>
-    <p><b>实战风控信号：</b>用 vol_ratio（5日RV / 60日RV）做波动率动量的简易代理，当 vol_ratio > 1.5 时，后5日波动率为全体均值的 <b>1.4x</b>，是最简洁有效的单一预警信号。</p>
-  </div>
-
-  <div class="finding red">
-    <h3>⚠️ 注意事项</h3>
-    <ul style="color:#e2e8f0; margin-left: 20px;">
-      <li><b>预测力在衰减：</b>Lasso 测试集 R² 从 2021 年的 0.10 下降到 2024 年的 0.05，说明创业板波动率驱动模式在变化，实盘需<b>每季度重新训练</b>模型。</li>
-      <li><b>成交量线性回归不成立：</b>ln(σₜ₊₁) = α + β·ln(Vₜ) 全样本 p=0.35, R²=0.0004，日常线性关系几乎不存在。只在高量极端（>90%分位）时有显著信号。</li>
-      <li><b>滚动 β 方向不稳定：</b>60日滚窗回归的 β>0 占比仅 54%（抛硬币水平），用 OLS 滚窗做目标波动率仓位管理的效果甚至更差（回撤 -61% vs 满仓 -58%）。</li>
-      <li><b>不适用于长周期：</b>预测 22 日以上时，所有模型 R² 均为负，波动率的可预测窗口不超过 5 个交易日。</li>
-      <li><b>Lasso 没有过度模拟（已验证）：</b>CV 折数 3/5/10 选出的特征完全一致，不同训练期选中的特征高度重合。所有入选特征均为 RV 滞后项——干净的波动率自回归。</li>
-      <li><b>下一步优化：</b>加入期权隐波(IV)、北向资金、融资余额等外生变量后，预测力有望显著提升。</li>
-    </ul>
-  </div>
-
-  <h2>📋 详细分析结果</h2>
-  <table>
-    <tr><th>指标</th><th>数值</th><th>评估</th></tr>
-    <tr><td>GARCH(1,1) 持续率 (α+β)</td><td>0.933</td><td><span class="tag yellow">中等持续</span></td></tr>
-    <tr><td>成交量对条件方差 R²</td><td>0.044</td><td><span class="tag yellow">有一定解释力</span></td></tr>
-    <tr><td>换手率对条件方差 R²</td><td>0.009</td><td><span class="tag red">解释力弱</span></td></tr>
-    <tr><td>Granger: volume→volatility</td><td>p=0.001 (lag=1)</td><td><span class="tag green">✅ 显著</span></td></tr>
-    <tr><td>Granger: volatility→volume</td><td>p=0.067 (lag=1)</td><td><span class="tag red">✅ 显著</span></td></tr>
-    <tr><td>成交量-波动率相关系数</td><td>0.138</td><td><span class="tag red">弱相关</span></td></tr>
-    <tr><td>换手率-波动率相关系数</td><td>0.094</td><td><span class="tag red">弱相关</span></td></tr>
-    <tr><td>最新收盘价 (2026-05-15)</td><td>3929.0642</td><td><span class="tag red">-0.56%</span></td></tr>
-  </table>
-
-  <h2>📊 期权 PCR 分析 (159915 创业板ETF)</h2>
+<h2>📡 信号列表</h2>
+<div class="signal-grid">
   
-  <div class="stats-grid">
-    <div class="stat-card partial">
-      <div class="stat-value">0.888</div>
-      <div class="stat-label">成交量PCR 均值 (认沽/认购)</div>
-    </div>
-    <div class="stat-card partial">
-      <div class="stat-value">0.857</div>
-      <div class="stat-label">持仓量PCR 均值 (未平仓)</div>
-    </div>
-    <div class="stat-card success">
-      <div class="stat-value">0.72</div>
-      <div class="stat-label">持仓量PCR vs 指数相关系数</div>
-    </div>
-    <div class="stat-card success">
-      <div class="stat-value">+2.44%</div>
-      <div class="stat-label">低PCR(<0.7)后5日平均收益 (上涨60%)</div>
-    </div>
-  </div>
-  
-  <div class="finding green">
-    <h3>🎯 PCR 极端信号</h3>
-    <p><b>低 PCR (<0.7)</b> — 极度看涨情绪，后5日平均收益 <b>+2.44%</b>，上涨概率 <b>60%</b></p>
-    <p><b>高 PCR (>1.2)</b> — 极度看跌情绪，后5日平均收益 <b>-0.41%</b>，下跌概率 <b>58%</b></p>
-    <p>结论：低 PCR 看涨信号远强于高 PCR 看跌信号，<0.7 时短期做多胜率较高。</p>
-  </div>
+        <a href="signals/granger.html" class="signal-card">
+          <div class="signal-emoji">🔗</div>
+          <div class="signal-title">❶ 量价因果：成交量→波动率 Granger 检验</div>
+          <div class="signal-desc">检验成交量是否'领先于'波动率变化。如果 p<0.05，说明历史成交量包含预测未来波动的信息。</div>
+        </a>
+        <a href="signals/garchx.html" class="signal-card">
+          <div class="signal-emoji">📊</div>
+          <div class="signal-title">❷ GARCH-X：成交量对条件波动率的解释力</div>
+          <div class="signal-desc">GARCH(1,1) 框架下加入成交量作为外生变量，检验成交量是否提高波动率拟合优度。</div>
+        </a>
+        <a href="signals/pcr.html" class="signal-card">
+          <div class="signal-emoji">📉</div>
+          <div class="signal-title">❸ PCR 期权情绪：认沽认购比</div>
+          <div class="signal-desc">Put/Call Ratio 反映期权市场的多空分歧程度。极低 PCR 对应极端乐观（尾部风险），极高 PCR 对应恐慌对冲。</div>
+        </a>
+        <a href="signals/qvix.html" class="signal-card">
+          <div class="signal-emoji">🌡️</div>
+          <div class="signal-title">❹ QVIX：隐含波动率 — 最好的波动率预测器</div>
+          <div class="signal-desc">QVIX 是159915期权的隐含波动率指数（类似 VIX）。它反映市场对未来30天波动率的集体预期。</div>
+        </a>
+        <a href="signals/vol_ratio.html" class="signal-card">
+          <div class="signal-emoji">📈</div>
+          <div class="signal-title">❺ vol_ratio：短期 vs 长期波动率比</div>
+          <div class="signal-desc">5日已实现波动率 / 60日已实现波动率。>1 时市场正经历高于常态的波动，<1 时波动在衰减。</div>
+        </a>
+        <a href="signals/dual_signal.html" class="signal-card">
+          <div class="signal-emoji">🔴</div>
+          <div class="signal-title">❻ 双重信号：QVIX + vol_ratio — 🚀 最有效的联合预警</div>
+          <div class="signal-desc">当 QVIX（隐含波动）和 vol_ratio（已实现波动冲量）同时突破90%分位时，市场正处于多维度高波动共振。</div>
+        </a>
+</div>
 
-  <h2>📈 QVIX 隐含波动率分析 (159915 创业板ETF)</h2>
-
-  <div class="stats-grid">
-    <div class="stat-card success">
-      <div class="stat-value">0.48</div>
-      <div class="stat-label">QVIX vs 实际波动率相关系数</div>
-    </div>
-    <div class="stat-card partial">
-      <div class="stat-value">1.8x</div>
-      <div class="stat-label">高QVIX(>36)次日波动 vs 均值</div>
-    </div>
-    <div class="stat-card partial">
-      <div class="stat-value">25</div>
-      <div class="stat-label">双重信号(高QVIX+高vol_ratio)次数</div>
-    </div>
-    <div class="stat-card success">
-      <div class="stat-value">35.3</div>
-      <div class="stat-label">当前QVIX (89%分位)</div>
-    </div>
-  </div>
-
-  <div class="finding green">
-    <h3>🔮 QVIX: 远优于成交量的波动率预测信号</h3>
-    <p><b>QVIX vs 实际波动率: r = 0.48</b>，是量价分析中最强的单变量信号（远高于成交量的 r=0.14）。</p>
-    <p>高QVIX (>90%分位, >36) 后:
-       次日波动率 <b>2.32%</b>（均值的 1.8x）
-       · 后5日波动率 <b>2.02%</b>
-    </p>
-    <p>低QVIX (<10%分位, <20) 后: 次日波动率 <b>0.90%</b>（低波环境确认）</p>
-    <p><b>双重信号 (QVIX + vol_ratio 同时超过90%分位):</b> 后5日波动率 <b>3.54%</b>（vs 无信号时 1.11%），是唯一的"火山爆发"式预警。</p>
-  </div>
-
-  <h2>🚀 QVIX + vol_ratio 联合信号</h2>
-
-  <div class="stats-grid">
-    <div class="stat-card success">
-      <div class="stat-value">1.11%</div>
-      <div class="stat-label">无信号时后5日波动率</div>
-    </div>
-    <div class="stat-card partial">
-      <div class="stat-value">1.77%</div>
-      <div class="stat-label">仅QVIX高时后5日波动率</div>
-    </div>
-    <div class="stat-card fail">
-      <div class="stat-value">3.54%</div>
-      <div class="stat-label">双重信号后5日波动率</div>
-    </div>
-    <div class="stat-card fail">
-      <div class="stat-value">3.2x</div>
-      <div class="stat-label">双重信号 vs 无信号</div>
-    </div>
-  </div>
-
-  <div class="finding red">
-    <h3>🔥 三重逻辑：QVIX 只测幅不测向，但与 vol_ratio 联合后威力大幅提升</h3>
-    <p><b>QVIX 只告诉"波动会变大"，vol_ratio 告诉"波动正在变大"。两者都突破 90% 分位时，后5日波动率是正常区间的 3.2 倍。</b></p>
-    <p>但不提供方向信息：高QVIX后次日上涨概率仅 51%（抛硬币水平），变化率相关系数 r=0.12。</p>
-    <p><b>实战用法：</b></p>
-    <ul style="color:#e2e8f0; margin-left:20px;">
-      <li><b>双重信号出现 → 降低仓位 + 做多跨式期权</b>（买入认购+认沽，赌波动但不赌方向）</li>
-      <li><b>仅 QVIX 高 → 控制仓位不变</b>，但对冲尾部风险（Put 保护）</li>
-      <li><b>QVIX 低 + vol_ratio 低 → 正常持仓</b>，趋势跟踪策略效果最好</li>
-      <li><b>QVIX 从低位跳涨 + 价格大跌 → 恐慌见底信号</b>，短期超跌反弹概率大</li>
-    </ul>
-  </div>
-
-  <div style="text-align: center;">
-    <a class="btn" href="output/cyb_mdh_analysis.html" target="_blank">📈 完整交互式图表</a>
-    <a class="btn" href="output/pcr_analysis.html" target="_blank" style="background:#059669;">📊 期权 PCR 走势图</a>
-    <a class="btn" href="output/qvix_signal_chart.html" target="_blank" style="background:#dc2626;">🔴 QVIX 联合信号图</a>
-    <a class="btn" href="output/mdh_report.md" target="_blank" style="background:#334155;">📄 完整分析报告</a>
-    <a class="btn" href="https://github.com/whao79-sudo/cyb-mdh-analysis" target="_blank" style="background:#334155;">📂 GitHub 仓库</a>
-  </div>
-
-  <div style="background:#1e293b; border-radius:12px; padding:20px; margin:30px 0;">
-    <h3 style="color:#facc15; margin-bottom:10px;">⚠️ 方法说明</h3>
-    <ul style="color:#94a3b8; font-size:0.9em; padding-left:20px;">
-      <li><b>GARCH-X 方法</b>：先拟合 GARCH(1,1) 提取条件方差，再用线性回归检验成交量对条件方差的解释力</li>
-      <li><b>Granger 因果</b>：使用 AIC 确定最优滞后阶数，检验双向因果关系</li>
-      <li><b>HAR-RV</b>：用日/周/月已实现波动率和成交量预测次日波动率</li>
-      <li><b>PCR 信号</b>：结合绝对阈值 (<0.7 极度乐观, >1.2 极度悲观) + 近60日滚动分位判断极端情绪</li>
-      <li><b>QVIX 信号图</b>：5行子图（价格+成交量 / QVIX / vol_ratio / 联合信号 / 波动率分组），红色标记双重信号预警区间</li>
-      <li><b>数据来源</b>：baostock (sz.399006) + 深交所 (159915 期权) + 中证指数 (159915 QVIX)</li>
-    </ul>
-  </div>
-
-  <h2>📈 交互式图表 (嵌入)</h2>
-  <div style="text-align:center;margin:15px 0;">
-    <a class="btn" href="output/cyb_mdh_analysis.html" target="_blank" style="background:#f97316;">🗂 在新窗口打开（建议）</a>
-  </div>
-  <div style="width:100%;height:700px;border-radius:12px;overflow:hidden;border:1px solid #334155;">
-    <iframe src="output/cyb_mdh_analysis.html" width="100%" height="700" style="border:none;"></iframe>
-  </div>
-  <p style="color:#64748b;font-size:0.85em;margin-top:8px;">💡 如果图表未加载，请直接点击上方按钮在新窗口打开</p>
-
-  <footer>
-    自动生成于 2026-05-15 · 每天 17:30 北京时间自动更新 · 🤖 claw-mdh-analysis
-  </footer>
+<footer>
+  CYB MDH Analysis · <a href="https://github.com/whao79-sudo/cyb-mdh-analysis" style="color:#60a5fa;">GitHub</a> ·
+  <a href="output/cyb_mdh_analysis.html" style="color:#60a5fa;">完整图表</a> ·
+  <a href="output/pcr_analysis.html" style="color:#60a5fa;">PCR图</a> ·
+  <a href="output/qvix_signal_chart.html" style="color:#60a5fa;">QVIX信号图</a> ·
+  生成时间: 2026-05-17 10:49
+</footer>
 </div>
 </body>
 </html>

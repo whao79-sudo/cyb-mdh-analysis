@@ -60,6 +60,10 @@ jobs:
       run: |
         python scripts/generate_index.py
     
+    - name: Generate signal pages
+      run: |
+        python scripts/generate_signals.py
+    
     - name: Copy outputs to docs for GitHub Pages
       run: |
         mkdir -p docs/output
