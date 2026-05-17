@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>📊 ❷ GARCH-X：成交量对条件波动率的解释力 — CYB MDH Analysis</title>
+<title>&#128202; GARCH-X：成交量对条件波动率的解释力 &mdash; CYB MDH</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
@@ -12,6 +12,7 @@ body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif
 header { text-align:center; padding:30px 0 20px; }
 h1 { font-size:1.8em; color:#60a5fa; margin-bottom:4px; }
 h2 { font-size:1.2em; color:#93c5fd; border-bottom:1px solid #334155; padding-bottom:8px; margin:25px 0 12px; }
+h3 { color:#e2e8f0; margin:15px 0 8px; }
 .subtitle { color:#94a3b8; font-size:0.9em; }
 .back { display:inline-block; color:#60a5fa; text-decoration:none; margin-bottom:10px; font-size:0.9em; }
 .back:hover { text-decoration:underline; }
@@ -43,23 +44,21 @@ footer { text-align:center; color:#64748b; padding:30px 0; font-size:0.8em; }
 <body>
 <div class="container">
 <header>
-  <a href="../index.html" class="back">← 返回仪表盘</a>
-  <h1>📊 ❷ GARCH-X：成交量对条件波动率的解释力</h1>
-  <p class="subtitle">GARCH(1,1) 框架下加入成交量作为外生变量，检验成交量是否提高波动率拟合优度。</p>
+  <a href="../index.html" class="back">&larr; 返回仪表盘</a>
+  <h1>&#128202; GARCH-X：成交量对条件波动率的解释力</h1>
+  <p class="subtitle">GARCH(1,1)框架下成交量作为外生变量的拟合优度。</p>
 </header>
-
-<div class='kpi'><div class="kpi-card"><div class="kpi-val" style="color:#facc15">0.0444</div><div class="kpi-label">GARCH-X 成交量 R²</div></div><div class="kpi-card"><div class="kpi-val" style="color:#f87171">0.0095</div><div class="kpi-label">GARCH-X 换手率 R²</div></div><div class="kpi-card"><div class="kpi-val" style="color:#60a5fa">成交量</div><div class="kpi-label">更优预测变量</div></div></div><div class="box info">
-      <b>结论：</b>成交量优于换手率（R²=4.4% vs 1.0%），但解释力仍然很弱。
-      意味着条件波动率中只有不到 5% 能被成交量解释。
-    </div><h2>📋 模型对比</h2><table><tr><th>模型</th><th>R²</th><th>AIC</th><th>BIC</th></tr></table><h2>🔎 解读</h2>
-    <ul>
-      <li>成交量对条件波动的解释力有限（R²=4.4%），<b>不足以单独用于预测</b></li>
-      <li>但结合其他信号（QVIX、vol_ratio）后，联合预警效果显著提升</li>
-    </ul>
-
+<div class="kpi"><div class="kpi-card"><div class="kpi-val" style="color:#facc15">0.0444</div><div class="kpi-label">GARCH-X 成交量 R²</div></div><div class="kpi-card"><div class="kpi-val" style="color:#f87171">0.0095</div><div class="kpi-label">GARCH-X 换手率 R²</div></div><div class="kpi-card"><div class="kpi-val" style="color:#60a5fa">成交量</div><div class="kpi-label">更优预测变量</div></div></div><div class="box info">
+      <b>实际数据：</b>成交量解释力 R²=4.4%，换手率 1.0%。
+      条件波动率中仅不到 5% 能被成交量解释。
+    </div><h2>回测事实：成交量阈值与波动率</h2><table><tr><th>阈值</th><th>N</th><th>后5日波动</th><th>后5日收益</th><th>上涨</th></tr><tr><td>量>90%分位(>182亿)</td><td>381</td><td>1.57%</td><td>+1.01%</td><td>57%</td></tr><tr><td>量>95%分位(>233亿)</td><td>191</td><td>1.81%</td><td>+1.10%</td><td>59%</td></tr><tr><td>量>99%分位(>319亿)</td><td>39</td><td>2.12%</td><td>+0.31%</td><td>49%</td></tr><tr><td>全体均值</td><td>&mdash;</td><td>1.39%</td><td>+0.27%</td><td>&mdash;</td></tr></table><div class="box">
+      <b>关键：</b>线性关系不存在（R²<5%），但阈值关系存在。
+      量>90%分位后波动1.57%（均值1.39%），量>99%分位后2.12%。
+      成交量预测波动率的本质是"极端事件触发"，不是日常线性关系。
+    </div>
 <footer>
-  CYB MDH Analysis · 数据来源: baostock + 深交所 + 中证指数 ·
-  生成时间: 2026-05-17 10:49
+  CYB MDH Analysis &middot; baostock + 深交所 + 中证指数 &middot;
+  2026-05-17 12:11
 </footer>
 </div>
 </body>

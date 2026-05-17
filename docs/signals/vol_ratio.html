@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>📈 ❺ vol_ratio：短期 vs 长期波动率比 — CYB MDH Analysis</title>
+<title>&#128200; vol_ratio：短期 vs 长期波动率比 &mdash; CYB MDH</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
@@ -12,6 +12,7 @@ body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif
 header { text-align:center; padding:30px 0 20px; }
 h1 { font-size:1.8em; color:#60a5fa; margin-bottom:4px; }
 h2 { font-size:1.2em; color:#93c5fd; border-bottom:1px solid #334155; padding-bottom:8px; margin:25px 0 12px; }
+h3 { color:#e2e8f0; margin:15px 0 8px; }
 .subtitle { color:#94a3b8; font-size:0.9em; }
 .back { display:inline-block; color:#60a5fa; text-decoration:none; margin-bottom:10px; font-size:0.9em; }
 .back:hover { text-decoration:underline; }
@@ -43,25 +44,18 @@ footer { text-align:center; color:#64748b; padding:30px 0; font-size:0.8em; }
 <body>
 <div class="container">
 <header>
-  <a href="../index.html" class="back">← 返回仪表盘</a>
-  <h1>📈 ❺ vol_ratio：短期 vs 长期波动率比</h1>
-  <p class="subtitle">5日已实现波动率 / 60日已实现波动率。>1 时市场正经历高于常态的波动，<1 时波动在衰减。</p>
+  <a href="../index.html" class="back">&larr; 返回仪表盘</a>
+  <h1>&#128200; vol_ratio：短期 vs 长期波动率比</h1>
+  <p class="subtitle">5日RV/60日RV，衡量波动率是否在加速/衰减。</p>
 </header>
-
-<div class='kpi'><div class="kpi-card"><div class="kpi-val" style="color:#60a5fa">1.50</div><div class="kpi-label">vol_ratio 90%分位阈值</div></div><div class="kpi-card"><div class="kpi-val" style="color:#facc15">2.16%</div><div class="kpi-label">高vol_ratio后5日波动</div></div><div class="kpi-card"><div class="kpi-val" style="color:#f87171">1.7x</div><div class="kpi-label">vs 全体均值</div></div></div><div class="box info">
-      <b>最佳单一波动率预警信号：</b>当 vol_ratio > 1.5（90%分位）时，后5日波动率为全体均值的 1.7x。
-      相比成交量线性回归的无效结果，这是最简洁有效的波动率预警。
-    </div><h2>🔎 用法</h2>
-    <ul>
-      <li><b>vol_ratio < 0.7</b> — 低波动期，趋势跟踪效果好</li>
-      <li><b>0.7 < vol_ratio < 1.3</b> — 正常波动，常规操作</li>
-      <li><b>vol_ratio > 1.5</b> — 高波动预警，考虑减仓或对冲</li>
-      <li><b>vol_ratio > 2.0</b> — 极罕见（全周期仅数次），多为市场恐慌顶点</li>
-    </ul>
-
+<div class="kpi"><div class="kpi-card"><div class="kpi-val" style="color:#facc15">2.58%</div><div class="kpi-label">vol_ratio>1.5 后5日波动</div></div><div class="kpi-card"><div class="kpi-val" style="color:#4ade80">61%</div><div class="kpi-label">上涨概率</div></div><div class="kpi-card"><div class="kpi-val" style="color:#f87171">-0.19%</div><div class="kpi-label">vol_ratio<0.7 后5日收益</div></div></div><h2>回测事实：vol_ratio 4档分组后5日表现</h2><table><tr><th>分区</th><th>占比</th><th>后5日波动</th><th>后5日收益</th><th>上涨</th></tr><tr><td>vol_ratio 超低<0.7</td><td>22%</td><td>0.80%</td><td>-0.19%</td><td>46%</td></tr><tr><td>vol_ratio 低 0.7~1.0</td><td>34%</td><td>1.18%</td><td>+0.11%</td><td>52%</td></tr><tr><td>vol_ratio 正常 1.0~1.5</td><td>34%</td><td>1.64%</td><td>+0.48%</td><td>54%</td></tr><tr><td>vol_ratio 高 >1.5</td><td>10%</td><td>2.58%</td><td>+1.09%</td><td>61%</td></tr></table><div class="box">
+      <b>发现：</b>vol_ratio 高时，后5日收益反而 > 低时(高波区年化48%, 低波区-3%)。
+      用 vol_ratio 做仓位调节会降低收益。<br>
+      <b>有效用途：波动率估计</b> — 高>1.5时后5日波动2.58%，是超低波0.80%的3.2x。
+    </div>
 <footer>
-  CYB MDH Analysis · 数据来源: baostock + 深交所 + 中证指数 ·
-  生成时间: 2026-05-17 10:49
+  CYB MDH Analysis &middot; baostock + 深交所 + 中证指数 &middot;
+  2026-05-17 12:11
 </footer>
 </div>
 </body>

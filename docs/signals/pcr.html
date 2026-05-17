@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>📉 ❸ PCR 期权情绪：认沽认购比 — CYB MDH Analysis</title>
+<title>&#128201; PCR 期权情绪：认沽认购比 &mdash; CYB MDH</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
@@ -12,6 +12,7 @@ body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif
 header { text-align:center; padding:30px 0 20px; }
 h1 { font-size:1.8em; color:#60a5fa; margin-bottom:4px; }
 h2 { font-size:1.2em; color:#93c5fd; border-bottom:1px solid #334155; padding-bottom:8px; margin:25px 0 12px; }
+h3 { color:#e2e8f0; margin:15px 0 8px; }
 .subtitle { color:#94a3b8; font-size:0.9em; }
 .back { display:inline-block; color:#60a5fa; text-decoration:none; margin-bottom:10px; font-size:0.9em; }
 .back:hover { text-decoration:underline; }
@@ -43,20 +44,17 @@ footer { text-align:center; color:#64748b; padding:30px 0; font-size:0.8em; }
 <body>
 <div class="container">
 <header>
-  <a href="../index.html" class="back">← 返回仪表盘</a>
-  <h1>📉 ❸ PCR 期权情绪：认沽认购比</h1>
-  <p class="subtitle">Put/Call Ratio 反映期权市场的多空分歧程度。极低 PCR 对应极端乐观（尾部风险），极高 PCR 对应恐慌对冲。</p>
+  <a href="../index.html" class="back">&larr; 返回仪表盘</a>
+  <h1>&#128201; PCR 期权情绪：认沽认购比</h1>
+  <p class="subtitle">期权市场的多空分歧信号。</p>
 </header>
-
-<div class='kpi'><div class="kpi-card"><div class="kpi-val" style="color:#60a5fa">0.888</div><div class="kpi-label">PCR(量)均值</div></div><div class="kpi-card"><div class="kpi-val" style="color:#60a5fa">0.857</div><div class="kpi-label">PCR(持仓)均值</div></div><div class="kpi-card"><div class="kpi-val" style="color:#facc15">0.000</div><div class="kpi-label">当前PCR(量)</div></div></div><h2>📋 各阈值收益统计</h2><table><tr><th>信号</th><th>后5日收益</th><th>胜率</th></tr><tr><td>低PCR(<0.7)_极度看涨</td><td style='color:green'>+2.44%</td><td>60%</td></tr><tr><td>高PCR(>1.2)_极度看跌</td><td style='color:warn'>-0.41%</td><td>42%</td></tr><tr><td>近60日低PCR分位(<15%)</td><td style='color:green'>+1.53%</td><td>53%</td></tr><tr><td>近60日高PCR分位(>85%)</td><td style='color:warn'>+0.26%</td><td>54%</td></tr><tr><td>低PCR(<0.8)_看涨</td><td style='color:green'>+1.03%</td><td>50%</td></tr></table><div class="box success">
-      <b>核心结论：</b>低PCR(<0.7)是唯一的有效<b>方向信号</b>（后5日+2.44%, 胜率60%）。
-      高PCR(>1.2)看跌信号弱（后5日-0.41%, 胜率降至42%）。
-      PCR 做多信号远强于做空信号。
+<div class="kpi"><div class="kpi-card"><div class="kpi-val" style="color:#60a5fa">0.888</div><div class="kpi-label">PCR(量)均值</div></div><div class="kpi-card"><div class="kpi-val" style="color:#60a5fa">0.857</div><div class="kpi-label">PCR(持仓)均值</div></div><div class="kpi-card"><div class="kpi-val" style="color:#facc15">0.000</div><div class="kpi-label">当前PCR(量)</div></div></div><h2>回测事实：各阈值后5日收益</h2><table><tr><th>信号</th><th>后5日</th><th>胜率</th><th>信号数</th></tr><tr><td>低PCR(<0.7)_极度看涨</td><td style="color:#4ade80">+2.44%</td><td>60%</td><td>65</td></tr><tr><td>高PCR(>1.2)_极度看跌</td><td style="color:#facc15">-0.41%</td><td>42%</td><td>31</td></tr><tr><td>近60日低PCR分位(<15%)</td><td style="color:#4ade80">+1.53%</td><td>53%</td><td>105</td></tr><tr><td>低PCR(<0.8)_看涨</td><td style="color:#4ade80">+1.03%</td><td>50%</td><td>207</td></tr><tr><td>高PCR(>1.0)_看跌</td><td style="color:#facc15">+0.40%</td><td>52%</td><td>151</td></tr></table><div class="box success">
+      <b>唯一有效的方向信号：</b>PCR<0.7 后5日+2.44% 胜率60%。<br>
+      高PCR(>1.2)看跌信号弱（-0.41%），PCR最佳应用是做多信号。
     </div>
-
 <footer>
-  CYB MDH Analysis · 数据来源: baostock + 深交所 + 中证指数 ·
-  生成时间: 2026-05-17 10:49
+  CYB MDH Analysis &middot; baostock + 深交所 + 中证指数 &middot;
+  2026-05-17 12:11
 </footer>
 </div>
 </body>

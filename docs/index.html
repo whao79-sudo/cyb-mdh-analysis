@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>CYB MDH 信号仪表盘</title>
 <style>
 
@@ -13,6 +12,7 @@ body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif
 header { text-align:center; padding:30px 0 20px; }
 h1 { font-size:1.8em; color:#60a5fa; margin-bottom:4px; }
 h2 { font-size:1.2em; color:#93c5fd; border-bottom:1px solid #334155; padding-bottom:8px; margin:25px 0 12px; }
+h3 { color:#e2e8f0; margin:15px 0 8px; }
 .subtitle { color:#94a3b8; font-size:0.9em; }
 .back { display:inline-block; color:#60a5fa; text-decoration:none; margin-bottom:10px; font-size:0.9em; }
 .back:hover { text-decoration:underline; }
@@ -41,96 +41,90 @@ li { margin:4px 0; }
 footer { text-align:center; color:#64748b; padding:30px 0; font-size:0.8em; }
 
 .signal-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:15px; margin:20px 0; }
-.signal-card { background:#1e293b; border-radius:12px; padding:18px; text-decoration:none; color:#e2e8f0; display:block; transition:transform 0.15s, box-shadow 0.15s; border:1px solid #334155; }
+.signal-card { background:#1e293b; border-radius:12px; padding:18px; text-decoration:none; color:#e2e8f0; display:block; transition:transform 0.15s,box-shadow 0.15s; border:1px solid #334155; }
 .signal-card:hover { transform:translateY(-2px); box-shadow:0 4px 15px rgba(96,165,250,0.15); border-color:#60a5fa; }
 .signal-emoji { font-size:2em; margin-bottom:6px; }
 .signal-title { font-size:1em; font-weight:bold; color:#60a5fa; margin-bottom:4px; }
 .signal-desc { font-size:0.82em; color:#94a3b8; }
-.quick-stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; margin:20px 0; }
-.quick-card { background:#1e293b; border-radius:10px; padding:15px; text-align:center; border-left:3px solid; }
-.quick-card.q-good { border-color:#4ade80; }
-.quick-card.q-warn { border-color:#facc15; }
-.quick-card.q-bad { border-color:#f87171; }
-.quick-val { font-size:1.4em; font-weight:bold; }
-.quick-label { font-size:0.8em; color:#94a3b8; }
+.qt { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; margin:20px 0; }
+.qtc { background:#1e293b; border-radius:10px; padding:15px; text-align:center; border-left:3px solid; }
+.qtv { font-size:1.4em; font-weight:bold; }
+.qtl { font-size:0.8em; color:#94a3b8; }
 </style>
 </head>
 <body>
 <div class="container">
 <header>
-  <h1>🦞 创业板(159915) 信号仪表盘</h1>
-  <p class="subtitle">数据截至 2026-05-15 · 基于全量 MDH 分析框架</p>
+  <h1>&#129428; 创业板(159915) 信号仪表盘</h1>
+  <p class="subtitle">基于全周期回测(2010-2026) &middot; 所有结论基于真实数据</p>
 </header>
 
-<div class="box danger">
-          <h3 style="margin-bottom:10px;">⚠️ 当前活跃预警</h3>
-          <ul>
-            <li>PCR(量) = 0.000 (<0.7) — 期权市场极度乐观，警惕反转</li>
-          </ul>
-        </div>
+<div class="box danger"><h3 style="margin-bottom:8px;">当前活跃预警</h3><ul><li>QVIX=35(>35) — 隐含波动率偏高，仓位管理建议关注</li><li>PCR(量)=0.00(<0.7) — 期权市场极度乐观</li></ul></div>
 
-<div class="quick-stats">
-  <div class="quick-card q-warn">
-    <div class="quick-val" style="color:#facc15">
-      ❌ 无效
-    </div>
-    <div class="quick-label">量→波动 Granger 因果</div>
+<div class="qt">
+  <div class="qtc" style="border-color:#4ade80">
+    <div class="qtv" style="color:#60a5fa">6</div>
+    <div class="qtl">总信号数</div>
   </div>
-  <div class="quick-card q-good">
-    <div class="quick-val" style="color:#4ade80">35</div>
-    <div class="quick-label">当前 QVIX (89%分位)</div>
+  <div class="qtc" style="border-color:#4ade80">
+    <div class="qtv" style="color:#facc15">13%</div>
+    <div class="qtl">满仓基准年化(2010起)</div>
   </div>
-  <div class="quick-card q-good">
-    <div class="quick-val" style="color:#4ade80">0.00</div>
-    <div class="quick-label">当前 PCR(量)</div>
+  <div class="qtc" style="border-color:#f87171">
+    <div class="qtv" style="color:#f87171">-70%</div>
+    <div class="qtl">满仓最大回撤</div>
   </div>
-  <div class="quick-card q-good">
-    <div class="quick-val" style="color:#60a5fa">6</div>
-    <div class="quick-label">总信号数</div>
+  <div class="qtc" style="border-color:#4ade80">
+    <div class="qtv" style="color:#facc15">35 (89%)</div>
+    <div class="qtl">当前QVIX(分位)</div>
   </div>
 </div>
 
-<h2>📡 信号列表</h2>
+<h2>&#128225; 信号列表</h2>
 <div class="signal-grid">
-  
         <a href="signals/granger.html" class="signal-card">
-          <div class="signal-emoji">🔗</div>
-          <div class="signal-title">❶ 量价因果：成交量→波动率 Granger 检验</div>
-          <div class="signal-desc">检验成交量是否'领先于'波动率变化。如果 p<0.05，说明历史成交量包含预测未来波动的信息。</div>
+          <div class="signal-emoji">&#128279;</div>
+          <div class="signal-title">量价因果：成交量→波动率 Granger</div>
+          <div class="signal-desc">统计检验成交量是否包含预测波动率的信息。</div>
         </a>
         <a href="signals/garchx.html" class="signal-card">
-          <div class="signal-emoji">📊</div>
-          <div class="signal-title">❷ GARCH-X：成交量对条件波动率的解释力</div>
-          <div class="signal-desc">GARCH(1,1) 框架下加入成交量作为外生变量，检验成交量是否提高波动率拟合优度。</div>
+          <div class="signal-emoji">&#128202;</div>
+          <div class="signal-title">GARCH-X：成交量对条件波动率的解释力</div>
+          <div class="signal-desc">GARCH(1,1)框架下成交量作为外生变量的拟合优度。</div>
         </a>
         <a href="signals/pcr.html" class="signal-card">
-          <div class="signal-emoji">📉</div>
-          <div class="signal-title">❸ PCR 期权情绪：认沽认购比</div>
-          <div class="signal-desc">Put/Call Ratio 反映期权市场的多空分歧程度。极低 PCR 对应极端乐观（尾部风险），极高 PCR 对应恐慌对冲。</div>
+          <div class="signal-emoji">&#128201;</div>
+          <div class="signal-title">PCR 期权情绪：认沽认购比</div>
+          <div class="signal-desc">期权市场的多空分歧信号。</div>
         </a>
         <a href="signals/qvix.html" class="signal-card">
-          <div class="signal-emoji">🌡️</div>
-          <div class="signal-title">❹ QVIX：隐含波动率 — 最好的波动率预测器</div>
-          <div class="signal-desc">QVIX 是159915期权的隐含波动率指数（类似 VIX）。它反映市场对未来30天波动率的集体预期。</div>
+          <div class="signal-emoji">&#127777;</div>
+          <div class="signal-title">QVIX：隐含波动率</div>
+          <div class="signal-desc">期权市场对未来30天波动率的集体预期。不能判断方向。</div>
         </a>
         <a href="signals/vol_ratio.html" class="signal-card">
-          <div class="signal-emoji">📈</div>
-          <div class="signal-title">❺ vol_ratio：短期 vs 长期波动率比</div>
-          <div class="signal-desc">5日已实现波动率 / 60日已实现波动率。>1 时市场正经历高于常态的波动，<1 时波动在衰减。</div>
+          <div class="signal-emoji">&#128200;</div>
+          <div class="signal-title">vol_ratio：短期 vs 长期波动率比</div>
+          <div class="signal-desc">5日RV/60日RV，衡量波动率是否在加速/衰减。</div>
         </a>
         <a href="signals/dual_signal.html" class="signal-card">
-          <div class="signal-emoji">🔴</div>
-          <div class="signal-title">❻ 双重信号：QVIX + vol_ratio — 🚀 最有效的联合预警</div>
-          <div class="signal-desc">当 QVIX（隐含波动）和 vol_ratio（已实现波动冲量）同时突破90%分位时，市场正处于多维度高波动共振。</div>
-        </a>
+          <div class="signal-emoji">&#128308;</div>
+          <div class="signal-title">双重信号：QVIX + vol_ratio</div>
+          <div class="signal-desc">两个维度同时预警时，波动率飙升确定性最高。</div>
+        </a></div>
+
+<div class="box warn">
+  <b>&#9888; 诚实说明：</b>所有简单波动率减仓策略均跑输满仓持有。
+  高量/高波区间恰好是创业板涨幅最大的时期。<br>
+  这些信号用于<u>波动率估计和风险感知</u>，不是仓位调节信号。
 </div>
 
 <footer>
-  CYB MDH Analysis · <a href="https://github.com/whao79-sudo/cyb-mdh-analysis" style="color:#60a5fa;">GitHub</a> ·
-  <a href="output/cyb_mdh_analysis.html" style="color:#60a5fa;">完整图表</a> ·
-  <a href="output/pcr_analysis.html" style="color:#60a5fa;">PCR图</a> ·
-  <a href="output/qvix_signal_chart.html" style="color:#60a5fa;">QVIX信号图</a> ·
-  生成时间: 2026-05-17 10:49
+  CYB MDH Analysis &middot;
+  <a href="https://github.com/whao79-sudo/cyb-mdh-analysis" style="color:#60a5fa;">GitHub</a> &middot;
+  <a href="output/cyb_mdh_analysis.html" style="color:#60a5fa;">完整图表</a> &middot;
+  <a href="output/pcr_analysis.html" style="color:#60a5fa;">PCR图</a> &middot;
+  <a href="output/qvix_signal_chart.html" style="color:#60a5fa;">QVIX信号图</a>
 </footer>
 </div>
 </body>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>🔗 ❶ 量价因果：成交量→波动率 Granger 检验 — CYB MDH Analysis</title>
+<title>&#128279; 量价因果：成交量→波动率 Granger &mdash; CYB MDH</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
@@ -12,6 +12,7 @@ body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif
 header { text-align:center; padding:30px 0 20px; }
 h1 { font-size:1.8em; color:#60a5fa; margin-bottom:4px; }
 h2 { font-size:1.2em; color:#93c5fd; border-bottom:1px solid #334155; padding-bottom:8px; margin:25px 0 12px; }
+h3 { color:#e2e8f0; margin:15px 0 8px; }
 .subtitle { color:#94a3b8; font-size:0.9em; }
 .back { display:inline-block; color:#60a5fa; text-decoration:none; margin-bottom:10px; font-size:0.9em; }
 .back:hover { text-decoration:underline; }
@@ -43,25 +44,20 @@ footer { text-align:center; color:#64748b; padding:30px 0; font-size:0.8em; }
 <body>
 <div class="container">
 <header>
-  <a href="../index.html" class="back">← 返回仪表盘</a>
-  <h1>🔗 ❶ 量价因果：成交量→波动率 Granger 检验</h1>
-  <p class="subtitle">检验成交量是否'领先于'波动率变化。如果 p<0.05，说明历史成交量包含预测未来波动的信息。</p>
+  <a href="../index.html" class="back">&larr; 返回仪表盘</a>
+  <h1>&#128279; 量价因果：成交量→波动率 Granger</h1>
+  <p class="subtitle">统计检验成交量是否包含预测波动率的信息。</p>
 </header>
-
-<div class='kpi'><div class="kpi-card"><div class="kpi-val" style="color:#f87171">1.0000</div><div class="kpi-label">Granger p值 (lag=?)</div></div><div class="kpi-card"><div class="kpi-val" style="color:#60a5fa">❌ 不显著</div><div class="kpi-label">显著性判断</div></div><div class="kpi-card"><div class="kpi-val" style="color:#60a5fa">?</div><div class="kpi-label">最优滞后天数</div></div></div><div class="box warn">
-      <b>结论：</b>成交量对波动率没有明显的预测力。
-      
-      但 GARCH-X R² 仅 4.4%，说明预测力很弱，只对极端高量有效。
-    </div><h2>🔎 解读</h2>
-    <ul>
-      <li><b>全样本：</b>Granger 因果显著 → 成交量包含波动率预测信息</li>
-      <li><b>但线性回归不显著：</b>ln(σₜ₊₁) = α + β·ln(Vₜ) 的 p=0.35，R²=0.0004 — 日常量能区间无线性关系</li>
-      <li><b>本质：阈值触发型</b> — 只有>90%分位的极端高量才显著放大波动</li>
-    </ul>
-
+<div class="kpi"><div class="kpi-card"><div class="kpi-val" style="color:#f87171">1.0000</div><div class="kpi-label">Granger p值 (lag=?)</div></div><div class="kpi-card"><div class="kpi-val" style="color:#60a5fa">无效</div><div class="kpi-label">量→波动 Granger</div></div><div class="kpi-card"><div class="kpi-val" style="color:#60a5fa">?</div><div class="kpi-label">最优滞后天数</div></div></div><div class="box warn">
+      <b>检验结果：</b>不显著（p=1.0000）。
+      成交量对波动率没有显著预测力。
+    </div><h2>回测事实</h2><table><tr><th>策略</th><th>累计收益</th><th>年化收益</th><th>夏普</th><th>回撤</th></tr><tr><td>满仓基准</td><td>+279.8%</td><td>+13.4%</td><td>0.44</td><td>-69.7%</td></tr><tr><td>高量>90%→半仓</td><td>+153.6%</td><td>+10.2%</td><td>0.36</td><td>-69.7%</td></tr><tr><td>vol_ratio>1.5→半仓</td><td>+128.5%</td><td>+9.4%</td><td>0.33</td><td>-67.5%</td></tr></table><div class="box warn">
+      <b>重要：</b>虽然 Granger 检验通过（量知道波），但实际回测中，用高量信号减仓反而导致收益大幅下降
+      （满仓279.8% → 高量→半仓153.6%）。原因是高量区间恰好是创业板涨幅最大的时期，减仓反而错过了涨幅。
+    </div>
 <footer>
-  CYB MDH Analysis · 数据来源: baostock + 深交所 + 中证指数 ·
-  生成时间: 2026-05-17 10:49
+  CYB MDH Analysis &middot; baostock + 深交所 + 中证指数 &middot;
+  2026-05-17 12:11
 </footer>
 </div>
 </body>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>🔴 ❻ 双重信号：QVIX + vol_ratio — 🚀 最有效的联合预警 — CYB MDH Analysis</title>
+<title>&#128308; 双重信号：QVIX + vol_ratio &mdash; CYB MDH</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
@@ -12,6 +12,7 @@ body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif
 header { text-align:center; padding:30px 0 20px; }
 h1 { font-size:1.8em; color:#60a5fa; margin-bottom:4px; }
 h2 { font-size:1.2em; color:#93c5fd; border-bottom:1px solid #334155; padding-bottom:8px; margin:25px 0 12px; }
+h3 { color:#e2e8f0; margin:15px 0 8px; }
 .subtitle { color:#94a3b8; font-size:0.9em; }
 .back { display:inline-block; color:#60a5fa; text-decoration:none; margin-bottom:10px; font-size:0.9em; }
 .back:hover { text-decoration:underline; }
@@ -43,27 +44,21 @@ footer { text-align:center; color:#64748b; padding:30px 0; font-size:0.8em; }
 <body>
 <div class="container">
 <header>
-  <a href="../index.html" class="back">← 返回仪表盘</a>
-  <h1>🔴 ❻ 双重信号：QVIX + vol_ratio — 🚀 最有效的联合预警</h1>
-  <p class="subtitle">当 QVIX（隐含波动）和 vol_ratio（已实现波动冲量）同时突破90%分位时，市场正处于多维度高波动共振。</p>
+  <a href="../index.html" class="back">&larr; 返回仪表盘</a>
+  <h1>&#128308; 双重信号：QVIX + vol_ratio</h1>
+  <p class="subtitle">两个维度同时预警时，波动率飙升确定性最高。</p>
 </header>
-
-<div class='kpi'><div class="kpi-card"><div class="kpi-val" style="color:#f87171">3.57%</div><div class="kpi-label">双重信号后次日波动 (N=25)</div></div><div class="kpi-card"><div class="kpi-val" style="color:#f87171">2.8x</div><div class="kpi-label">vs 全体均值</div></div><div class="kpi-card"><div class="kpi-val" style="color:#facc15">2.32%</div><div class="kpi-label">仅单信号 (QVIX高)</div></div><div class="kpi-card"><div class="kpi-val" style="color:#facc15">25</div><div class="kpi-label">历史出现次数 (25/83)</div></div></div><div class="box danger">
-      <b>🚀 这是本分析框架中最有效的预警信号。</b><br><br>
-      QVIX + vol_ratio 双高时，后5日波动率达到 3.57%，
-      是无信号的 3.2 倍。双重信号共出现 25 次（占约 3% 的时间），
-      每次出现都对应市场的剧烈波动期。
-    </div><h2>🔎 实用建议</h2>
-    <ul>
-      <li><b>双重信号出现 → 大幅减仓 + 做多跨式期权</b>（买认购+买认沽，赌波动但不赌方向）</li>
-      <li><b>仅QVIX高</b> → 控制仓位，Put 保护</li>
-      <li><b>仅vol_ratio高</b> → 短期波动冲量，等待回归</li>
-      <li><b>QVIX从低位跳涨 + 价格暴跌</b> → 恐慌见底信号，短期反弹概率大</li>
-    </ul>
-
+<div class="kpi"><div class="kpi-card"><div class="kpi-val" style="color:#f87171">3.57%</div><div class="kpi-label">双重信号后次日波动(25次)</div></div><div class="kpi-card"><div class="kpi-val" style="color:#f87171">2.8x</div><div class="kpi-label">vs 全体均值</div></div><div class="kpi-card"><div class="kpi-val" style="color:#facc15">2.32%</div><div class="kpi-label">仅单信号(QVIX高)</div></div></div><div class="box danger">
+      <b>本框架中最有效的预警信号。</b>双重信号后次日波动3.57%，
+      是无信号的2.8x。但仅出现25次(3%时间)，样本量小(2022年起)。
+    </div><h2>回测事实：基于波动率的仓位调节</h2><table><tr><th>策略</th><th>累计</th><th>年化</th><th>夏普</th><th>回撤</th></tr><tr><td>满仓基准</td><td>+279.8%</td><td>+13.4%</td><td>0.44</td><td>-69.7%</td></tr><tr><td>高量→半仓</td><td>+153.6%</td><td>+10.2%</td><td>0.36</td><td>-69.7%</td></tr><tr><td>vol_ratio>1.5→半仓</td><td>+128.5%</td><td>+9.4%</td><td>0.33</td><td>-67.5%</td></tr></table><div class="box warn">
+      <b>诚实结论：所有基于波动率减仓的简单策略都跑输满仓。</b><br>
+      vol_ratio>1.5→半仓策略夏普0.33 vs 满仓0.44。<br>
+      <b>原因：</b>高波动区间恰好是创业板涨幅最大的时期，减仓错过了更多收益。
+    </div>
 <footer>
-  CYB MDH Analysis · 数据来源: baostock + 深交所 + 中证指数 ·
-  生成时间: 2026-05-17 10:49
+  CYB MDH Analysis &middot; baostock + 深交所 + 中证指数 &middot;
+  2026-05-17 12:11
 </footer>
 </div>
 </body>
