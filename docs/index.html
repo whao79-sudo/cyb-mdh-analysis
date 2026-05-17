@@ -69,7 +69,7 @@
   <div class="finding yellow">
     <h3>📈 MDH 假说：成交量对波动率有解释力，但 GARCH 持续率变化不显著</h3>
     <p>GARCH-X 模型中成交量对条件方差的 R² = 0.044，说明成交量能解释约 4.4% 的波动率方差。</p>
-    <p>GARCH(1,1) 持续率 在加入成交量后几乎未下降 (0.9328 → 0.9328)，未完全支持 MDH 的核心预测（成交量吸收波动率聚集信息后持续率应显著下降）。</p>
+    <p>GARCH(1,1) 持续率 在加入成交量后几乎未下降 (0.9326 → 0.9326)，未完全支持 MDH 的核心预测（成交量吸收波动率聚集信息后持续率应显著下降）。</p>
   </div>
 
   <div class="finding green">
@@ -149,7 +149,7 @@
       <div class="stat-label">成交量PCR 均值 (认沽/认购)</div>
     </div>
     <div class="stat-card partial">
-      <div class="stat-value">0.856</div>
+      <div class="stat-value">0.857</div>
       <div class="stat-label">持仓量PCR 均值 (未平仓)</div>
     </div>
     <div class="stat-card success">
@@ -167,6 +167,38 @@
     <p><b>低 PCR (<0.7)</b> — 极度看涨情绪，后5日平均收益 <b>+2.44%</b>，上涨概率 <b>60%</b></p>
     <p><b>高 PCR (>1.2)</b> — 极度看跌情绪，后5日平均收益 <b>-0.41%</b>，下跌概率 <b>58%</b></p>
     <p>结论：低 PCR 看涨信号远强于高 PCR 看跌信号，<0.7 时短期做多胜率较高。</p>
+  </div>
+
+  <h2>📈 QVIX 隐含波动率分析 (159915 创业板ETF)</h2>
+
+  <div class="stats-grid">
+    <div class="stat-card success">
+      <div class="stat-value">0.48</div>
+      <div class="stat-label">QVIX vs 实际波动率相关系数</div>
+    </div>
+    <div class="stat-card partial">
+      <div class="stat-value">1.8x</div>
+      <div class="stat-label">高QVIX(>36)次日波动 vs 均值</div>
+    </div>
+    <div class="stat-card partial">
+      <div class="stat-value">25</div>
+      <div class="stat-label">双重信号(高QVIX+高vol_ratio)次数</div>
+    </div>
+    <div class="stat-card success">
+      <div class="stat-value">35.3</div>
+      <div class="stat-label">当前QVIX (89%分位)</div>
+    </div>
+  </div>
+
+  <div class="finding green">
+    <h3>🔮 QVIX: 远优于成交量的波动率预测信号</h3>
+    <p><b>QVIX vs 实际波动率: r = 0.48</b>，是量价分析中最强的单变量信号（远高于成交量的 r=0.14）。</p>
+    <p>高QVIX (>90%分位, >36) 后:
+       次日波动率 <b>2.32%</b>（均值的 1.8x）
+       · 后5日波动率 <b>2.02%</b>
+    </p>
+    <p>低QVIX (<10%分位, <20) 后: 次日波动率 <b>0.90%</b>（低波环境确认）</p>
+    <p><b>双重信号 (QVIX + vol_ratio 同时超过90%分位):</b> 次日波动率 <b>3.574%</b>，远高于单信号，是后续波动率全面爆发的可靠预警。</p>
   </div>
 
   <div style="text-align: center;">

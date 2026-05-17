@@ -80,6 +80,21 @@ def render_page(data):
     oi_pcr_mean = pcr_bs.get("oi_pcr_mean", 0)
     oi_pcr_close_corr = pcr_corr.get("oi_pcr_close", 0)
 
+    # QVIX
+    qvix = data.get("qvix_analysis", {})
+    qvix_close_corr = qvix.get("corr_qvix_abs_ret", 0)
+    qvix_high_threshold = qvix.get("high_qvix_threshold", 35)
+    qvix_low_threshold = qvix.get("low_qvix_threshold", 20)
+    qvix_high_fwd_1d = qvix.get("high_qvix_fwd_1d_vol", 0)
+    qvix_high_fwd_5d = qvix.get("high_qvix_fwd_5d_vol", 0)
+    qvix_low_fwd_1d = qvix.get("low_qvix_fwd_1d_vol", 0)
+    qvix_all_mean = qvix.get("all_mean_fwd_1d_vol", 1.3)
+    qvix_dual_signal = qvix.get("dual_signal_fwd_1d_vol", 0)
+    qvix_dual_count = qvix.get("dual_signal_count", 0)
+    qvix_latest = qvix.get("latest_qvix", 0)
+    qvix_latest_pct = qvix.get("latest_percentile", 0)
+    qvix_fold = (qvix_high_fwd_1d / qvix_all_mean) if qvix_all_mean > 0 else 1
+
     # 分段结果
     garch_json = os.path.join(OUTPUT_DIR, "mdh_report.json")
     segment_results = []
@@ -255,6 +270,38 @@ def render_page(data):
     <p><b>低 PCR (<0.7)</b> — 极度看涨情绪，后5日平均收益 <b>+{pcr_extreme_bullish_ret:.2f}%</b>，上涨概率 <b>{pcr_extreme_bullish_up:.0f}%</b></p>
     <p><b>高 PCR (>1.2)</b> — 极度看跌情绪，后5日平均收益 <b>{pcr_extreme_bearish_ret:+.2f}%</b>，下跌概率 <b>{pcr_extreme_bearish_down:.0f}%</b></p>
     <p>结论：低 PCR 看涨信号远强于高 PCR 看跌信号，<0.7 时短期做多胜率较高。</p>
+  </div>
+
+  <h2>📈 QVIX 隐含波动率分析 (159915 创业板ETF)</h2>
+
+  <div class="stats-grid">
+    <div class="stat-card success">
+      <div class="stat-value">{qvix_close_corr:.2f}</div>
+      <div class="stat-label">QVIX vs 实际波动率相关系数</div>
+    </div>
+    <div class="stat-card partial">
+      <div class="stat-value">{qvix_fold:.1f}x</div>
+      <div class="stat-label">高QVIX(>{qvix_high_threshold:.0f})次日波动 vs 均值</div>
+    </div>
+    <div class="stat-card partial">
+      <div class="stat-value">{qvix_dual_count if qvix_dual_count > 0 else '—'}</div>
+      <div class="stat-label">双重信号(高QVIX+高vol_ratio)次数</div>
+    </div>
+    <div class="stat-card {'fail' if qvix_latest > qvix_high_threshold else 'success'}">
+      <div class="stat-value">{qvix_latest:.1f}</div>
+      <div class="stat-label">当前QVIX ({qvix_latest_pct:.0f}%分位)</div>
+    </div>
+  </div>
+
+  <div class="finding green">
+    <h3>🔮 QVIX: 远优于成交量的波动率预测信号</h3>
+    <p><b>QVIX vs 实际波动率: r = {qvix_close_corr:.2f}</b>，是量价分析中最强的单变量信号（远高于成交量的 r={vol_corr:.2f}）。</p>
+    <p>高QVIX (>90%分位, >{qvix_high_threshold:.0f}) 后:
+       次日波动率 <b>{qvix_high_fwd_1d:.2f}%</b>（均值的 {qvix_fold:.1f}x）
+       · 后5日波动率 <b>{qvix_high_fwd_5d:.2f}%</b>
+    </p>
+    <p>低QVIX (<10%分位, <{qvix_low_threshold:.0f}) 后: 次日波动率 <b>{qvix_low_fwd_1d:.2f}%</b>（低波环境确认）</p>
+    {'<p><b>双重信号 (QVIX + vol_ratio 同时超过90%分位):</b> 次日波动率 <b>{:.3f}%</b>，远高于单信号，是后续波动率全面爆发的可靠预警。</p>'.format(qvix_dual_signal) if qvix_dual_signal > 0 else ''}
   </div>
 
   <div style="text-align: center;">

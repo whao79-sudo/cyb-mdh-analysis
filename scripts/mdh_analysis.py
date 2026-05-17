@@ -17,6 +17,7 @@ warnings.filterwarnings('ignore')
 
 DB_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "cyb_data.db")
 PCR_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "option_pcr.csv")
+QVIX_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "qvix_data.csv")
 OUTPUT_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "output")
 
 def get_data():
@@ -807,6 +808,14 @@ def main():
     print("\n🔧 计算收益率和波动率指标...")
     df = calc_returns(df)
     print(f"   有效数据: {len(df)} 个交易日")
+    
+    # 2.5 QVIX 分析
+    print("\n" + "="*60)
+    print("📊 加载 QVIX (隐含波动率) 数据...")
+    print("="*60)
+    qvix_df = load_qvix_data()
+    qvix_results = run_qvix_analysis(qvix_df, df) if qvix_df is not None else None
+    qvix_report = generate_qvix_report_section(qvix_results) if qvix_results else ""
     print(f"   时间范围: {df.index.min()} ~ {df.index.max()}")
     
     # 3. 基础相关性
@@ -840,8 +849,8 @@ def main():
     print("📝 生成报告...")
     report_md = generate_report(garch_results, granger_results, harrv_results, df)
     
-    # 追加分段分析报告 + PCR 报告
-    report_full = report_md + segment_report + pcr_report
+    # 追加分段分析报告 + PCR 报告 + QVIX 报告
+    report_full = report_md + segment_report + pcr_report + qvix_report
     report_path = os.path.join(OUTPUT_DIR, "mdh_report.md")
     with open(report_path, 'w', encoding='utf-8') as f:
         f.write(report_full)
@@ -851,9 +860,11 @@ def main():
     # PCR 结果也写入 JSON
     if pcr_results:
         json_data['pcr_analysis'] = pcr_results
-        json_path = os.path.join(OUTPUT_DIR, "mdh_report.json")
-        with open(json_path, 'w', encoding='utf-8') as f:
-            json.dump(json_data, f, ensure_ascii=False, indent=2, default=str)
+    if qvix_results:
+        json_data['qvix_analysis'] = qvix_results
+    json_path = os.path.join(OUTPUT_DIR, "mdh_report.json")
+    with open(json_path, 'w', encoding='utf-8') as f:
+        json.dump(json_data, f, ensure_ascii=False, indent=2, default=str)
     
     # 10. 生成图表
     print("\n📈 生成图表...")
@@ -1197,6 +1208,159 @@ def generate_pcr_report_section(pcr_results):
         sig = "✅ 显著" if granger.get('significant') else "❌ 不显著"
         lines.append(f"\n### PCR → 波动率 Granger 因果\n")
         lines.append(f"- p={granger['best_p_value']:.4f} (滞后{granger['best_lag']}期) {sig}\n")
+    
+    return "".join(lines)
+
+# ====================================================================
+# QVIX (隐含波动率) 分析模块
+# ====================================================================
+
+QVIX_SOURCE = "中证指数有限公司 (akshare.index_option_cyb_qvix)"
+
+def load_qvix_data():
+    if not os.path.exists(QVIX_PATH):
+        print("⚠️ QVIX数据文件不存在，跳过QVIX分析")
+        return None
+    df = pd.read_csv(QVIX_PATH)
+    if len(df) == 0:
+        return None
+    df['date'] = pd.to_datetime(df['date'])
+    df = df.set_index('date').sort_index()
+    print(f"   QVIX数据: {df.index[0].strftime('%Y-%m-%d')} ~ {df.index[-1].strftime('%Y-%m-%d')} ({len(df)}条)")
+    return df
+
+def run_qvix_analysis(qvix_df, cyb_df):
+    """QVIX 与波动率的交叉分析"""
+    print("\n▶ 合并QVIX与指数数据...")
+    
+    # 合并
+    merged = qvix_df[['qvix']].join(cyb_df[['close','volume','turnover','abs_return']], how='inner')
+    merged = merged.dropna(subset=['qvix', 'close'])
+    
+    # 基础指标
+    merged['ret'] = merged['close'].pct_change() * 100
+    merged['abs_ret'] = merged['ret'].abs()
+    merged['fwd_1d_vol'] = merged['abs_ret'].shift(-1)
+    merged['fwd_5d_vol'] = merged['abs_ret'].rolling(5).mean().shift(-5)
+    merged['log_vol'] = np.log(merged['volume'] + 1)
+    merged['log_qvix'] = np.log(merged['qvix'] + 1e-8)
+    
+    merged = merged.dropna(subset=['qvix', 'abs_return'])
+    
+    results = {}
+    
+    # 1. 基础相关性
+    results['corr_qvix_abs_ret'] = float(merged['qvix'].corr(merged['abs_return']))
+    results['corr_log_qvix_log_vol'] = float(merged['log_qvix'].corr(merged['log_vol']))
+    
+    print(f"\n▶ QVIX 相关性:")
+    print(f"   QVIX vs 当日波动: r={results['corr_qvix_abs_ret']:.4f}")
+    
+    # 2. 极端信号
+    high_q = merged[merged['qvix'] > merged['qvix'].quantile(0.9)]
+    low_q = merged[merged['qvix'] < merged['qvix'].quantile(0.1)]
+    all_mean = merged['fwd_1d_vol'].mean()
+    
+    high_1d = high_q['fwd_1d_vol'].dropna().mean()
+    low_1d = low_q['fwd_1d_vol'].dropna().mean()
+    high_5d = high_q['fwd_5d_vol'].dropna().mean()
+    low_5d = low_q['fwd_5d_vol'].dropna().mean()
+    
+    results['high_qvix_threshold'] = float(merged['qvix'].quantile(0.9))
+    results['low_qvix_threshold'] = float(merged['qvix'].quantile(0.1))
+    results['high_qvix_fwd_1d_vol'] = float(high_1d)
+    results['low_qvix_fwd_1d_vol'] = float(low_1d)
+    results['high_qvix_fwd_5d_vol'] = float(high_5d)
+    results['low_qvix_fwd_5d_vol'] = float(low_5d)
+    results['all_mean_fwd_1d_vol'] = float(all_mean)
+    
+    print(f"\n▶ QVIX 极端信号:")
+    print(f"   高QVIX(>{merged['qvix'].quantile(0.9):.1f}) 次日波动: {high_1d:.3f}% (均值{all_mean:.3f}%)")
+    print(f"   低QVIX(<{merged['qvix'].quantile(0.1):.1f}) 次日波动: {low_1d:.3f}%")
+    print(f"   高QVIX后5日波动: {high_5d:.3f}%")
+    
+    # 3. vol_ratio 信号
+    merged['rv_5d'] = merged['abs_ret'].rolling(5).mean()
+    merged['rv_60d'] = merged['abs_ret'].rolling(60).mean()
+    merged['vol_ratio'] = merged['rv_5d'] / merged['rv_60d']
+    merged['vr_signal'] = merged['vol_ratio'] > merged['vol_ratio'].quantile(0.9)
+    
+    high_vr = merged[merged['vr_signal']]
+    vr_fwd = high_vr['fwd_5d_vol'].dropna().mean()
+    all_5d = merged['fwd_5d_vol'].dropna().mean()
+    
+    results['high_vr_fwd_5d_vol'] = float(vr_fwd)
+    results['all_mean_fwd_5d_vol'] = float(all_5d)
+    results['high_vr_ratio_p90'] = float(merged['vol_ratio'].quantile(0.9))
+    
+    # 4. 双重信号: QVIX + vol_ratio
+    both = merged[(merged['qvix'] > merged['qvix'].quantile(0.9)) & merged['vr_signal']]
+    any_sig = merged[(merged['qvix'] > merged['qvix'].quantile(0.9)) | merged['vr_signal']]
+    
+    if len(both) > 3:
+        both_fwd = both['fwd_1d_vol'].dropna().mean()
+        any_fwd = any_sig['fwd_1d_vol'].dropna().mean()
+        results['dual_signal_fwd_1d_vol'] = float(both_fwd)
+        results['dual_signal_count'] = int(len(both))
+        results['either_signal_fwd_1d_vol'] = float(any_fwd)
+        results['either_signal_count'] = int(len(any_sig))
+        
+        print(f"\n▶ 双重信号:")
+        print(f"   双重信号(N={len(both)}): 次日波动={both_fwd:.3f}%")
+        print(f"   任一信号(N={len(any_sig)}): 次日波动={any_fwd:.3f}%")
+    
+    # 5. QVIX 分位数
+    qvix_quantiles = {}
+    for q in [0.05, 0.25, 0.5, 0.75, 0.9, 0.95]:
+        qvix_quantiles[f'p{int(q*100)}'] = float(merged['qvix'].quantile(q))
+    results['qvix_quantiles'] = qvix_quantiles
+    
+    # 6. 最新值及分位
+    latest_qvix = merged['qvix'].iloc[-1]
+    latest_date = merged.index[-1].strftime('%Y-%m-%d')
+    qvix_pct = (merged['qvix'] < latest_qvix).sum() / len(merged) * 100
+    results['latest_qvix'] = float(latest_qvix)
+    results['latest_date'] = latest_date
+    results['latest_percentile'] = float(qvix_pct)
+    
+    print(f"\n▶ 当前QVIX ({latest_date}): {latest_qvix:.1f} ({qvix_pct:.0f}%分位)")
+    
+    print(f"\n✅ QVIX 分析完成")
+    return results
+
+def generate_qvix_report_section(qvix_results):
+    """生成 QVIX 分析报告片段"""
+    if not qvix_results:
+        return ""
+    
+    lines = []
+    lines.append("\n\n## 📊 QVIX (隐含波动率) 分析\n")
+    lines.append(f"*数据来源: {QVIX_SOURCE}*\n\n")
+    
+    c = qvix_results.get('corr_qvix_abs_ret', 0)
+    lines.append(f"- **QVIX vs 实际波动率相关系数**: {c:.4f}\n")
+    
+    lines.append("\n### QVIX 极端信号\n")
+    lines.append(f"- **高QVIX (>{qvix_results['high_qvix_threshold']:.1f})** — 次日波动率 {qvix_results['high_qvix_fwd_1d_vol']:.3f}% (均值 {qvix_results['all_mean_fwd_1d_vol']:.3f}%)\n")
+    lines.append(f"- **高QVIX后5日波动率**: {qvix_results['high_qvix_fwd_5d_vol']:.3f}%\n")
+    lines.append(f"- **低QVIX (<{qvix_results['low_qvix_threshold']:.1f})** — 次日波动率 {qvix_results['low_qvix_fwd_1d_vol']:.3f}%\n")
+    
+    if 'dual_signal_fwd_1d_vol' in qvix_results:
+        lines.append(f"\n### 双重信号 (QVIX + vol_ratio)\n")
+        lines.append(f"- **双重信号** (高QVIX + 高vol_ratio): 次日波动率 {qvix_results['dual_signal_fwd_1d_vol']:.3f}% (信号{qvix_results['dual_signal_count']}次)\n")
+        lines.append(f"- **任一信号**: 次日波动率 {qvix_results['either_signal_fwd_1d_vol']:.3f}%\n")
+    
+    lines.append(f"\n### QVIX 分位数\n")
+    for k, v in sorted(qvix_results.get('qvix_quantiles', {}).items()):
+        lines.append(f"- **{k}**: {v:.1f}\n")
+    
+    lines.append(f"\n### 最新状态\n")
+    lines.append(f"- **{qvix_results['latest_date']}**: QVIX = {qvix_results['latest_qvix']:.1f} (位于 {qvix_results['latest_percentile']:.0f}% 分位)\n")
+    
+    lines.append(f"\n### 结论\n")
+    lines.append(f"- QVIX 与实际波动率的相关性 (r={c:.2f}) 远高于成交量的预测力, 是最有效的单一波动率信号\n")
+    lines.append(f"- 高QVIX (>90%分位) 后次日波动率为全体均值的 {qvix_results['high_qvix_fwd_1d_vol']/qvix_results['all_mean_fwd_1d_vol']:.1f}x\n")
+    lines.append(f"- QVIX + vol_ratio 双重信号的预测力最强\n")
     
     return "".join(lines)
 
