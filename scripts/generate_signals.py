@@ -1504,6 +1504,107 @@ def render_expiry(data):
     return h
 
 
+def render_daydrop(data):
+    """日跌3%+布林低位 — 数量多/胜率高/偶尔爆发"""
+    jp = os.path.join(DATA_DIR, "daydrop_signal.json")
+    if not os.path.exists(jp):
+        return '<div class="box warn">数据文件未生成，请先运行数据分析脚本。</div>'
+    with open(jp) as f:
+        s = json.load(f)
+    
+    h = '''
+<div class="box success">
+  <b>🎯 策略：当日跌>3% + 布林位置≤30% → 抄底</b><br>
+  布林低位说明价格已处于技术低位区间；日内再跌3%以上说明恐慌盘仍在抛售。
+  历史上N={n}次信号，45d均值+4.51%，W66%，21%概率10%+收益。<br><br>
+  <b>特点：数量适中(年频~7次) + 胜率59% + 偶尔爆发(21%>10%)</b>
+</div>
+
+<h2>📊 各持有期统计</h2>
+<table>
+  <tr><th>持有期</th><th>N</th><th>均值</th><th>中位数</th><th>胜率</th><th>>10%</th><th>>20%</th>
+      <th>平均赚</th><th>平均亏</th><th>R/R</th><th>期间峰均</th><th>期间峰顶</th></tr>'''
+    
+    for d in [5,10,20,30,45,60]:
+        st = s['stats'][str(d)]
+        h += f'<tr><td>{d}d</td><td>{st["n"]}</td><td style="color:{"#4ade80" if st["mean"]>0 else "#f87171"}">{st["mean"]:+.2f}%</td>'
+        h += f'<td>{st["median"]:+.2f}%</td><td>{st["wr"]:.0f}%</td><td>{st["p10"]:.0f}%</td><td>{st["p20"]:.0f}%</td>'
+        h += f'<td style="color:#4ade80">+{st["avg_win"]:.0f}%</td><td style="color:#f87171">{st["avg_loss"]:+.0f}%</td>'
+        h += f'<td style="font-weight:bold">{st["rr"]}x</td><td>{st["peak_mean"]:.0f}%</td><td>{st["peak_max"]:.0f}%</td></tr>'
+    
+    h += '</table>'
+
+    # 分层子集
+    h += '<h2>🔍 分层过滤</h2><p>对同一个信号加额外过滤，看效果变化：</p><table>'
+    h += '<tr><th>过滤器</th><th>N</th><th>20d</th><th>W20d</th><th>效果评价</th></tr>'
+    
+    sub_names = {
+        "全部": "基准无过滤", "+300均线上方(趋势)": "追涨(较差)", "+300均线下方(逆势)": "抄底(优异)",
+        "+缩量(v_ratio<0.8)": "缩量(噪音)", "+放量(v_ratio>1.3)": "放量(确认恐慌迫)",
+        "+MA120上方(中期趋势)": "趋势过滤", "+MA120下方(中期空头)": "空头过滤",
+        "+高波(vol>30)": "高波动过滤", "+低波(vol<20)": "低波过滤"
+    }
+    
+    for k, sub in s['subsets'].items():
+        if k == "全部":
+            h += f'<tr style="font-weight:bold"><td>{k}</td><td>{sub["n"]}</td><td style="color:#4ade80">{sub["mean20d"]:+.2f}%</td><td>{sub["wr20d"]:.0f}%</td><td>基准</td></tr>'
+        else:
+            eval_text = sub_names.get(k, "")
+            if sub["wr20d"] >= 60:
+                color_e = "#4ade80"; star = "⭐"
+            elif sub["wr20d"] >= 55:
+                color_e = "#facc15"; star = ""
+            else:
+                color_e = "#f87171"; star = ""
+            h += f'<tr><td>{k}</td><td>{sub["n"]}</td><td style="color:{"#4ade80" if sub["mean20d"]>0 else "#f87171"}">{sub["mean20d"]:+.2f}%</td><td>{sub["wr20d"]:.0f}%</td><td style="color:{color_e}">{star}{eval_text}</td></tr>'
+    
+    h += '</table>'
+
+    # 关键发现
+    h += '''
+<div class="box success">
+  <b>🔑 关键发现：</b><br><br>
+  <b>1. +300下方(逆势抄底)是最佳过滤</b><br>
+  N=58, 20d=+4.73%, W66%, >10%=24% — 逆势+恐慌才是真正机会点。<br><br>
+  <b>2. +放量确认极强但太少</b><br>
+  N=12, 20d=+6.08%, W92% — 放量说明恐慌盘出清。<br>
+  但年频不到1次，只能作为加强信号。<br><br>
+  <b>3. +300上方(追涨)效果差</b><br>
+  N=46, 20d=+0.25%, W50% — 高位加跌3%可能是趋势修正而非抄底机会。<br><br>
+  <b>4. 最佳持有期：20-30天</b><br>
+  10d: W57%→20d: W59%(最好)→30d: W67%(最强)→60d: W64%(开始衰减)<br>
+  持有20~30天是黄金窗口。过久(60d)反而大幅回落。
+</div>
+
+<div class="box warn">
+  <b>⚠️ 实战用法：</b><br>
+  ● 主力版本：<b>当日跌>3% + 布林≤30% + 300下方</b><br>
+    每2月触发1次，N=58，20d=+4.73%，W66% → 可做方向买call或价差<br>
+  ● 宽松版本：<b>当日跌>3% + 布林≤30%（无方向过滤）</b><br>
+    每1.5月触发1次，N=104，20d=+2.75%，W59% → 超跌必做<br>
+  ● 加注信号：<b>日跌3%+布林低位+300下方+放量</b><br>
+    N极少，发生时重仓。放量=恐慌盘出清确认。
+</div>
+
+<h2>📅 历史信号一览</h2>
+<table><tr><th>日期</th><th>收盘</th><th>日跌幅</th><th>布林%</th><th>vol_30</th><th>v_ratio</th><th>300方</th>
+  <th>5d</th><th>10d</th><th>20d</th><th>30d</th></tr>'''
+    
+    for sig in s['signals']:
+        c5 = '#4ade80' if (sig.get('fwd5_ret') or 0) > 0 else '#f87171'
+        c10 = '#4ade80' if (sig.get('fwd10_ret') or 0) > 0 else '#f87171'
+        c20 = '#4ade80' if (sig.get('fwd20_ret') or 0) > 0 else '#f87171'
+        c30 = '#4ade80' if (sig.get('fwd30_ret') or 0) > 0 else '#f87171'
+        h += f'''<tr><td>{sig["date"]}</td><td>{sig["close"]}</td><td style="color:#f87171">{sig["ret"]:+.1f}%</td>
+          <td>{sig["bb_pos"]:.0f}%</td><td>{sig["vol_30"]:.0f}%</td>
+          <td>{sig["v_ratio"]:.2f}</td><td>{"上" if sig["above_ma300"] else "下"}</td>
+          <td style="{c5}">{sig["fwd5_ret"]:+.1f}%</td><td style="{c10}">{sig["fwd10_ret"]:+.1f}%</td>
+          <td style="{c20}">{sig["fwd20_ret"]:+.1f}%</td><td style="{c30}">{sig["fwd30_ret"]:+.1f}%</td></tr>'''
+    
+    h += '</table>'''
+    return h.format(n=s['meta']['signal_n'])
+
+
 SIGNALS = [
     {"slug":"granger", "title":"量价因果：成交量→波动率 Granger", "emoji":"&#128279;",
      "desc":"统计检验成交量是否包含预测波动率的信息。", "fn": render_granger},
@@ -1535,6 +1636,8 @@ SIGNALS = [
      "desc":"QVIX 自身日变化率的波动率：是否隐波自身在剧烈变化？极高分位时信号可靠。", "fn": render_qviv},
     {"slug":"expiry", "title":"到期日选择器：信号→最佳到期日", "emoji":"&#128197;",
      "desc":"基于当前信号状态，推荐最优的期权到期日和行权价。", "fn": render_expiry},
+    {"slug":"daydrop","title":"日跌3%+布林低位：数量多+胜率高+偶尔爆发", "emoji":"&#127769;",
+     "desc":"当日跌>3%+布林≤30%→抄底信号。N=104, 20d=+2.75%, W59%, 爆发21%。放量版W92%。", "fn": render_daydrop},
 ]
 
 def dashboard(signals, data):

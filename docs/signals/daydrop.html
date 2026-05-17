@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>&#127769; 日跌3%+布林低位：数量多+胜率高+偶尔爆发 &mdash; CYB MDH</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+       background:#0f172a; color:#e2e8f0; line-height:1.6; }
+.container { max-width:800px; margin:0 auto; padding:20px; }
+header { text-align:center; padding:30px 0 20px; }
+h1 { font-size:1.8em; color:#60a5fa; margin-bottom:4px; }
+h2 { font-size:1.2em; color:#93c5fd; border-bottom:1px solid #334155; padding-bottom:8px; margin:25px 0 12px; }
+h3 { color:#e2e8f0; margin:15px 0 8px; }
+.subtitle { color:#94a3b8; font-size:0.9em; }
+.back { display:inline-block; color:#60a5fa; text-decoration:none; margin-bottom:10px; font-size:0.9em; }
+.back:hover { text-decoration:underline; }
+.kpi { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin:15px 0; }
+.kpi-card { background:#1e293b; border-radius:10px; padding:15px; text-align:center; }
+.kpi-val { font-size:1.6em; font-weight:bold; color:#60a5fa; }
+.kpi-label { font-size:0.8em; color:#94a3b8; margin-top:4px; }
+.kpi-card.good .kpi-val { color:#4ade80; }
+.kpi-card.bad .kpi-val { color:#f87171; }
+.kpi-card.warn .kpi-val { color:#facc15; }
+table { width:100%; border-collapse:collapse; margin:10px 0; font-size:0.85em; }
+th { background:#1e293b; color:#94a3b8; padding:8px; text-align:left; border-bottom:2px solid #334155; }
+td { padding:8px; border-bottom:1px solid #1e293b; }
+tr:hover td { background:#1e293b; }
+.badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:0.8em; font-weight:bold; }
+.badge.green { background:rgba(74,222,128,0.2); color:#4ade80; }
+.badge.red { background:rgba(248,113,113,0.2); color:#f87171; }
+.badge.yellow { background:rgba(250,204,21,0.2); color:#facc15; }
+.box { background:#1e293b; border-radius:10px; padding:15px; margin:15px 0; border-left:4px solid #334155; }
+.box.info { border-left-color:#60a5fa; }
+.box.warn { border-left-color:#facc15; }
+.box.danger { border-left-color:#f87171; }
+.box.success { border-left-color:#4ade80; }
+ul { margin-left:20px; }
+li { margin:4px 0; }
+footer { text-align:center; color:#64748b; padding:30px 0; font-size:0.8em; }
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+  <a href="../index.html" class="back">&larr; 返回仪表盘</a>
+  <h1>&#127769; 日跌3%+布林低位：数量多+胜率高+偶尔爆发</h1>
+  <p class="subtitle">当日跌>3%+布林≤30%→抄底信号。N=104, 20d=+2.75%, W59%, 爆发21%。放量版W92%。</p>
+</header>
+
+<div class="box success">
+  <b>🎯 策略：当日跌>3% + 布林位置≤30% → 抄底</b><br>
+  布林低位说明价格已处于技术低位区间；日内再跌3%以上说明恐慌盘仍在抛售。
+  历史上N=104次信号，45d均值+4.51%，W66%，21%概率10%+收益。<br><br>
+  <b>特点：数量适中(年频~7次) + 胜率59% + 偶尔爆发(21%>10%)</b>
+</div>
+
+<h2>📊 各持有期统计</h2>
+<table>
+  <tr><th>持有期</th><th>N</th><th>均值</th><th>中位数</th><th>胜率</th><th>>10%</th><th>>20%</th>
+      <th>平均赚</th><th>平均亏</th><th>R/R</th><th>期间峰均</th><th>期间峰顶</th></tr><tr><td>5d</td><td>104</td><td style="color:#f87171">-0.01%</td><td>+0.39%</td><td>53%</td><td>6%</td><td>0%</td><td style="color:#4ade80">+5%</td><td style="color:#f87171">-6%</td><td style="font-weight:bold">0.9x</td><td>3%</td><td>16%</td></tr><tr><td>10d</td><td>104</td><td style="color:#4ade80">+0.86%</td><td>+1.44%</td><td>57%</td><td>12%</td><td>1%</td><td style="color:#4ade80">+7%</td><td style="color:#f87171">-7%</td><td style="font-weight:bold">1.0x</td><td>5%</td><td>23%</td></tr><tr><td>20d</td><td>104</td><td style="color:#4ade80">+2.75%</td><td>+3.35%</td><td>59%</td><td>21%</td><td>3%</td><td style="color:#4ade80">+9%</td><td style="color:#f87171">-6%</td><td style="font-weight:bold">1.5x</td><td>8%</td><td>40%</td></tr><tr><td>30d</td><td>104</td><td style="color:#4ade80">+3.99%</td><td>+4.22%</td><td>67%</td><td>29%</td><td>8%</td><td style="color:#4ade80">+10%</td><td style="color:#f87171">-9%</td><td style="font-weight:bold">1.1x</td><td>10%</td><td>43%</td></tr><tr><td>45d</td><td>103</td><td style="color:#4ade80">+4.51%</td><td>+3.92%</td><td>66%</td><td>30%</td><td>14%</td><td style="color:#4ade80">+13%</td><td style="color:#f87171">-12%</td><td style="font-weight:bold">1.1x</td><td>13%</td><td>57%</td></tr><tr><td>60d</td><td>103</td><td style="color:#4ade80">+5.57%</td><td>+3.98%</td><td>64%</td><td>38%</td><td>18%</td><td style="color:#4ade80">+16%</td><td style="color:#f87171">-12%</td><td style="font-weight:bold">1.3x</td><td>15%</td><td>61%</td></tr></table><h2>🔍 分层过滤</h2><p>对同一个信号加额外过滤，看效果变化：</p><table><tr><th>过滤器</th><th>N</th><th>20d</th><th>W20d</th><th>效果评价</th></tr><tr style="font-weight:bold"><td>全部</td><td>104</td><td style="color:#4ade80">+2.75%</td><td>59%</td><td>基准</td></tr><tr><td>+300均线上方(趋势)</td><td>46</td><td style="color:#4ade80">+0.25%</td><td>50%</td><td style="color:#f87171">追涨(较差)</td></tr><tr><td>+300均线下方(逆势)</td><td>58</td><td style="color:#4ade80">+4.73%</td><td>66%</td><td style="color:#4ade80">⭐抄底(优异)</td></tr><tr><td>+缩量(v_ratio<0.8)</td><td>13</td><td style="color:#4ade80">+1.19%</td><td>54%</td><td style="color:#f87171">缩量(噪音)</td></tr><tr><td>+放量(v_ratio>1.3)</td><td>12</td><td style="color:#4ade80">+6.08%</td><td>92%</td><td style="color:#4ade80">⭐放量(确认恐慌迫)</td></tr><tr><td>+MA120上方(中期趋势)</td><td>37</td><td style="color:#4ade80">+1.12%</td><td>49%</td><td style="color:#f87171">趋势过滤</td></tr><tr><td>+MA120下方(中期空头)</td><td>67</td><td style="color:#4ade80">+3.65%</td><td>64%</td><td style="color:#4ade80">⭐空头过滤</td></tr><tr><td>+高波(vol>30)</td><td>75</td><td style="color:#4ade80">+1.74%</td><td>52%</td><td style="color:#f87171">高波动过滤</td></tr><tr><td>+低波(vol<20)</td><td>3</td><td style="color:#4ade80">+5.10%</td><td>67%</td><td style="color:#4ade80">⭐低波过滤</td></tr></table>
+<div class="box success">
+  <b>🔑 关键发现：</b><br><br>
+  <b>1. +300下方(逆势抄底)是最佳过滤</b><br>
+  N=58, 20d=+4.73%, W66%, >10%=24% — 逆势+恐慌才是真正机会点。<br><br>
+  <b>2. +放量确认极强但太少</b><br>
+  N=12, 20d=+6.08%, W92% — 放量说明恐慌盘出清。<br>
+  但年频不到1次，只能作为加强信号。<br><br>
+  <b>3. +300上方(追涨)效果差</b><br>
+  N=46, 20d=+0.25%, W50% — 高位加跌3%可能是趋势修正而非抄底机会。<br><br>
+  <b>4. 最佳持有期：20-30天</b><br>
+  10d: W57%→20d: W59%(最好)→30d: W67%(最强)→60d: W64%(开始衰减)<br>
+  持有20~30天是黄金窗口。过久(60d)反而大幅回落。
+</div>
+
+<div class="box warn">
+  <b>⚠️ 实战用法：</b><br>
+  ● 主力版本：<b>当日跌>3% + 布林≤30% + 300下方</b><br>
+    每2月触发1次，N=58，20d=+4.73%，W66% → 可做方向买call或价差<br>
+  ● 宽松版本：<b>当日跌>3% + 布林≤30%（无方向过滤）</b><br>
+    每1.5月触发1次，N=104，20d=+2.75%，W59% → 超跌必做<br>
+  ● 加注信号：<b>日跌3%+布林低位+300下方+放量</b><br>
+    N极少，发生时重仓。放量=恐慌盘出清确认。
+</div>
+
+<h2>📅 历史信号一览</h2>
+<table><tr><th>日期</th><th>收盘</th><th>日跌幅</th><th>布林%</th><th>vol_30</th><th>v_ratio</th><th>300方</th>
+  <th>5d</th><th>10d</th><th>20d</th><th>30d</th></tr><tr><td>2011-09-22</td><td>852.9</td><td style="color:#f87171">-3.2%</td>
+          <td>18%</td><td>27%</td>
+          <td>0.90</td><td>下</td>
+          <td style="#f87171">-7.2%</td><td style="#f87171">-2.3%</td>
+          <td style="#f87171">-4.9%</td><td style="#4ade80">+5.0%</td></tr><tr><td>2011-09-29</td><td>791.9</td><td style="color:#f87171">-3.1%</td>
+          <td>-8%</td><td>26%</td>
+          <td>0.90</td><td>下</td>
+          <td style="#4ade80">+5.2%</td><td style="#f87171">-1.6%</td>
+          <td style="#4ade80">+10.8%</td><td style="#4ade80">+13.4%</td></tr><tr><td>2011-10-18</td><td>806.6</td><td style="color:#f87171">-3.1%</td>
+          <td>28%</td><td>29%</td>
+          <td>1.37</td><td>下</td>
+          <td style="#f87171">-1.1%</td><td style="#4ade80">+5.8%</td>
+          <td style="#4ade80">+14.2%</td><td style="#4ade80">+9.1%</td></tr><tr><td>2011-10-20</td><td>779.0</td><td style="color:#f87171">-3.2%</td>
+          <td>11%</td><td>29%</td>
+          <td>1.21</td><td>下</td>
+          <td style="#4ade80">+4.1%</td><td style="#4ade80">+12.7%</td>
+          <td style="#4ade80">+15.3%</td><td style="#4ade80">+9.5%</td></tr><tr><td>2011-11-30</td><td>838.1</td><td style="color:#f87171">-4.8%</td>
+          <td>-2%</td><td>33%</td>
+          <td>0.93</td><td>下</td>
+          <td style="#f87171">-4.2%</td><td style="#f87171">-9.8%</td>
+          <td style="#f87171">-14.4%</td><td style="#f87171">-20.5%</td></tr><tr><td>2011-12-05</td><td>792.5</td><td style="color:#f87171">-4.4%</td>
+          <td>-16%</td><td>35%</td>
+          <td>0.62</td><td>下</td>
+          <td style="#f87171">-0.2%</td><td style="#4ade80">+0.1%</td>
+          <td style="#f87171">-10.8%</td><td style="#f87171">-21.1%</td></tr><tr><td>2011-12-27</td><td>727.2</td><td style="color:#f87171">-3.4%</td>
+          <td>5%</td><td>32%</td>
+          <td>0.89</td><td>下</td>
+          <td style="#f87171">-8.3%</td><td style="#f87171">-2.4%</td>
+          <td style="#f87171">-8.5%</td><td style="#f87171">-0.7%</td></tr><tr><td>2012-01-04</td><td>707.1</td><td style="color:#f87171">-3.1%</td>
+          <td>6%</td><td>32%</td>
+          <td>0.83</td><td>下</td>
+          <td style="#4ade80">+1.5%</td><td style="#f87171">-11.6%</td>
+          <td style="#f87171">-2.1%</td><td style="#4ade80">+7.4%</td></tr><tr><td>2012-01-05</td><td>666.9</td><td style="color:#f87171">-5.7%</td>
+          <td>-10%</td><td>35%</td>
+          <td>1.10</td><td>下</td>
+          <td style="#4ade80">+6.5%</td><td style="#f87171">-5.1%</td>
+          <td style="#4ade80">+4.6%</td><td style="#4ade80">+13.5%</td></tr><tr><td>2012-01-13</td><td>666.1</td><td style="color:#f87171">-6.2%</td>
+          <td>9%</td><td>40%</td>
+          <td>1.28</td><td>下</td>
+          <td style="#f87171">-3.0%</td><td style="#4ade80">+2.1%</td>
+          <td style="#4ade80">+7.8%</td><td style="#4ade80">+13.8%</td></tr><tr><td>2012-01-16</td><td>633.9</td><td style="color:#f87171">-4.8%</td>
+          <td>-2%</td><td>41%</td>
+          <td>0.90</td><td>下</td>
+          <td style="#4ade80">+2.7%</td><td style="#4ade80">+8.3%</td>
+          <td style="#4ade80">+13.8%</td><td style="#4ade80">+19.8%</td></tr><tr><td>2012-01-18</td><td>624.9</td><td style="color:#f87171">-5.7%</td>
+          <td>2%</td><td>45%</td>
+          <td>1.25</td><td>下</td>
+          <td style="#4ade80">+4.1%</td><td style="#4ade80">+10.8%</td>
+          <td style="#4ade80">+21.6%</td><td style="#4ade80">+19.9%</td></tr><tr><td>2012-03-28</td><td>698.5</td><td style="color:#f87171">-5.1%</td>
+          <td>-18%</td><td>30%</td>
+          <td>0.86</td><td>下</td>
+          <td style="#f87171">-1.3%</td><td style="#4ade80">+2.5%</td>
+          <td style="#f87171">-0.7%</td><td style="#4ade80">+1.6%</td></tr><tr><td>2012-04-23</td><td>690.4</td><td style="color:#f87171">-5.2%</td>
+          <td>24%</td><td>34%</td>
+          <td>1.80</td><td>下</td>
+          <td style="#4ade80">+0.5%</td><td style="#4ade80">+4.2%</td>
+          <td style="#4ade80">+3.3%</td><td style="#4ade80">+3.6%</td></tr><tr><td>2012-07-16</td><td>691.4</td><td style="color:#f87171">-4.7%</td>
+          <td>-11%</td><td>26%</td>
+          <td>1.18</td><td>下</td>
+          <td style="#4ade80">+1.9%</td><td style="#f87171">-0.4%</td>
+          <td style="#4ade80">+5.2%</td><td style="#4ade80">+4.5%</td></tr><tr><td>2012-08-30</td><td>704.0</td><td style="color:#f87171">-3.1%</td>
+          <td>-7%</td><td>24%</td>
+          <td>1.33</td><td>下</td>
+          <td style="#4ade80">+5.1%</td><td style="#4ade80">+6.5%</td>
+          <td style="#f87171">-3.9%</td><td style="#4ade80">+2.3%</td></tr><tr><td>2012-09-26</td><td>661.5</td><td style="color:#f87171">-3.0%</td>
+          <td>-4%</td><td>26%</td>
+          <td>0.63</td><td>下</td>
+          <td style="#4ade80">+9.1%</td><td style="#4ade80">+7.2%</td>
+          <td style="#4ade80">+4.6%</td><td style="#4ade80">+0.6%</td></tr><tr><td>2012-11-27</td><td>616.3</td><td style="color:#f87171">-3.5%</td>
+          <td>-10%</td><td>18%</td>
+          <td>1.19</td><td>下</td>
+          <td style="#f87171">-2.5%</td><td style="#4ade80">+4.0%</td>
+          <td style="#4ade80">+12.6%</td><td style="#4ade80">+18.7%</td></tr><tr><td>2013-04-02</td><td>845.2</td><td style="color:#f87171">-3.6%</td>
+          <td>22%</td><td>30%</td>
+          <td>1.01</td><td>上</td>
+          <td style="#4ade80">+0.3%</td><td style="#4ade80">+3.4%</td>
+          <td style="#4ade80">+13.3%</td><td style="#4ade80">+27.0%</td></tr><tr><td>2013-06-20</td><td>1029.5</td><td style="color:#f87171">-3.6%</td>
+          <td>21%</td><td>31%</td>
+          <td>0.73</td><td>上</td>
+          <td style="#f87171">-0.7%</td><td style="#4ade80">+5.7%</td>
+          <td style="#4ade80">+9.6%</td><td style="#4ade80">+15.6%</td></tr><tr><td>2013-06-24</td><td>971.5</td><td style="color:#f87171">-5.3%</td>
+          <td>-18%</td><td>34%</td>
+          <td>0.91</td><td>上</td>
+          <td style="#4ade80">+8.7%</td><td style="#4ade80">+6.1%</td>
+          <td style="#4ade80">+18.8%</td><td style="#4ade80">+23.8%</td></tr><tr><td>2013-12-05</td><td>1202.1</td><td style="color:#f87171">-3.1%</td>
+          <td>12%</td><td>35%</td>
+          <td>1.09</td><td>上</td>
+          <td style="#4ade80">+6.4%</td><td style="#4ade80">+4.5%</td>
+          <td style="#4ade80">+12.5%</td><td style="#4ade80">+16.1%</td></tr><tr><td>2014-02-25</td><td>1472.7</td><td style="color:#f87171">-4.4%</td>
+          <td>24%</td><td>32%</td>
+          <td>1.28</td><td>上</td>
+          <td style="#f87171">-0.8%</td><td style="#f87171">-5.2%</td>
+          <td style="#f87171">-5.3%</td><td style="#f87171">-6.9%</td></tr><tr><td>2014-02-27</td><td>1414.7</td><td style="color:#f87171">-3.5%</td>
+          <td>-13%</td><td>31%</td>
+          <td>0.90</td><td>上</td>
+          <td style="#4ade80">+3.4%</td><td style="#4ade80">+1.6%</td>
+          <td style="#f87171">-3.3%</td><td style="#f87171">-3.6%</td></tr><tr><td>2014-03-10</td><td>1407.1</td><td style="color:#f87171">-3.7%</td>
+          <td>5%</td><td>31%</td>
+          <td>0.77</td><td>上</td>
+          <td style="#4ade80">+5.0%</td><td style="#f87171">-0.7%</td>
+          <td style="#f87171">-4.0%</td><td style="#f87171">-5.0%</td></tr><tr><td>2014-03-20</td><td>1417.7</td><td style="color:#f87171">-3.3%</td>
+          <td>26%</td><td>33%</td>
+          <td>0.99</td><td>上</td>
+          <td style="#f87171">-3.5%</td><td style="#f87171">-6.5%</td>
+          <td style="#f87171">-2.8%</td><td style="#f87171">-7.1%</td></tr><tr><td>2014-03-27</td><td>1368.0</td><td style="color:#f87171">-3.5%</td>
+          <td>1%</td><td>32%</td>
+          <td>0.97</td><td>上</td>
+          <td style="#f87171">-3.0%</td><td style="#f87171">-0.3%</td>
+          <td style="#f87171">-5.6%</td><td style="#f87171">-6.7%</td></tr><tr><td>2014-11-11</td><td>1461.5</td><td style="color:#f87171">-3.5%</td>
+          <td>-11%</td><td>18%</td>
+          <td>1.23</td><td>上</td>
+          <td style="#4ade80">+1.4%</td><td style="#4ade80">+5.5%</td>
+          <td style="#4ade80">+3.0%</td><td style="#4ade80">+2.4%</td></tr><tr><td>2014-12-22</td><td>1517.9</td><td style="color:#f87171">-4.9%</td>
+          <td>11%</td><td>33%</td>
+          <td>0.92</td><td>上</td>
+          <td style="#f87171">-1.2%</td><td style="#4ade80">+0.4%</td>
+          <td style="#4ade80">+13.5%</td><td style="#4ade80">+15.8%</td></tr><tr><td>2015-06-18</td><td>3504.6</td><td style="color:#f87171">-6.3%</td>
+          <td>20%</td><td>55%</td>
+          <td>0.83</td><td>上</td>
+          <td style="#f87171">-16.7%</td><td style="#f87171">-25.7%</td>
+          <td style="#f87171">-20.6%</td><td style="#f87171">-27.5%</td></tr><tr><td>2015-06-19</td><td>3315.0</td><td style="color:#f87171">-5.4%</td>
+          <td>-2%</td><td>56%</td>
+          <td>0.82</td><td>上</td>
+          <td style="#f87171">-18.9%</td><td style="#f87171">-24.8%</td>
+          <td style="#f87171">-14.1%</td><td style="#f87171">-27.6%</td></tr><tr><td>2015-06-25</td><td>3206.4</td><td style="color:#f87171">-5.2%</td>
+          <td>0%</td><td>55%</td>
+          <td>0.84</td><td>上</td>
+          <td style="#f87171">-17.4%</td><td style="#f87171">-24.0%</td>
+          <td style="#f87171">-7.4%</td><td style="#f87171">-22.6%</td></tr><tr><td>2015-06-26</td><td>2920.7</td><td style="color:#f87171">-8.9%</td>
+          <td>-14%</td><td>61%</td>
+          <td>0.83</td><td>上</td>
+          <td style="#f87171">-10.8%</td><td style="#f87171">-13.2%</td>
+          <td style="#f87171">-0.8%</td><td style="#f87171">-11.8%</td></tr><tr><td>2015-06-29</td><td>2689.8</td><td style="color:#f87171">-7.9%</td>
+          <td>-14%</td><td>65%</td>
+          <td>0.91</td><td>上</td>
+          <td style="#f87171">-7.3%</td><td style="#f87171">-0.2%</td>
+          <td style="#f87171">-0.2%</td><td style="#4ade80">+0.6%</td></tr><tr><td>2015-07-01</td><td>2759.4</td><td style="color:#f87171">-3.5%</td>
+          <td>6%</td><td>67%</td>
+          <td>1.22</td><td>上</td>
+          <td style="#f87171">-14.3%</td><td style="#f87171">-6.1%</td>
+          <td style="#f87171">-2.4%</td><td style="#f87171">-5.0%</td></tr><tr><td>2015-07-02</td><td>2649.3</td><td style="color:#f87171">-4.0%</td>
+          <td>6%</td><td>67%</td>
+          <td>1.06</td><td>上</td>
+          <td style="#f87171">-8.1%</td><td style="#f87171">-0.8%</td>
+          <td style="#f87171">-3.3%</td><td style="#4ade80">+1.3%</td></tr><tr><td>2015-07-06</td><td>2493.8</td><td style="color:#f87171">-4.3%</td>
+          <td>8%</td><td>66%</td>
+          <td>1.20</td><td>上</td>
+          <td style="#4ade80">+7.6%</td><td style="#4ade80">+14.2%</td>
+          <td style="#f87171">-3.8%</td><td style="#4ade80">+6.9%</td></tr><tr><td>2015-07-07</td><td>2352.0</td><td style="color:#f87171">-5.7%</td>
+          <td>7%</td><td>68%</td>
+          <td>0.45</td><td>上</td>
+          <td style="#4ade80">+15.9%</td><td style="#4ade80">+22.6%</td>
+          <td style="#4ade80">+8.2%</td><td style="#4ade80">+6.5%</td></tr><tr><td>2015-08-03</td><td>2399.3</td><td style="color:#f87171">-5.5%</td>
+          <td>16%</td><td>69%</td>
+          <td>0.91</td><td>上</td>
+          <td style="#4ade80">+12.8%</td><td style="#4ade80">+11.1%</td>
+          <td style="#f87171">-16.8%</td><td style="#f87171">-19.7%</td></tr><tr><td>2015-08-18</td><td>2504.2</td><td style="color:#f87171">-6.1%</td>
+          <td>26%</td><td>60%</td>
+          <td>1.07</td><td>上</td>
+          <td style="#f87171">-20.5%</td><td style="#f87171">-24.6%</td>
+          <td style="#f87171">-22.8%</td><td style="#f87171">-12.5%</td></tr><tr><td>2015-08-21</td><td>2342.0</td><td style="color:#f87171">-6.7%</td>
+          <td>-7%</td><td>62%</td>
+          <td>0.80</td><td>上</td>
+          <td style="#f87171">-11.1%</td><td style="#f87171">-14.6%</td>
+          <td style="#f87171">-11.2%</td><td style="#f87171">+0.0%</td></tr><tr><td>2015-08-24</td><td>2152.6</td><td style="color:#f87171">-8.1%</td>
+          <td>-23%</td><td>64%</td>
+          <td>0.55</td><td>上</td>
+          <td style="#f87171">-7.2%</td><td style="#f87171">-3.8%</td>
+          <td style="#f87171">-3.5%</td><td style="#4ade80">+7.1%</td></tr><tr><td>2015-08-25</td><td>1990.7</td><td style="color:#f87171">-7.5%</td>
+          <td>-22%</td><td>66%</td>
+          <td>0.67</td><td>下</td>
+          <td style="#f87171">-5.1%</td><td style="#4ade80">+2.4%</td>
+          <td style="#4ade80">+5.8%</td><td style="#4ade80">+20.8%</td></tr><tr><td>2015-08-26</td><td>1890.0</td><td style="color:#f87171">-5.1%</td>
+          <td>-15%</td><td>66%</td>
+          <td>1.15</td><td>下</td>
+          <td style="#f87171">-1.9%</td><td style="#4ade80">+9.0%</td>
+          <td style="#4ade80">+6.9%</td><td style="#4ade80">+29.6%</td></tr><tr><td>2015-08-31</td><td>1996.9</td><td style="color:#f87171">-4.1%</td>
+          <td>14%</td><td>68%</td>
+          <td>0.89</td><td>下</td>
+          <td style="#4ade80">+3.8%</td><td style="#f87171">-3.5%</td>
+          <td style="#4ade80">+4.3%</td><td style="#4ade80">+17.4%</td></tr><tr><td>2015-09-01</td><td>1889.5</td><td style="color:#f87171">-5.4%</td>
+          <td>10%</td><td>68%</td>
+          <td>0.81</td><td>下</td>
+          <td style="#4ade80">+7.9%</td><td style="#4ade80">+2.3%</td>
+          <td style="#4ade80">+15.9%</td><td style="#4ade80">+30.1%</td></tr><tr><td>2015-09-14</td><td>1906.2</td><td style="color:#f87171">-7.5%</td>
+          <td>28%</td><td>70%</td>
+          <td>0.92</td><td>下</td>
+          <td style="#4ade80">+9.1%</td><td style="#4ade80">+11.3%</td>
+          <td style="#4ade80">+27.7%</td><td style="#4ade80">+27.6%</td></tr><tr><td>2015-09-15</td><td>1797.6</td><td style="color:#f87171">-5.7%</td>
+          <td>20%</td><td>71%</td>
+          <td>0.88</td><td>下</td>
+          <td style="#4ade80">+15.6%</td><td style="#4ade80">+16.8%</td>
+          <td style="#4ade80">+39.7%</td><td style="#4ade80">+35.1%</td></tr><tr><td>2016-01-04</td><td>2491.2</td><td style="color:#f87171">-8.2%</td>
+          <td>-28%</td><td>39%</td>
+          <td>0.79</td><td>上</td>
+          <td style="#f87171">-15.4%</td><td style="#f87171">-12.7%</td>
+          <td style="#f87171">-20.0%</td><td style="#f87171">-9.9%</td></tr><tr><td>2016-01-07</td><td>2256.5</td><td style="color:#f87171">-8.6%</td>
+          <td>-18%</td><td>45%</td>
+          <td>0.27</td><td>下</td>
+          <td style="#f87171">-3.6%</td><td style="#f87171">-6.4%</td>
+          <td style="#f87171">-5.8%</td><td style="#f87171">-9.7%</td></tr><tr><td>2016-01-11</td><td>2106.4</td><td style="color:#f87171">-6.3%</td>
+          <td>-9%</td><td>45%</td>
+          <td>0.97</td><td>下</td>
+          <td style="#4ade80">+3.3%</td><td style="#4ade80">+2.5%</td>
+          <td style="#4ade80">+0.5%</td><td style="#f87171">-10.7%</td></tr><tr><td>2016-01-13</td><td>2059.8</td><td style="color:#f87171">-4.1%</td>
+          <td>3%</td><td>46%</td>
+          <td>0.86</td><td>下</td>
+          <td style="#4ade80">+7.0%</td><td style="#f87171">-3.0%</td>
+          <td style="#4ade80">+7.5%</td><td style="#f87171">-2.0%</td></tr><tr><td>2016-01-21</td><td>2112.4</td><td style="color:#f87171">-4.2%</td>
+          <td>25%</td><td>52%</td>
+          <td>1.07</td><td>下</td>
+          <td style="#f87171">-9.8%</td><td style="#4ade80">+0.7%</td>
+          <td style="#f87171">-3.6%</td><td style="#f87171">-8.3%</td></tr><tr><td>2016-01-26</td><td>1994.0</td><td style="color:#f87171">-7.6%</td>
+          <td>19%</td><td>55%</td>
+          <td>0.97</td><td>下</td>
+          <td style="#4ade80">+4.1%</td><td style="#4ade80">+10.4%</td>
+          <td style="#f87171">-3.0%</td><td style="#4ade80">+0.1%</td></tr><tr><td>2016-01-28</td><td>1906.5</td><td style="color:#f87171">-4.6%</td>
+          <td>11%</td><td>56%</td>
+          <td>0.81</td><td>下</td>
+          <td style="#4ade80">+11.6%</td><td style="#4ade80">+14.9%</td>
+          <td style="#4ade80">+5.3%</td><td style="#4ade80">+9.5%</td></tr><tr><td>2016-02-29</td><td>1880.1</td><td style="color:#f87171">-6.7%</td>
+          <td>2%</td><td>55%</td>
+          <td>0.95</td><td>下</td>
+          <td style="#4ade80">+3.9%</td><td style="#4ade80">+7.6%</td>
+          <td style="#4ade80">+17.0%</td><td style="#4ade80">+20.4%</td></tr><tr><td>2016-03-04</td><td>1907.0</td><td style="color:#f87171">-5.0%</td>
+          <td>10%</td><td>54%</td>
+          <td>1.08</td><td>下</td>
+          <td style="#4ade80">+1.5%</td><td style="#4ade80">+14.2%</td>
+          <td style="#4ade80">+15.6%</td><td style="#4ade80">+18.8%</td></tr><tr><td>2016-04-20</td><td>2145.2</td><td style="color:#f87171">-5.6%</td>
+          <td>-3%</td><td>39%</td>
+          <td>1.19</td><td>下</td>
+          <td style="#4ade80">+0.1%</td><td style="#4ade80">+3.7%</td>
+          <td style="#f87171">-5.0%</td><td style="#4ade80">+2.0%</td></tr><tr><td>2016-05-06</td><td>2129.2</td><td style="color:#f87171">-4.3%</td>
+          <td>22%</td><td>34%</td>
+          <td>1.25</td><td>下</td>
+          <td style="#f87171">-4.9%</td><td style="#f87171">-3.0%</td>
+          <td style="#4ade80">+3.6%</td><td style="#f87171">-1.8%</td></tr><tr><td>2016-05-09</td><td>2053.6</td><td style="color:#f87171">-3.5%</td>
+          <td>4%</td><td>35%</td>
+          <td>0.96</td><td>下</td>
+          <td style="#4ade80">+0.2%</td><td style="#4ade80">+2.2%</td>
+          <td style="#4ade80">+7.1%</td><td style="#4ade80">+4.4%</td></tr><tr><td>2016-07-27</td><td>2155.4</td><td style="color:#f87171">-5.5%</td>
+          <td>-26%</td><td>24%</td>
+          <td>1.30</td><td>下</td>
+          <td style="#f87171">-2.2%</td><td style="#f87171">-0.8%</td>
+          <td style="#4ade80">+1.7%</td><td style="#4ade80">+2.6%</td></tr><tr><td>2016-12-12</td><td>1984.4</td><td style="color:#f87171">-5.5%</td>
+          <td>-41%</td><td>20%</td>
+          <td>1.21</td><td>下</td>
+          <td style="#f87171">-0.2%</td><td style="#f87171">-0.5%</td>
+          <td style="#f87171">-1.6%</td><td style="#f87171">-6.2%</td></tr><tr><td>2017-01-16</td><td>1830.8</td><td style="color:#f87171">-3.6%</td>
+          <td>-35%</td><td>21%</td>
+          <td>1.44</td><td>下</td>
+          <td style="#4ade80">+3.1%</td><td style="#4ade80">+3.8%</td>
+          <td style="#4ade80">+3.5%</td><td style="#4ade80">+7.2%</td></tr><tr><td>2017-07-17</td><td>1656.4</td><td style="color:#f87171">-5.1%</td>
+          <td>-38%</td><td>20%</td>
+          <td>1.35</td><td>下</td>
+          <td style="#4ade80">+1.8%</td><td style="#4ade80">+4.8%</td>
+          <td style="#4ade80">+8.3%</td><td style="#4ade80">+11.2%</td></tr><tr><td>2017-11-23</td><td>1794.8</td><td style="color:#f87171">-3.2%</td>
+          <td>-15%</td><td>19%</td>
+          <td>0.96</td><td>下</td>
+          <td style="#f87171">-1.4%</td><td style="#f87171">-1.0%</td>
+          <td style="#f87171">-0.3%</td><td style="#4ade80">+0.4%</td></tr><tr><td>2018-02-06</td><td>1598.1</td><td style="color:#f87171">-5.3%</td>
+          <td>-21%</td><td>24%</td>
+          <td>1.08</td><td>下</td>
+          <td style="#4ade80">+3.2%</td><td style="#4ade80">+9.1%</td>
+          <td style="#4ade80">+17.2%</td><td style="#4ade80">+15.4%</td></tr><tr><td>2018-03-23</td><td>1726.0</td><td style="color:#f87171">-5.0%</td>
+          <td>7%</td><td>34%</td>
+          <td>1.28</td><td>下</td>
+          <td style="#4ade80">+10.1%</td><td style="#4ade80">+6.3%</td>
+          <td style="#4ade80">+4.7%</td><td style="#4ade80">+8.1%</td></tr><tr><td>2018-06-19</td><td>1547.1</td><td style="color:#f87171">-5.8%</td>
+          <td>-12%</td><td>25%</td>
+          <td>1.15</td><td>下</td>
+          <td style="#4ade80">+1.1%</td><td style="#4ade80">+3.9%</td>
+          <td style="#4ade80">+4.8%</td><td style="#4ade80">+0.9%</td></tr><tr><td>2018-10-08</td><td>1353.7</td><td style="color:#f87171">-4.1%</td>
+          <td>8%</td><td>23%</td>
+          <td>0.90</td><td>下</td>
+          <td style="#f87171">-7.6%</td><td style="#f87171">-2.9%</td>
+          <td style="#f87171">-0.3%</td><td style="#4ade80">+3.0%</td></tr><tr><td>2018-10-11</td><td>1261.9</td><td style="color:#f87171">-6.3%</td>
+          <td>-29%</td><td>29%</td>
+          <td>1.31</td><td>下</td>
+          <td style="#f87171">-4.5%</td><td style="#4ade80">+0.9%</td>
+          <td style="#4ade80">+5.4%</td><td style="#4ade80">+7.3%</td></tr><tr><td>2019-05-06</td><td>1494.9</td><td style="color:#f87171">-7.9%</td>
+          <td>-29%</td><td>35%</td>
+          <td>0.84</td><td>下</td>
+          <td style="#4ade80">+0.6%</td><td style="#f87171">-1.7%</td>
+          <td style="#f87171">-1.7%</td><td style="#f87171">-2.6%</td></tr><tr><td>2019-05-17</td><td>1478.7</td><td style="color:#f87171">-3.6%</td>
+          <td>21%</td><td>35%</td>
+          <td>1.03</td><td>下</td>
+          <td style="#f87171">-2.4%</td><td style="#4ade80">+0.3%</td>
+          <td style="#f87171">-2.5%</td><td style="#4ade80">+6.0%</td></tr><tr><td>2020-02-03</td><td>1795.8</td><td style="color:#f87171">-6.8%</td>
+          <td>15%</td><td>31%</td>
+          <td>0.56</td><td>上</td>
+          <td style="#4ade80">+13.7%</td><td style="#4ade80">+19.5%</td>
+          <td style="#4ade80">+18.9%</td><td style="#4ade80">+6.4%</td></tr><tr><td>2020-03-09</td><td>2093.1</td><td style="color:#f87171">-4.5%</td>
+          <td>28%</td><td>46%</td>
+          <td>0.98</td><td>上</td>
+          <td style="#f87171">-8.7%</td><td style="#f87171">-12.7%</td>
+          <td style="#f87171">-5.9%</td><td style="#f87171">-3.3%</td></tr><tr><td>2020-03-16</td><td>1910.8</td><td style="color:#f87171">-5.9%</td>
+          <td>-18%</td><td>45%</td>
+          <td>0.93</td><td>上</td>
+          <td style="#f87171">-4.4%</td><td style="#f87171">-2.6%</td>
+          <td style="#4ade80">+3.9%</td><td style="#4ade80">+6.3%</td></tr><tr><td>2020-03-23</td><td>1827.1</td><td style="color:#f87171">-4.6%</td>
+          <td>5%</td><td>42%</td>
+          <td>0.72</td><td>上</td>
+          <td style="#4ade80">+1.8%</td><td style="#4ade80">+7.8%</td>
+          <td style="#4ade80">+10.8%</td><td style="#4ade80">+16.3%</td></tr><tr><td>2020-08-19</td><td>2612.8</td><td style="color:#f87171">-3.3%</td>
+          <td>16%</td><td>39%</td>
+          <td>0.96</td><td>上</td>
+          <td style="#4ade80">+1.2%</td><td style="#4ade80">+6.1%</td>
+          <td style="#f87171">-2.2%</td><td style="#f87171">-1.5%</td></tr><tr><td>2020-09-07</td><td>2641.2</td><td style="color:#f87171">-3.3%</td>
+          <td>30%</td><td>29%</td>
+          <td>1.74</td><td>上</td>
+          <td style="#f87171">-2.6%</td><td style="#f87171">-2.7%</td>
+          <td style="#4ade80">+5.4%</td><td style="#4ade80">+0.4%</td></tr><tr><td>2020-09-09</td><td>2523.4</td><td style="color:#f87171">-4.8%</td>
+          <td>-10%</td><td>30%</td>
+          <td>1.84</td><td>上</td>
+          <td style="#4ade80">+1.2%</td><td style="#4ade80">+3.0%</td>
+          <td style="#4ade80">+8.5%</td><td style="#4ade80">+7.0%</td></tr><tr><td>2021-02-22</td><td>3138.7</td><td style="color:#f87171">-4.5%</td>
+          <td>20%</td><td>33%</td>
+          <td>1.29</td><td>上</td>
+          <td style="#f87171">-4.6%</td><td style="#f87171">-13.1%</td>
+          <td style="#f87171">-14.0%</td><td style="#f87171">-9.8%</td></tr><tr><td>2021-02-24</td><td>3007.5</td><td style="color:#f87171">-3.4%</td>
+          <td>-7%</td><td>35%</td>
+          <td>1.08</td><td>上</td>
+          <td style="#f87171">-0.3%</td><td style="#f87171">-11.0%</td>
+          <td style="#f87171">-12.4%</td><td style="#f87171">-6.0%</td></tr><tr><td>2021-03-04</td><td>2851.9</td><td style="color:#f87171">-4.9%</td>
+          <td>4%</td><td>37%</td>
+          <td>1.09</td><td>上</td>
+          <td style="#f87171">-3.7%</td><td style="#f87171">-3.6%</td>
+          <td style="#f87171">-1.3%</td><td style="#f87171">-2.4%</td></tr><tr><td>2021-03-08</td><td>2728.8</td><td style="color:#f87171">-5.0%</td>
+          <td>0%</td><td>39%</td>
+          <td>1.20</td><td>上</td>
+          <td style="#f87171">-3.1%</td><td style="#f87171">-1.1%</td>
+          <td style="#4ade80">+3.8%</td><td style="#4ade80">+6.1%</td></tr><tr><td>2021-03-09</td><td>2633.4</td><td style="color:#f87171">-3.5%</td>
+          <td>-2%</td><td>40%</td>
+          <td>1.20</td><td>上</td>
+          <td style="#4ade80">+1.5%</td><td style="#4ade80">+1.3%</td>
+          <td style="#4ade80">+6.6%</td><td style="#4ade80">+10.8%</td></tr><tr><td>2021-03-15</td><td>2644.0</td><td style="color:#f87171">-4.1%</td>
+          <td>16%</td><td>38%</td>
+          <td>0.88</td><td>上</td>
+          <td style="#4ade80">+2.0%</td><td style="#4ade80">+3.4%</td>
+          <td style="#4ade80">+3.7%</td><td style="#4ade80">+12.9%</td></tr><tr><td>2021-06-16</td><td>3125.7</td><td style="color:#f87171">-4.2%</td>
+          <td>14%</td><td>28%</td>
+          <td>1.32</td><td>上</td>
+          <td style="#4ade80">+6.2%</td><td style="#4ade80">+11.2%</td>
+          <td style="#4ade80">+11.6%</td><td style="#4ade80">+5.1%</td></tr><tr><td>2021-07-27</td><td>3232.8</td><td style="color:#f87171">-4.1%</td>
+          <td>-9%</td><td>34%</td>
+          <td>1.16</td><td>上</td>
+          <td style="#4ade80">+7.6%</td><td style="#4ade80">+7.3%</td>
+          <td style="#4ade80">+3.0%</td><td style="#4ade80">+0.6%</td></tr><tr><td>2022-01-27</td><td>2906.8</td><td style="color:#f87171">-3.2%</td>
+          <td>1%</td><td>24%</td>
+          <td>0.78</td><td>下</td>
+          <td style="#f87171">-2.8%</td><td style="#f87171">-2.3%</td>
+          <td style="#f87171">-4.0%</td><td style="#f87171">-6.7%</td></tr><tr><td>2022-03-07</td><td>2630.4</td><td style="color:#f87171">-4.3%</td>
+          <td>-22%</td><td>29%</td>
+          <td>0.96</td><td>下</td>
+          <td style="#f87171">-2.3%</td><td style="#4ade80">+3.6%</td>
+          <td style="#4ade80">+0.1%</td><td style="#f87171">-10.1%</td></tr><tr><td>2022-03-14</td><td>2570.4</td><td style="color:#f87171">-3.6%</td>
+          <td>6%</td><td>31%</td>
+          <td>0.98</td><td>下</td>
+          <td style="#4ade80">+6.1%</td><td style="#4ade80">+0.9%</td>
+          <td style="#f87171">-4.0%</td><td style="#f87171">-11.7%</td></tr><tr><td>2022-04-11</td><td>2462.0</td><td style="color:#f87171">-4.2%</td>
+          <td>-9%</td><td>36%</td>
+          <td>0.86</td><td>下</td>
+          <td style="#4ade80">+1.1%</td><td style="#f87171">-11.9%</td>
+          <td style="#f87171">-4.5%</td><td style="#f87171">-5.7%</td></tr><tr><td>2022-04-20</td><td>2363.7</td><td style="color:#f87171">-3.7%</td>
+          <td>0%</td><td>36%</td>
+          <td>0.89</td><td>下</td>
+          <td style="#f87171">-4.0%</td><td style="#f87171">-5.7%</td>
+          <td style="#4ade80">+2.0%</td><td style="#4ade80">+8.1%</td></tr><tr><td>2022-04-25</td><td>2169.0</td><td style="color:#f87171">-5.6%</td>
+          <td>-10%</td><td>38%</td>
+          <td>1.15</td><td>下</td>
+          <td style="#4ade80">+5.5%</td><td style="#4ade80">+8.4%</td>
+          <td style="#4ade80">+7.0%</td><td style="#4ade80">+17.9%</td></tr><tr><td>2022-09-15</td><td>2424.2</td><td style="color:#f87171">-3.2%</td>
+          <td>5%</td><td>22%</td>
+          <td>0.97</td><td>下</td>
+          <td style="#f87171">-4.3%</td><td style="#f87171">-3.8%</td>
+          <td style="#f87171">-0.9%</td><td style="#f87171">-2.0%</td></tr><tr><td>2022-10-28</td><td>2250.5</td><td style="color:#f87171">-3.7%</td>
+          <td>10%</td><td>30%</td>
+          <td>1.37</td><td>下</td>
+          <td style="#4ade80">+8.9%</td><td style="#4ade80">+6.9%</td>
+          <td style="#4ade80">+2.6%</td><td style="#4ade80">+7.6%</td></tr><tr><td>2024-01-17</td><td>1699.6</td><td style="color:#f87171">-3.0%</td>
+          <td>2%</td><td>22%</td>
+          <td>0.84</td><td>下</td>
+          <td style="#f87171">-0.2%</td><td style="#f87171">-7.4%</td>
+          <td style="#4ade80">+3.4%</td><td style="#4ade80">+5.3%</td></tr><tr><td>2024-01-29</td><td>1623.8</td><td style="color:#f87171">-3.5%</td>
+          <td>-1%</td><td>26%</td>
+          <td>1.06</td><td>下</td>
+          <td style="#f87171">-3.8%</td><td style="#4ade80">+7.5%</td>
+          <td style="#4ade80">+12.9%</td><td style="#4ade80">+17.4%</td></tr><tr><td>2024-11-22</td><td>2175.6</td><td style="color:#f87171">-4.0%</td>
+          <td>26%</td><td>44%</td>
+          <td>0.91</td><td>上</td>
+          <td style="#4ade80">+2.2%</td><td style="#4ade80">+4.2%</td>
+          <td style="#4ade80">+1.6%</td><td style="#f87171">-7.4%</td></tr><tr><td>2025-01-02</td><td>2060.4</td><td style="color:#f87171">-3.8%</td>
+          <td>-27%</td><td>26%</td>
+          <td>0.79</td><td>上</td>
+          <td style="#f87171">-2.4%</td><td style="#f87171">-0.4%</td>
+          <td style="#4ade80">+5.5%</td><td style="#4ade80">+10.7%</td></tr><tr><td>2025-04-07</td><td>1807.2</td><td style="color:#f87171">-12.5%</td>
+          <td>-41%</td><td>40%</td>
+          <td>1.38</td><td>下</td>
+          <td style="#4ade80">+7.0%</td><td style="#4ade80">+7.6%</td>
+          <td style="#4ade80">+12.3%</td><td style="#4ade80">+13.2%</td></tr></table>
+<footer>
+  CYB MDH Analysis &middot; baostock + 深交所 + 中证指数 &middot;
+  2026-05-17 23:12
+</footer>
+</div>
+</body>
+</html>
