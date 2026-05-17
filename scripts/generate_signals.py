@@ -1654,6 +1654,60 @@ def dashboard(signals, data):
     elif pc > 1.2:
         alerts.append(f"PCR(量)={pc:.2f}(>1.2) — 期权市场恐慌对冲")
 
+    # === 实时信号检测 (基于db) ===
+    realtime_sigs = []
+    try:
+        base = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        db = os.path.join(base, 'data', 'cyb_data.db')
+        import pandas as pd, numpy as np
+        import sqlite3
+        conn = sqlite3.connect(db)
+        ddb = pd.read_sql('SELECT date,close,volume FROM daily ORDER BY date', conn)
+        conn.close()
+        ddb['date'] = pd.to_datetime(ddb['date']); ddb = ddb.set_index('date').sort_index()
+        ddb['close'] = ddb['close'].astype(float); ddb['volume'] = ddb['volume'].astype(float)
+        ddb['ret'] = ddb['close'].pct_change() * 100
+        ddb['ma300'] = ddb['close'].rolling(300).mean()
+        ddb['v_ma20'] = ddb['volume'].rolling(20).mean()
+        ddb['v_ratio'] = ddb['volume'] / ddb['v_ma20']
+        ddb['bb_mid20'] = ddb['close'].rolling(20).mean()
+        ddb['bb_std20'] = ddb['close'].rolling(20).std()
+        ddb['bb_pos'] = (ddb['close'] - (ddb['bb_mid20']-2*ddb['bb_std20'])) / (4*ddb['bb_std20']) * 100
+        ddb['drop10'] = ddb['close'] / ddb['close'].shift(10) - 1
+        ddb['drop5'] = ddb['close'] / ddb['close'].shift(5) - 1
+        ddb['drop20'] = ddb['close'] / ddb['close'].shift(20) - 1
+        ddb['ret_t1'] = ddb['ret'].shift(1)
+        ddb = ddb.dropna()
+        L = ddb.iloc[-1]; P = ddb.iloc[-2]
+
+        ABV = float(L['close']) > float(L['ma300'])
+        VLO = float(L['v_ratio']) < 0.7; VML = float(L['v_ratio']) < 0.8; VLOT = float(L['v_ratio']) < 0.6
+        B30 = float(L['bb_pos']) <= 30; B50 = float(L['bb_pos']) <= 50; B25 = float(L['bb_pos']) <= 25
+        D10N3 = float(L['drop10']) < -0.03; D10N5 = float(L['drop10']) < -0.05
+        D5N2 = float(L['drop5']) < -0.02; D5N5 = float(L['drop5']) < -0.05
+        R1 = float(L['ret']) < -1; R2 = float(L['ret']) < -2
+        TUP = float(L['ret']) > 0; T1B = float(L['ret_t1']) < -1.5
+
+        rchk = lambda n, c: bool(c)
+        rt_sigs = [
+            ("彩票(bb≤15+20d跌>8%)", "买入末日call", float(L['bb_pos'])<=15 and float(L['drop20'])<-0.08),
+            ("日跌3%+布林低位", "买入方向call", float(L['ret'])<-3 and B30),
+            ("300上+10d跌>3%(回调)", "买入call/价差", ABV and D10N3),
+            ("300上+日跌>1%+布林≤50", "买入call/价差", ABV and R1 and B50),
+            ("300上+前日跌>1.5%+缩量", "买入call", ABV and T1B and VML),
+            ("5d跌>5%+今日涨+布林≤30", "反弹买call", D5N5 and TUP and B30),
+            ("高波+300下+放量(恐慌反弹)", "方向买call", float(L['vol_10'])>30 and not ABV and float(L['v_ratio'])>1.3),
+            ("低波+300上+缩量(慢牛)", "持有/加仓call", float(L['vol_10'])<20 and ABV and VLO),
+            ("布林上轨+300上(过热)", "减仓/谨慎", float(L['bb_pos'])>=80 and ABV),
+            ("布林上轨+300下(高风险)", "减仓/观望", float(L['bb_pos'])>=80 and not ABV),
+            ("连跌3天+缩量(企稳信号)", "买入观察", float(L['ret'])<0 and float(P['ret'])<0 and float(ddb.iloc[-3]['ret'])<0 and VML),
+            ("前日跌>2%+缩量+布林≤40", "抄底买call", float(L['ret_t1'])<-2 and VLO and float(L['bb_pos'])<=40),
+        ]
+        for sname, action, trig in rt_sigs:
+            realtime_sigs.append({"name": sname, "action": action, "triggered": trig})
+    except Exception:
+        realtime_sigs = []
+
     cards = ''
     for s in signals:
         cards += f'''
@@ -1662,6 +1716,36 @@ def dashboard(signals, data):
           <div class="signal-title">{s['title']}</div>
           <div class="signal-desc">{s['desc'][:80]}{'...' if len(s['desc'])>80 else ''}</div>
         </a>'''
+
+    # 实时信号html
+    has_signal = any(r['triggered'] for r in realtime_sigs)
+    n_trig = sum(1 for r in realtime_sigs if r['triggered'])
+    rt_rows = ''
+    for r in realtime_sigs:
+        if r['triggered']:
+            rt_rows += f'<tr class="rt-triggered"><td>✅</td><td>{r["name"]}</td><td style="color:#4ade80">{r["action"]}</td></tr>'
+        else:
+            rt_rows += f'<tr class="rt-dim"><td>⬜</td><td>{r["name"]}</td><td style="color:#475569">{r["action"]}</td></tr>'
+
+    realtime_html = f'''
+<style>
+.rt {{ width:100%; border-collapse:collapse; font-size:0.9em; }}
+.rt th {{ text-align:left; padding:8px 10px; color:#94a3b8; font-weight:normal; border-bottom:1px solid #334155; }}
+.rt td {{ padding:6px 10px; }}
+.rt-triggered {{ background:#1a3a2a; border-left:3px solid #4ade80; }}
+.rt-dim td {{ color:#334155; }}
+</style>
+<div class="box {"success" if has_signal else ""}">
+  <h3 style="margin-bottom:8px;">&#128200; 实时信号看板</h3>
+  <p style="color:#94a3b8;font-size:0.85em;margin-bottom:10px;">
+    基于最新数据自动检测。⬜=未触发 &nbsp; ✅=正在触发
+  </p>
+  <table class="rt">
+    <tr><th></th><th>信号</th><th>建议操作</th></tr>
+    {rt_rows}
+  </table>
+  {"<p style='margin-top:8px;color:#4ade80;font-weight:bold'>✅ 当前 {n_trig} 个信号触发中</p>" if has_signal else "<p style='margin-top:8px;color:#64748b;'>当前无信号触发 — 市场处于平静/无方向状态</p>"}
+</div>'''
 
     alert_html = ''
     if alerts:
@@ -1695,6 +1779,8 @@ def dashboard(signals, data):
 </header>
 
 {alert_html}
+
+{realtime_html}
 
 <div class="qt">
   <div class="qtc" style="border-color:#4ade80">

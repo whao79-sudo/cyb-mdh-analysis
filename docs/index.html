@@ -61,6 +61,26 @@ footer { text-align:center; color:#64748b; padding:30px 0; font-size:0.8em; }
 
 <div class="box danger"><h3 style="margin-bottom:8px;">当前活跃预警</h3><ul><li>QVIX=35(>35) — 隐含波动率偏高，仓位管理建议关注</li><li>PCR(量)=0.00(<0.7) — 期权市场极度乐观</li></ul></div>
 
+
+<style>
+.rt { width:100%; border-collapse:collapse; font-size:0.9em; }
+.rt th { text-align:left; padding:8px 10px; color:#94a3b8; font-weight:normal; border-bottom:1px solid #334155; }
+.rt td { padding:6px 10px; }
+.rt-triggered { background:#1a3a2a; border-left:3px solid #4ade80; }
+.rt-dim td { color:#334155; }
+</style>
+<div class="box ">
+  <h3 style="margin-bottom:8px;">&#128200; 实时信号看板</h3>
+  <p style="color:#94a3b8;font-size:0.85em;margin-bottom:10px;">
+    基于最新数据自动检测。⬜=未触发 &nbsp; ✅=正在触发
+  </p>
+  <table class="rt">
+    <tr><th></th><th>信号</th><th>建议操作</th></tr>
+    
+  </table>
+  <p style='margin-top:8px;color:#64748b;'>当前无信号触发 — 市场处于平静/无方向状态</p>
+</div>
+
 <div class="qt">
   <div class="qtc" style="border-color:#4ade80">
     <div class="qtv" style="color:#60a5fa">16</div>
