@@ -130,6 +130,28 @@ footer { text-align:center; color:#64748b; padding:30px 0; font-size:0.8em; }
   或<b>平值ATM + 10天到期</b> — 最稳定正期望，R/R 3.0x，期望+108元/100元
 </div>
 
+<h2>⭐ 信号质量评级</h2>
+<p>N越大 → 统计越可信。小样本(尤其N&lt;20)的信号100%胜率可能是运气成分。</p>
+<table>
+  <tr><th>信号</th><th>触发条件</th><th>N</th><th>20d</th><th>胜率</th><th>置信度</th><th>建议</th></tr>
+  <tr><td>彩票超跌(布林) &darr;</td><td>布林≤15+20d跌>8%</td><td>40</td><td>+6.55%</td><td>75%</td><td>&#11088;&#11088;&#11088; 中等</td><td>主力信号，可做</td></tr>
+  <tr><td>→ 高波子集 &darr;</td><td>+vol≥30</td><td style="color:#facc15">8</td><td>+13.19%</td><td style="color:#facc15">100%</td><td>&#11088; 偏低</td><td>确认信号，小心N小</td></tr>
+  <tr><td>→ 宽版本 &darr;</td><td>+vol≥25</td><td>17</td><td>+8.42%</td><td>82%</td><td>&#11088;&#11088; 尚可</td><td>更均衡的选择</td></tr>
+  <tr><td>恐慌暴跌 &darr;</td><td>QVIX>35+300下</td><td style="color:#facc15">6</td><td>+11.75%</td><td style="color:#facc15">100%</td><td>&#11088; 偏低</td><td>极强但N小，需放宽</td></tr>
+  <tr><td>→ 宽版本 &darr;</td><td>QVIX>30+300下</td><td>19</td><td>+9.41%</td><td>89%</td><td>&#11088;&#11088; 尚可</td><td>推荐使用此版本</td></tr>
+  <tr><td>末端彩票 &darr;</td><td>布林30下轨+跌>8%</td><td>16</td><td>+8.87%</td><td>81%</td><td>&#11088;&#11088; 尚可</td><td>强信号但N偏小</td></tr>
+  <tr><td>低波+300上 慢牛</td><td>vol<20+300上</td><td>98</td><td>+5.07%</td><td>69%</td><td>&#11088;&#11088;&#11088; 中-高</td><td>N大稳定，可做</td></tr>
+  <tr><td>高波+300下 反弹</td><td>vol≥30+300下</td><td>51</td><td>+4.79%</td><td>63%</td><td>&#11088;&#11088;&#11088; 中等</td><td>中等仓位可做</td></tr>
+  <tr><td>低波+300下 观望</td><td>vol<20+300下</td><td>289</td><td>-1.00%</td><td>30%</td><td>&#11088;&#11088;&#11088;&#11088; 高</td><td>可靠的空仓信号</td></tr>
+</table>
+
+<div class="box warn">
+  <b>&#9888; 关于小样本(N&lt;20)：</b><br>
+  N=6时100%胜率的背后：标准误≈23%，意味着真实胜率可能是77%~100%。<br>
+  N=40时75%胜率的背后：标准误≈7%，真实胜率区间68%~82%。<br><br>
+  <b>建议：</b>当"彩票+高波"或"恐慌暴跌"触发时，确认为主策略(彩票或慢牛)的<b>加注信号</b>而不是独立满仓信号。
+</div>
+
 <div class="box success">
   <b>✅ 总结：</b>布林下轨+超跌买入末日call是<u>正期望策略</u>（期望+97元/100元）。
   每3次中约1次归零，但每次中奖平均赚237%。适合小仓位（1-2%账户）长期执行。
@@ -139,7 +161,7 @@ footer { text-align:center; color:#64748b; padding:30px 0; font-size:0.8em; }
 </div>
 <footer>
   CYB MDH Analysis &middot; baostock + 深交所 + 中证指数 &middot;
-  2026-05-17 21:01
+  2026-05-17 23:06
 </footer>
 </div>
 </body>
