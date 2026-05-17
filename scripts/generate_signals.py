@@ -281,6 +281,60 @@ def render_dual(data):
 # 信号注册 & 页面生成
 # ──────────────────────────────────────────────────
 
+def render_qvix_strategy(data):
+    # 加载策略回测数据
+    sp = os.path.join(DATA_DIR, "qvix_strategy.json")
+    if not os.path.exists(sp):
+        return "<div class='box warn'><b>策略数据尚未生成。</b>运行 fetch_qvix.py 和回测脚本可生成。</div>"
+    with open(sp) as f:
+        s = json.load(f)
+
+    h = ''
+    # 当前信号
+    cur = s["current_signal"]
+    now_q = s["latest_qvix"]
+    now_pct = s["qvix_pct_60"]
+    sig_emoji = "💰" if cur == "卖出期权(卖方)" else "🔥" if cur == "买入期权" else "⏸️"
+    sig_color = "warn" if cur == "无信号" else "success"
+    h += '<div class="kpi">'
+    h += card(f"{now_q:.1f}%", f"QVIX ({s['latest_date']})", "warn" if now_q > 30 else "good")
+    h += card(f"{now_pct:.0f}%", "60日分位", "bad" if now_pct > 80 else "good")
+    h += card(f"{sig_emoji} {cur}", "当前策略信号", sig_color, fmt="s")
+    h += '</div>'
+
+    # 策略说明
+    h += f'''<div class="box info">
+      <b>策略逻辑：</b>QVIX处于15-30%历史分位 → IV偏低 → 买入期权（赌波动率回升）。<br>
+      QVIX处于40-60%历史分位 → IV偏高 → 卖出期权（卖方，赚波动率溢价回归）。<br>
+      当前QVIX={now_q:.0f}%处于60日{now_pct:.0f}%分位，{cur}。
+    </div>'''
+
+    bbt = s["buy_backtest"]
+    sbt = s["sell_backtest"]
+    h += '<h2>回测结果 (2022-09 ~ 至今)</h2>'
+    h += '<table><tr><th>策略</th><th>信号数</th><th>10日后ΔQVIX</th><th>期权估算收益</th><th>胜率</th></tr>'
+    h += f'<tr><td>买方 (IV 15-30%分位)</td><td>{bbt["total"]}</td><td>{bbt["avg_delta_qvix_10d"]:+.1f}pp</td><td style="color:#4ade80">{bbt["avg_opt_ret_10d"]:+.1f}%</td><td>{bbt["win_rate"]}%</td></tr>'
+    h += f'<tr><td>卖方 (IV 40-60%分位)</td><td>{sbt["total"]}</td><td>{sbt["avg_delta_qvix_10d"]:+.1f}pp</td><td style="color:#f87171">{sbt["avg_opt_ret_10d"]:+.1f}%</td><td>{sbt["win_rate"]}%</td></tr>'
+    h += '</table>'
+
+    # 最近信号
+    h += '<h3>最近几次买入信号详情</h3>'
+    h += '<table><tr><th>日期</th><th>QVIX</th><th>分位</th><th>10日后ΔQVIX</th><th>期权收益</th></tr>'
+    for r in s["recent_buy_signals"][-5:]:
+        dq = r.get("fwd_delta_qvix", "--")
+        op = r.get("opt_ret", "--")
+        if dq is None: dq = "--"
+        if op is None: op = "--"
+        col = "color:#4ade80" if (isinstance(op, (int,float)) and op > 0) else "color:#f87171" if (isinstance(op, (int,float)) and op < 0) else ""
+        h += f'<tr><td>{r["date"]}</td><td>{r["qvix"]}%</td><td>{r["pct"]}%</td><td>{dq}</td><td style="{col}">{op}</td></tr>'
+    h += '</table>'
+
+    h += f'''<div class="box warn">
+      <b>⚠️ 局限：</b>期权收益基于简化模型（vega=5x），未计交易成本。QVIX数据仅2022年9月起（874个交易日），
+      策略样本量有限。N(买方)={bbt["total"]}次，N(卖方)={sbt["total"]}次。
+    </div>'''
+    return h
+
 SIGNALS = [
     {"slug":"granger", "title":"量价因果：成交量→波动率 Granger", "emoji":"&#128279;",
      "desc":"统计检验成交量是否包含预测波动率的信息。", "fn": render_granger},
@@ -294,6 +348,8 @@ SIGNALS = [
      "desc":"5日RV/60日RV，衡量波动率是否在加速/衰减。", "fn": render_vol_ratio},
     {"slug":"dual_signal","title":"双重信号：QVIX + vol_ratio", "emoji":"&#128308;",
      "desc":"两个维度同时预警时，波动率飙升确定性最高。", "fn": render_dual},
+    {"slug":"qvix_strategy","title":"QVIX 波动率套利策略", "emoji":"&#128176;",
+     "desc":"基于QVIX历史分位的期权买卖信号（买方/卖方双向）。", "fn": render_qvix_strategy},
 ]
 
 def dashboard(signals, data):

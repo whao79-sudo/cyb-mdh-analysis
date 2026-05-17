@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>&#128279; 量价因果：成交量→波动率 Granger &mdash; CYB MDH</title>
+<title>&#128176; QVIX 波动率套利策略 &mdash; CYB MDH</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
@@ -45,15 +45,16 @@ footer { text-align:center; color:#64748b; padding:30px 0; font-size:0.8em; }
 <div class="container">
 <header>
   <a href="../index.html" class="back">&larr; 返回仪表盘</a>
-  <h1>&#128279; 量价因果：成交量→波动率 Granger</h1>
-  <p class="subtitle">统计检验成交量是否包含预测波动率的信息。</p>
+  <h1>&#128176; QVIX 波动率套利策略</h1>
+  <p class="subtitle">基于QVIX历史分位的期权买卖信号（买方/卖方双向）。</p>
 </header>
-<div class="kpi"><div class="kpi-card"><div class="kpi-val" style="color:#f87171">1.0000</div><div class="kpi-label">Granger p值 (lag=?)</div></div><div class="kpi-card"><div class="kpi-val" style="color:#60a5fa">无效</div><div class="kpi-label">量→波动 Granger</div></div><div class="kpi-card"><div class="kpi-val" style="color:#60a5fa">?</div><div class="kpi-label">最优滞后天数</div></div></div><div class="box warn">
-      <b>检验结果：</b>不显著（p=1.0000）。
-      成交量对波动率没有显著预测力。
-    </div><h2>回测事实</h2><table><tr><th>策略</th><th>累计收益</th><th>年化收益</th><th>夏普</th><th>回撤</th></tr><tr><td>满仓基准</td><td>+279.8%</td><td>+13.4%</td><td>0.44</td><td>-69.7%</td></tr><tr><td>高量>90%→半仓</td><td>+153.6%</td><td>+10.2%</td><td>0.36</td><td>-69.7%</td></tr><tr><td>vol_ratio>1.5→半仓</td><td>+128.5%</td><td>+9.4%</td><td>0.33</td><td>-67.5%</td></tr></table><div class="box warn">
-      <b>重要：</b>虽然 Granger 检验通过（量知道波），但实际回测中，用高量信号减仓反而导致收益大幅下降
-      （满仓279.8% → 高量→半仓153.6%）。原因是高量区间恰好是创业板涨幅最大的时期，减仓反而错过了涨幅。
+<div class="kpi"><div class="kpi-card"><div class="kpi-val" style="color:#facc15">35.3%</div><div class="kpi-label">QVIX (2026-05-15)</div></div><div class="kpi-card"><div class="kpi-val" style="color:#f87171">97%</div><div class="kpi-label">60日分位</div></div><div class="kpi-card"><div class="kpi-val" style="color:#facc15">⏸️ 无信号</div><div class="kpi-label">当前策略信号</div></div></div><div class="box info">
+      <b>策略逻辑：</b>QVIX处于15-30%历史分位 → IV偏低 → 买入期权（赌波动率回升）。<br>
+      QVIX处于40-60%历史分位 → IV偏高 → 卖出期权（卖方，赚波动率溢价回归）。<br>
+      当前QVIX=35%处于60日97%分位，无信号。
+    </div><h2>回测结果 (2022-09 ~ 至今)</h2><table><tr><th>策略</th><th>信号数</th><th>10日后ΔQVIX</th><th>期权估算收益</th><th>胜率</th></tr><tr><td>买方 (IV 15-30%分位)</td><td>149</td><td>+0.9pp</td><td style="color:#4ade80">+4.4%</td><td>58.0%</td></tr><tr><td>卖方 (IV 40-60%分位)</td><td>138</td><td>-0.6pp</td><td style="color:#f87171">-2.8%</td><td>64.0%</td></tr></table><h3>最近几次买入信号详情</h3><table><tr><th>日期</th><th>QVIX</th><th>分位</th><th>10日后ΔQVIX</th><th>期权收益</th></tr><tr><td>2026-02-24</td><td>26.2%</td><td>15.0%</td><td>-0.92</td><td style="color:#f87171">-4.6</td></tr><tr><td>2026-03-05</td><td>26.0%</td><td>20.0%</td><td>1.95</td><td style="color:#4ade80">9.7</td></tr><tr><td>2026-03-10</td><td>25.2%</td><td>15.0%</td><td>23.93</td><td style="color:#4ade80">119.7</td></tr><tr><td>2026-03-12</td><td>26.0%</td><td>22.0%</td><td>2.11</td><td style="color:#4ade80">10.5</td></tr><tr><td>2026-04-09</td><td>26.4%</td><td>28.0%</td><td>3.81</td><td style="color:#4ade80">19.0</td></tr></table><div class="box warn">
+      <b>⚠️ 局限：</b>期权收益基于简化模型（vega=5x），未计交易成本。QVIX数据仅2022年9月起（874个交易日），
+      策略样本量有限。N(买方)=149次，N(卖方)=138次。
     </div>
 <footer>
   CYB MDH Analysis &middot; baostock + 深交所 + 中证指数 &middot;

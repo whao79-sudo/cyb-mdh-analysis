@@ -56,6 +56,11 @@ jobs:
       run: |
         python scripts/fetch_qvix.py
     
+    - name: Generate QVIX strategy signal
+      run: |
+        python scripts/fetch_qvix.py 2>&1 | tail -3
+        python scripts/update_qvix_strategy.py
+
     - name: Generate index page from JSON results
       run: |
         python scripts/generate_index.py

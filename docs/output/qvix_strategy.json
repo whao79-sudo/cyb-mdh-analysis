@@ -1,0 +1,95 @@
+{
+  "latest_qvix": 35.3,
+  "latest_date": "2026-05-15",
+  "qvix_pct_60": 96,
+  "qvix_pct_all": 89,
+  "current_signal": "无信号",
+  "buy_signal": false,
+  "sell_signal": false,
+  "buy_backtest": {
+    "total": 149,
+    "avg_delta_qvix_10d": 0.88,
+    "avg_opt_ret_10d": 4.4,
+    "win_rate": 57
+  },
+  "sell_backtest": {
+    "total": 138,
+    "avg_delta_qvix_10d": -0.56,
+    "avg_opt_ret_10d": -2.8,
+    "win_rate": 64
+  },
+  "recent_buy_signals": [
+    {
+      "date": "2026-02-24",
+      "qvix": 26.2,
+      "pct": 15,
+      "fwd_delta_qvix": -0.92,
+      "opt_ret": -4.6
+    },
+    {
+      "date": "2026-03-05",
+      "qvix": 26.0,
+      "pct": 20,
+      "fwd_delta_qvix": 1.95,
+      "opt_ret": 9.7
+    },
+    {
+      "date": "2026-03-10",
+      "qvix": 25.2,
+      "pct": 15,
+      "fwd_delta_qvix": 23.93,
+      "opt_ret": 119.7
+    },
+    {
+      "date": "2026-03-12",
+      "qvix": 26.0,
+      "pct": 22,
+      "fwd_delta_qvix": 2.11,
+      "opt_ret": 10.5
+    },
+    {
+      "date": "2026-04-09",
+      "qvix": 26.4,
+      "pct": 28,
+      "fwd_delta_qvix": 3.81,
+      "opt_ret": 19.0
+    }
+  ],
+  "recent_sell_signals": [
+    {
+      "date": "2026-03-27",
+      "qvix": 27.4,
+      "pct": 50,
+      "fwd_delta_qvix": 2.76,
+      "opt_ret": 13.8
+    },
+    {
+      "date": "2026-04-08",
+      "qvix": 27.1,
+      "pct": 43,
+      "fwd_delta_qvix": 2.7,
+      "opt_ret": 13.5
+    },
+    {
+      "date": "2026-04-28",
+      "qvix": 28.7,
+      "pct": 55,
+      "fwd_delta_qvix": 6.57,
+      "opt_ret": 32.9
+    },
+    {
+      "date": "2026-04-29",
+      "qvix": 27.9,
+      "pct": 45,
+      "fwd_delta_qvix": null,
+      "opt_ret": null
+    },
+    {
+      "date": "2026-04-30",
+      "qvix": 27.8,
+      "pct": 41,
+      "fwd_delta_qvix": null,
+      "opt_ret": null
+    }
+  ]
+}
