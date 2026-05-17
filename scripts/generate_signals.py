@@ -571,6 +571,112 @@ def render_lottery(data):
 </div>'''
     return h
 
+def render_thermometer(data):
+    """市场温度计 — 状态分类系统"""
+    tp = os.path.join(DATA_DIR, "thermometer.json")
+    if not os.path.exists(tp):
+        return '<div class="box warn">数据文件未生成，请先运行数据分析脚本。</div>'
+    with open(tp) as f:
+        t = json.load(f)
+    
+    cur = t['current']
+    re = t['ready_to_erupt']
+    
+    state_colors = {'死寂':'#64748b','平静':'#60a5fa','躁动':'#facc15','异动':'#fb923c','预备爆发':'#f97316','风暴':'#f87171'}
+    sc = state_colors.get(cur['state'], '#60a5fa')
+    
+    h = f'''
+<div class="box info">
+  <b>🌡️ 核心理念：</b>市场不是随机游走，而是在不同状态间转换——平静、躁动、异动、预备爆发、风暴。
+  状态分类基于两个关键维度：<b>相对成交量(vol_ratio)</b> 和 <b>短期波动率HV_10的近3月分位</b>。
+  <br><br>
+  分类规则：
+  ● <b>风暴</b> — HV_10 > 40%年化
+  ● <b>异动</b> — vol_ratio > 2.0
+  ● <b>预备爆发</b> — vol_ratio > 1.5 且 HV_10 < 近3月50%分位
+  ● <b>躁动</b> — vol_ratio > 1.2
+  ● <b>死寂</b> — vol_ratio < 0.6 且 HV_10 < 20%
+  ● <b>平静</b> — 其他
+</div>
+
+<h2>📡 当前市场状态</h2>
+<div class="qt">
+  <div class="qtc" style="border-color:{sc}">
+    <div class="qtv" style="color:#60a5fa">{cur['state']}</div>
+    <div class="qtl">当前状态 ({cur['date']})</div>
+  </div>
+  <div class="qtc" style="border-color:#60a5fa">
+    <div class="qtv" style="color:#60a5fa">{t['meta']['total_dates']}</div>
+    <div class="qtl">总样本天数</div>
+  </div>
+  <div class="qtc" style="border-color:#60a5fa">
+    <div class="qtv" style="color:#facc15">{cur['vol_ratio']}x</div>
+    <div class="qtl">相对成交量</div>
+  </div>
+  <div class="qtc" style="border-color:#60a5fa">
+    <div class="qtv" style="color:#facc15">{cur['hv_10']:.0f}%</div>
+    <div class="qtl">HV_10(年化)</div>
+  </div>
+  <div class="qtc" style="border-color:#60a5fa">
+    <div class="qtv" style="color:#facc15">{cur['hv_10_rank_3m']:.0f}%</div>
+    <div class="qtl">HV_10近3月分位</div>
+  </div>
+</div>
+
+<h2>📊 各状态收益特征 (2010-2026)</h2>
+<p>每个状态下买入并持有不同期限的平均收益。</p>
+<table>
+  <tr><th>状态</th><th>占比</th><th>5d均值</th><th>5d胜率</th><th>10d均值</th><th>10d胜率</th><th>20d均值</th><th>彩票>20%</th></tr>'''
+    for r in t['states']:
+        color = state_colors.get(r['state'], '#60a5fa')
+        h += f'<tr><td style="color:{color};font-weight:bold">{r["state"]}</td>'
+        h += f'<td>{r["n"]} ({r["n"]/t["meta"]["total_dates"]*100:.0f}%)</td>'
+        h += f'<td style="color:{"#4ade80" if r["fwd5_mean"]>0 else "f87171"}">{r["fwd5_mean"]:+.1f}%</td>'
+        h += f'<td>{r["fwd5_win"]:.0f}%</td>'
+        h += f'<td style="color:{"#4ade80" if r["fwd10_mean"]>0 else "f87171"}">{r["fwd10_mean"]:+.1f}%</td>'
+        h += f'<td>{r["fwd10_win"]:.0f}%</td>'
+        h += f'<td style="color:{"#4ade80" if r["fwd20_mean"]>0 else "f87171"}">{r["fwd20_mean"]:+.1f}%</td>'
+        h += f'<td>{r["fwd20_lotto"]:.0f}%</td></tr>'
+    
+    h += f'''</table>
+
+<h2>🔥 核心状态：预备爆发</h2>
+<div class="box warn" style="border-left-color:#f97316">
+  <b>定义：</b>成交量突然放大(vol_ratio > 1.5)，但短期波动率仍处近3月低位(HV_10 < 50%分位)。<br>
+  这意味着：<u>市场开始放量但波动还未跟上，平静即将被打破</u>。
+</div>
+
+<div class="kpi">
+  <div class="kpi-card warn"><div class="kpi-val">{re["n"]}次</div><div class="kpi-label">总信号 ({re["pct"]}%)</div></div>
+  <div class="kpi-card {"good" if re["fwd5_mean"]>0 else "bad"}"><div class="kpi-val">{re["fwd5_mean"]:+.1f}%</div><div class="kpi-label">未来5d均值</div></div>
+  <div class="kpi-card"><div class="kpi-val">{re["fwd5_win"]:.0f}%</div><div class="kpi-label">5d胜率</div></div>
+  <div class="kpi-card"><div class="kpi-val">{re["fwd10_mean"]:+.1f}%</div><div class="kpi-label">未来10d均值</div></div>
+  <div class="kpi-card"><div class="kpi-val">{re["fwd10_win"]:.0f}%</div><div class="kpi-label">10d胜率</div></div>
+  <div class="kpi-card"><div class="kpi-val">{re["fwd20_mean"]:+.1f}%</div><div class="kpi-label">未来20d均值</div></div>
+  <div class="kpi-card warn"><div class="kpi-val">{re["fwd20_gt10"]:.0f}%</div><div class="kpi-label">>10%概率</div></div>
+  <div class="kpi-card warn"><div class="kpi-val">{re["fwd20_gt20"]:.0f}%</div><div class="kpi-label">>20%彩票</div></div>
+</div>
+
+<div class="box success">
+  <b>💡 实战用法：</b><br>
+  ● 处于<b>预备爆发</b>状态 → 关注期权买方机会（波动率即将放大的先兆）<br>
+  ● 处于<b>风暴</b>状态 → 彩票概率提升（20d>20%概率6%），可配合布林下轨+超跌执行末日彩票策略<br>
+  ● 处于<b>平静</b>状态 → 无信号，等待<br>
+  ● 处于<b>躁动</b>状态 → 小幅正收益趋势，可小仓做多<br><br>
+  <b>注意：</b>预备爆发信号仅45次(1.2%概率)，信号稀少但方向清晰。<br>
+  <b>当前状态：{cur["state"]}</b> → 当前 {"有" if cur["state"]=="预备爆发" or cur["state"]=="风暴" else "无"}交易信号
+</div>
+
+<h2>📅 最近预备爆发信号</h2>
+<table><tr><th>日期</th><th>收盘价</th><th>状态</th><th>vol_ratio</th><th>HV_10</th><th>HV_10分位</th><th>未来10d收益</th></tr>'''
+    for sig in t['last_signals'][-15:]:
+        f10 = f'{sig["fwd10_ret"]:+.1f}%' if sig.get("fwd10_ret") is not None else '--'
+        c10 = 'color:#4ade80' if (sig.get("fwd10_ret") or 0) > 0 else 'color:#f87171'
+        h += f'<tr><td>{sig["date"]}</td><td>{sig["close"]}</td><td style="color:{state_colors.get(sig["state"],"#60a5fa")}">{sig["state"]}</td><td>{sig["vol_ratio"]}x</td><td>{sig["hv_10"]:.0f}%</td><td>{sig["hv_10_rank"]:.0f}%</td><td style="{c10}">{f10}</td></tr>'
+    
+    h += '</table>'
+    return h
+
 SIGNALS = [
     {"slug":"granger", "title":"量价因果：成交量→波动率 Granger", "emoji":"&#128279;",
      "desc":"统计检验成交量是否包含预测波动率的信息。", "fn": render_granger},
@@ -588,6 +694,8 @@ SIGNALS = [
      "desc":"基于QVIX历史分位的期权买卖信号（买方/卖方双向）。", "fn": render_qvix_strategy},
     {"slug":"lottery","title":"末日彩票：超跌末日期权策略", "emoji":"&#127922;",
      "desc":"布林下轨+超跌时买入6天末日call，正期望期权策略。", "fn": render_lottery},
+    {"slug":"thermometer","title":"市场温度计：全状态分类系统", "emoji":"&#127777;&#65039;",
+     "desc":"平静/躁动/异动/预备爆发/风暴 —— 基于成交量×波动率的市场状态分类。", "fn": render_thermometer},
 ]
 
 def dashboard(signals, data):

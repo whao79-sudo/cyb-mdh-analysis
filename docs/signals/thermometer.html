@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>&#127777;&#65039; 市场温度计：全状态分类系统 &mdash; CYB MDH</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+       background:#0f172a; color:#e2e8f0; line-height:1.6; }
+.container { max-width:800px; margin:0 auto; padding:20px; }
+header { text-align:center; padding:30px 0 20px; }
+h1 { font-size:1.8em; color:#60a5fa; margin-bottom:4px; }
+h2 { font-size:1.2em; color:#93c5fd; border-bottom:1px solid #334155; padding-bottom:8px; margin:25px 0 12px; }
+h3 { color:#e2e8f0; margin:15px 0 8px; }
+.subtitle { color:#94a3b8; font-size:0.9em; }
+.back { display:inline-block; color:#60a5fa; text-decoration:none; margin-bottom:10px; font-size:0.9em; }
+.back:hover { text-decoration:underline; }
+.kpi { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin:15px 0; }
+.kpi-card { background:#1e293b; border-radius:10px; padding:15px; text-align:center; }
+.kpi-val { font-size:1.6em; font-weight:bold; color:#60a5fa; }
+.kpi-label { font-size:0.8em; color:#94a3b8; margin-top:4px; }
+.kpi-card.good .kpi-val { color:#4ade80; }
+.kpi-card.bad .kpi-val { color:#f87171; }
+.kpi-card.warn .kpi-val { color:#facc15; }
+table { width:100%; border-collapse:collapse; margin:10px 0; font-size:0.85em; }
+th { background:#1e293b; color:#94a3b8; padding:8px; text-align:left; border-bottom:2px solid #334155; }
+td { padding:8px; border-bottom:1px solid #1e293b; }
+tr:hover td { background:#1e293b; }
+.badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:0.8em; font-weight:bold; }
+.badge.green { background:rgba(74,222,128,0.2); color:#4ade80; }
+.badge.red { background:rgba(248,113,113,0.2); color:#f87171; }
+.badge.yellow { background:rgba(250,204,21,0.2); color:#facc15; }
+.box { background:#1e293b; border-radius:10px; padding:15px; margin:15px 0; border-left:4px solid #334155; }
+.box.info { border-left-color:#60a5fa; }
+.box.warn { border-left-color:#facc15; }
+.box.danger { border-left-color:#f87171; }
+.box.success { border-left-color:#4ade80; }
+ul { margin-left:20px; }
+li { margin:4px 0; }
+footer { text-align:center; color:#64748b; padding:30px 0; font-size:0.8em; }
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+  <a href="../index.html" class="back">&larr; 返回仪表盘</a>
+  <h1>&#127777;&#65039; 市场温度计：全状态分类系统</h1>
+  <p class="subtitle">平静/躁动/异动/预备爆发/风暴 —— 基于成交量×波动率的市场状态分类。</p>
+</header>
+
+<div class="box info">
+  <b>🌡️ 核心理念：</b>市场不是随机游走，而是在不同状态间转换——平静、躁动、异动、预备爆发、风暴。
+  状态分类基于两个关键维度：<b>相对成交量(vol_ratio)</b> 和 <b>短期波动率HV_10的近3月分位</b>。
+  <br><br>
+  分类规则：
+  ● <b>风暴</b> — HV_10 > 40%年化
+  ● <b>异动</b> — vol_ratio > 2.0
+  ● <b>预备爆发</b> — vol_ratio > 1.5 且 HV_10 < 近3月50%分位
+  ● <b>躁动</b> — vol_ratio > 1.2
+  ● <b>死寂</b> — vol_ratio < 0.6 且 HV_10 < 20%
+  ● <b>平静</b> — 其他
+</div>
+
+<h2>📡 当前市场状态</h2>
+<div class="qt">
+  <div class="qtc" style="border-color:#60a5fa">
+    <div class="qtv" style="color:#60a5fa">平静</div>
+    <div class="qtl">当前状态 (2026-05-15)</div>
+  </div>
+  <div class="qtc" style="border-color:#60a5fa">
+    <div class="qtv" style="color:#60a5fa">3872</div>
+    <div class="qtl">总样本天数</div>
+  </div>
+  <div class="qtc" style="border-color:#60a5fa">
+    <div class="qtv" style="color:#facc15">1.09x</div>
+    <div class="qtl">相对成交量</div>
+  </div>
+  <div class="qtc" style="border-color:#60a5fa">
+    <div class="qtv" style="color:#facc15">30%</div>
+    <div class="qtl">HV_10(年化)</div>
+  </div>
+  <div class="qtc" style="border-color:#60a5fa">
+    <div class="qtv" style="color:#facc15">78%</div>
+    <div class="qtl">HV_10近3月分位</div>
+  </div>
+</div>
+
+<h2>📊 各状态收益特征 (2010-2026)</h2>
+<p>每个状态下买入并持有不同期限的平均收益。</p>
+<table>
+  <tr><th>状态</th><th>占比</th><th>5d均值</th><th>5d胜率</th><th>10d均值</th><th>10d胜率</th><th>20d均值</th><th>彩票>20%</th></tr><tr><td style="color:#60a5fa;font-weight:bold">平静</td><td>2771 (72%)</td><td style="color:#4ade80">+0.1%</td><td>50%</td><td style="color:#4ade80">+0.2%</td><td>50%</td><td style="color:#4ade80">+0.7%</td><td>3%</td></tr><tr><td style="color:#facc15;font-weight:bold">躁动</td><td>508 (13%)</td><td style="color:#4ade80">+1.0%</td><td>58%</td><td style="color:#4ade80">+1.6%</td><td>61%</td><td style="color:#4ade80">+2.6%</td><td>4%</td></tr><tr><td style="color:#fb923c;font-weight:bold">异动</td><td>10 (0%)</td><td style="color:#4ade80">+1.6%</td><td>70%</td><td style="color:#4ade80">+3.0%</td><td>60%</td><td style="color:f87171">+0.0%</td><td>0%</td></tr><tr><td style="color:#f97316;font-weight:bold">预备爆发</td><td>40 (1%)</td><td style="color:f87171">-0.9%</td><td>42%</td><td style="color:f87171">+0.0%</td><td>48%</td><td style="color:#4ade80">+0.9%</td><td>0%</td></tr><tr><td style="color:#f87171;font-weight:bold">风暴</td><td>460 (12%)</td><td style="color:#4ade80">+0.6%</td><td>57%</td><td style="color:#4ade80">+1.5%</td><td>63%</td><td style="color:#4ade80">+2.0%</td><td>6%</td></tr></table>
+
+<h2>🔥 核心状态：预备爆发</h2>
+<div class="box warn" style="border-left-color:#f97316">
+  <b>定义：</b>成交量突然放大(vol_ratio > 1.5)，但短期波动率仍处近3月低位(HV_10 < 50%分位)。<br>
+  这意味着：<u>市场开始放量但波动还未跟上，平静即将被打破</u>。
+</div>
+
+<div class="kpi">
+  <div class="kpi-card warn"><div class="kpi-val">45次</div><div class="kpi-label">总信号 (1.2%)</div></div>
+  <div class="kpi-card bad"><div class="kpi-val">-0.6%</div><div class="kpi-label">未来5d均值</div></div>
+  <div class="kpi-card"><div class="kpi-val">44%</div><div class="kpi-label">5d胜率</div></div>
+  <div class="kpi-card"><div class="kpi-val">+0.3%</div><div class="kpi-label">未来10d均值</div></div>
+  <div class="kpi-card"><div class="kpi-val">51%</div><div class="kpi-label">10d胜率</div></div>
+  <div class="kpi-card"><div class="kpi-val">+1.1%</div><div class="kpi-label">未来20d均值</div></div>
+  <div class="kpi-card warn"><div class="kpi-val">11%</div><div class="kpi-label">>10%概率</div></div>
+  <div class="kpi-card warn"><div class="kpi-val">0%</div><div class="kpi-label">>20%彩票</div></div>
+</div>
+
+<div class="box success">
+  <b>💡 实战用法：</b><br>
+  ● 处于<b>预备爆发</b>状态 → 关注期权买方机会（波动率即将放大的先兆）<br>
+  ● 处于<b>风暴</b>状态 → 彩票概率提升（20d>20%概率6%），可配合布林下轨+超跌执行末日彩票策略<br>
+  ● 处于<b>平静</b>状态 → 无信号，等待<br>
+  ● 处于<b>躁动</b>状态 → 小幅正收益趋势，可小仓做多<br><br>
+  <b>注意：</b>预备爆发信号仅45次(1.2%概率)，信号稀少但方向清晰。<br>
+  <b>当前状态：平静</b> → 当前 无交易信号
+</div>
+
+<h2>📅 最近预备爆发信号</h2>
+<table><tr><th>日期</th><th>收盘价</th><th>状态</th><th>vol_ratio</th><th>HV_10</th><th>HV_10分位</th><th>未来10d收益</th></tr><tr><td>2019-09-05</td><td>1689.0</td><td style="color:#f97316">预备爆发</td><td>1.56x</td><td>17%</td><td>16%</td><td style="color:#4ade80">+0.9%</td></tr><tr><td>2019-12-17</td><td>1802.0</td><td style="color:#f97316">预备爆发</td><td>1.62x</td><td>16%</td><td>38%</td><td style="color:#f87171">-0.2%</td></tr><tr><td>2019-12-18</td><td>1792.0</td><td style="color:#f97316">预备爆发</td><td>1.53x</td><td>17%</td><td>46%</td><td style="color:#4ade80">+2.2%</td></tr><tr><td>2020-09-02</td><td>2772.0</td><td style="color:#f97316">预备爆发</td><td>1.83x</td><td>24%</td><td>37%</td><td style="color:#f87171">-7.8%</td></tr><tr><td>2020-09-03</td><td>2747.0</td><td style="color:#f97316">预备爆发</td><td>1.58x</td><td>24%</td><td>37%</td><td style="color:#f87171">-6.9%</td></tr><tr><td>2023-01-30</td><td>2614.0</td><td style="color:#f97316">预备爆发</td><td>1.53x</td><td>14%</td><td>19%</td><td style="color:#f87171">-1.6%</td></tr><tr><td>2023-02-01</td><td>2614.0</td><td style="color:#f97316">预备爆发</td><td>1.56x</td><td>14%</td><td>21%</td><td style="color:#f87171">-2.5%</td></tr><tr><td>2023-02-02</td><td>2602.0</td><td style="color:#f97316">预备爆发</td><td>1.59x</td><td>15%</td><td>33%</td><td style="color:#f87171">-3.5%</td></tr><tr><td>2023-02-16</td><td>2512.0</td><td style="color:#f97316">预备爆发</td><td>1.53x</td><td>16%</td><td>46%</td><td style="color:#f87171">-3.7%</td></tr><tr><td>2024-02-28</td><td>1749.0</td><td style="color:#f97316">预备爆发</td><td>1.64x</td><td>23%</td><td>48%</td><td style="color:#4ade80">+8.4%</td></tr><tr><td>2025-02-07</td><td>2174.0</td><td style="color:#f97316">预备爆发</td><td>1.57x</td><td>26%</td><td>41%</td><td style="color:#4ade80">+4.9%</td></tr><tr><td>2026-01-09</td><td>3328.0</td><td style="color:#f97316">预备爆发</td><td>1.55x</td><td>18%</td><td>8%</td><td style="color:#4ade80">+0.7%</td></tr><tr><td>2026-01-12</td><td>3388.0</td><td style="color:#f97316">预备爆发</td><td>1.8x</td><td>20%</td><td>16%</td><td style="color:#f87171">-2.0%</td></tr><tr><td>2026-01-13</td><td>3322.0</td><td style="color:#f97316">预备爆发</td><td>1.77x</td><td>23%</td><td>27%</td><td style="color:#4ade80">+0.6%</td></tr><tr><td>2026-01-14</td><td>3349.0</td><td style="color:#f97316">预备爆发</td><td>1.77x</td><td>23%</td><td>27%</td><td style="color:#f87171">-0.8%</td></tr></table>
+<footer>
+  CYB MDH Analysis &middot; baostock + 深交所 + 中证指数 &middot;
+  2026-05-17 16:34
+</footer>
+</div>
+</body>
+</html>
