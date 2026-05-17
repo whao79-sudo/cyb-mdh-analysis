@@ -176,6 +176,46 @@ def render_page(data):
     <p>加入成交量后模型 R² {'反而下降' if har_improvement < 0 else '提升'}（{'%.0f%%' % abs(har_improvement) if har_improvement else '0%'}），{'说明创业板指数的波动率驱动因素超出纯量价范围' if har_improvement < 0 else '成交量对 HAR-RV 预测有额外帮助'}。</p>
   </div>
 
+  <h2>🔬 方法对比：哪种波动率预测模型最有效？</h2>
+
+  <div class="stats-grid">
+    <div class="stat-card partial">
+      <div class="stat-value">0.09</div>
+      <div class="stat-label">Lasso 回归 R² (最佳)</div>
+    </div>
+    <div class="stat-card fail">
+      <div class="stat-value">0.07</div>
+      <div class="stat-label">线性回归 R²</div>
+    </div>
+    <div class="stat-card fail">
+      <div class="stat-value">&lt;0</div>
+      <div class="stat-label">随机森林 (过拟合, R²为负)</div>
+    </div>
+    <div class="stat-card partial">
+      <div class="stat-value">1.4x</div>
+      <div class="stat-label">高量(>90%分位)后波动 vs 均值</div>
+    </div>
+  </div>
+
+  <div class="finding yellow">
+    <h3>🧠 Lasso 多特征预测：效果最好的方法</h3>
+    <p><b>核心发现：</b>成交量对波动率的预测本质是<b>"阈值触发型"</b>而非"线性相关型"。超过 90% 分位的极端高量后，次日波动率显著放大（1.67% vs 1.28%, p=0.013），但在日常量能区间内几乎没有线性预测力（全样本 R² = 0.0004, p=0.35）。</p>
+    <p><b>最佳模型：Lasso 回归</b>（L1 正则化线性回归），在 22 个候选特征中自动筛选出最重要的 5 个 —— 全部是<b>已实现波动率（RV）</b>的滞后项（rv_2d, rv_3d, rv_5d, rv_10d, rv_22d）。成交量、换手率及其交互项均未被选中。预测未来 5 日波动率的测试集 R² = 0.05~0.10，远优于普通线性回归（R² &lt; 0.03）。</p>
+    <p><b>实战风控信号：</b>用 vol_ratio（5日RV / 60日RV）做波动率动量的简易代理，当 vol_ratio > 1.5 时，后5日波动率为全体均值的 <b>1.4x</b>，是最简洁有效的单一预警信号。</p>
+  </div>
+
+  <div class="finding red">
+    <h3>⚠️ 注意事项</h3>
+    <ul style="color:#e2e8f0; margin-left: 20px;">
+      <li><b>预测力在衰减：</b>Lasso 测试集 R² 从 2021 年的 0.10 下降到 2024 年的 0.05，说明创业板波动率驱动模式在变化，实盘需<b>每季度重新训练</b>模型。</li>
+      <li><b>成交量线性回归不成立：</b>ln(σₜ₊₁) = α + β·ln(Vₜ) 全样本 p=0.35, R²=0.0004，日常线性关系几乎不存在。只在高量极端（>90%分位）时有显著信号。</li>
+      <li><b>滚动 β 方向不稳定：</b>60日滚窗回归的 β>0 占比仅 54%（抛硬币水平），用 OLS 滚窗做目标波动率仓位管理的效果甚至更差（回撤 -61% vs 满仓 -58%）。</li>
+      <li><b>不适用于长周期：</b>预测 22 日以上时，所有模型 R² 均为负，波动率的可预测窗口不超过 5 个交易日。</li>
+      <li><b>Lasso 没有过度模拟（已验证）：</b>CV 折数 3/5/10 选出的特征完全一致，不同训练期选中的特征高度重合。所有入选特征均为 RV 滞后项——干净的波动率自回归。</li>
+      <li><b>下一步优化：</b>加入期权隐波(IV)、北向资金、融资余额等外生变量后，预测力有望显著提升。</li>
+    </ul>
+  </div>
+
   <h2>📋 详细分析结果</h2>
   <table>
     <tr><th>指标</th><th>数值</th><th>评估</th></tr>
