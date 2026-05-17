@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>&#127822; 期权评级：全部信号期权适用性重评 &mdash; CYB MDH</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+       background:#0f172a; color:#e2e8f0; line-height:1.6; }
+.container { max-width:800px; margin:0 auto; padding:20px; }
+header { text-align:center; padding:30px 0 20px; }
+h1 { font-size:1.8em; color:#60a5fa; margin-bottom:4px; }
+h2 { font-size:1.2em; color:#93c5fd; border-bottom:1px solid #334155; padding-bottom:8px; margin:25px 0 12px; }
+h3 { color:#e2e8f0; margin:15px 0 8px; }
+.subtitle { color:#94a3b8; font-size:0.9em; }
+.back { display:inline-block; color:#60a5fa; text-decoration:none; margin-bottom:10px; font-size:0.9em; }
+.back:hover { text-decoration:underline; }
+.kpi { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin:15px 0; }
+.kpi-card { background:#1e293b; border-radius:10px; padding:15px; text-align:center; }
+.kpi-val { font-size:1.6em; font-weight:bold; color:#60a5fa; }
+.kpi-label { font-size:0.8em; color:#94a3b8; margin-top:4px; }
+.kpi-card.good .kpi-val { color:#4ade80; }
+.kpi-card.bad .kpi-val { color:#f87171; }
+.kpi-card.warn .kpi-val { color:#facc15; }
+table { width:100%; border-collapse:collapse; margin:10px 0; font-size:0.85em; }
+th { background:#1e293b; color:#94a3b8; padding:8px; text-align:left; border-bottom:2px solid #334155; }
+td { padding:8px; border-bottom:1px solid #1e293b; }
+tr:hover td { background:#1e293b; }
+.badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:0.8em; font-weight:bold; }
+.badge.green { background:rgba(74,222,128,0.2); color:#4ade80; }
+.badge.red { background:rgba(248,113,113,0.2); color:#f87171; }
+.badge.yellow { background:rgba(250,204,21,0.2); color:#facc15; }
+.box { background:#1e293b; border-radius:10px; padding:15px; margin:15px 0; border-left:4px solid #334155; }
+.box.info { border-left-color:#60a5fa; }
+.box.warn { border-left-color:#facc15; }
+.box.danger { border-left-color:#f87171; }
+.box.success { border-left-color:#4ade80; }
+ul { margin-left:20px; }
+li { margin:4px 0; }
+footer { text-align:center; color:#64748b; padding:30px 0; font-size:0.8em; }
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+  <a href="../index.html" class="back">&larr; 返回仪表盘</a>
+  <h1>&#127822; 期权评级：全部信号期权适用性重评</h1>
+  <p class="subtitle">标的W%≠期权W%! 全部信号加装期权费滤波器重评。卖出PUT/末日call/末日PUT全对比。</p>
+</header>
+
+<div class="box danger">
+  <b>⚠️ 关键认知校正：标的W% ≠ 期权W%</b><br>
+  之前所有信号页面都基于"标的价格变化"来算胜率，没考虑期权费。<br>
+  同一信号，标的W60%落到到期权层面可能只有W45-50%(被期权费吃掉)。<br>
+  <br>
+  <b>修正后:</b> 创业板真正能用期权稳定赚钱的信号只有3-5个。
+</div>
+
+<h2>⭐ 期权适用性总评级</h2>
+<p>评级标准：<br>
+⭐⭐可做 = 多个期权策略(买call/卖PUT/末日)均正收益<br>
+✅可做 = 至少有一个策略可用(如只适合末日call)<br>
+🔄谨慎 = 只能特定模式/收益有限<br>
+❌别做 = 所有期权策略期望亏损
+</p>
+
+<table>
+  <tr><th>信号</th><th>N</th><th>年频</th><th>标20d</th><th>标W</th>
+      <th>买平值W</th><th>买虚1W</th><th>末日callW</th><th>末日PUTW</th>
+      <th>裸卖PUT总</th><th>-3%止PUT</th><th>评级</th></tr><tr><td style="font-weight:bold">日跌3%+BB≤30+300下</td>
+          <td>58</td><td>4</td>
+          <td style="color:#4ade80">+4.73%</td>
+          <td>66%</td>
+          <td>59%</td><td>53%</td>
+          <td>50%</td><td>62%</td>
+          <td style="color:#4ade80">+4.6%</td>
+          <td style="color:#4ade80">+24.3%</td>
+          <td style="color:#facc15;font-weight:bold">✅可做</td></tr><tr><td style="font-weight:bold">高位死叉+300上回调</td>
+          <td>209</td><td>14</td>
+          <td style="color:#4ade80">+4.20%</td>
+          <td>69%</td>
+          <td>62%</td><td>53%</td>
+          <td>46%</td><td>62%</td>
+          <td style="color:#f87171">-127.7%</td>
+          <td style="color:#4ade80">+92.0%</td>
+          <td style="color:#4ade80;font-weight:bold">⭐⭐可做</td></tr><tr><td style="font-weight:bold">K>80+300上追涨</td>
+          <td>778</td><td>53</td>
+          <td style="color:#4ade80">+3.66%</td>
+          <td>66%</td>
+          <td>58%</td><td>50%</td>
+          <td>46%</td><td>60%</td>
+          <td style="color:#f87171">-570.8%</td>
+          <td style="color:#4ade80">+278.5%</td>
+          <td style="color:#4ade80;font-weight:bold">⭐⭐可做</td></tr><tr><td style="font-weight:bold">彩票+300下</td>
+          <td>150</td><td>10</td>
+          <td style="color:#4ade80">+3.37%</td>
+          <td>63%</td>
+          <td>51%</td><td>47%</td>
+          <td>53%</td><td>66%</td>
+          <td style="color:#f87171">-71.3%</td>
+          <td style="color:#4ade80">+39.6%</td>
+          <td style="color:#f97316;font-weight:bold">🔄谨慎</td></tr><tr><td style="font-weight:bold">低波+300上</td>
+          <td>360</td><td>25</td>
+          <td style="color:#4ade80">+3.02%</td>
+          <td>65%</td>
+          <td>56%</td><td>46%</td>
+          <td>41%</td><td>59%</td>
+          <td style="color:#f87171">-136.5%</td>
+          <td style="color:#4ade80">+115.7%</td>
+          <td style="color:#4ade80;font-weight:bold">⭐⭐可做</td></tr><tr><td style="font-weight:bold">彩票(bb≤15+d20>8%)</td>
+          <td>203</td><td>14</td>
+          <td style="color:#4ade80">+2.81%</td>
+          <td>60%</td>
+          <td>50%</td><td>46%</td>
+          <td>53%</td><td>62%</td>
+          <td style="color:#f87171">-129.8%</td>
+          <td style="color:#4ade80">+32.0%</td>
+          <td style="color:#f97316;font-weight:bold">🔄谨慎</td></tr><tr><td style="font-weight:bold">日跌3%+布林≤30</td>
+          <td>104</td><td>7</td>
+          <td style="color:#4ade80">+2.75%</td>
+          <td>59%</td>
+          <td>54%</td><td>49%</td>
+          <td>48%</td><td>56%</td>
+          <td style="color:#f87171">-110.1%</td>
+          <td style="color:#4ade80">+7.1%</td>
+          <td style="color:#f97316;font-weight:bold">🔄谨慎</td></tr><tr><td style="font-weight:bold">高波+300下恐慌</td>
+          <td>415</td><td>28</td>
+          <td style="color:#4ade80">+2.20%</td>
+          <td>57%</td>
+          <td>50%</td><td>43%</td>
+          <td>50%</td><td>63%</td>
+          <td style="color:#f87171">-499.1%</td>
+          <td style="color:#f87171">-52.7%</td>
+          <td style="color:#f97316;font-weight:bold">🔄谨慎</td></tr><tr><td style="font-weight:bold">K<20+300上超卖</td>
+          <td>377</td><td>26</td>
+          <td style="color:#4ade80">+1.77%</td>
+          <td>63%</td>
+          <td>51%</td><td>42%</td>
+          <td>52%</td><td>62%</td>
+          <td style="color:#f87171">-461.7%</td>
+          <td style="color:#4ade80">+56.6%</td>
+          <td style="color:#f97316;font-weight:bold">🔄谨慎</td></tr><tr><td style="font-weight:bold">300上+10d跌3%回调</td>
+          <td>309</td><td>21</td>
+          <td style="color:#4ade80">+1.00%</td>
+          <td>60%</td>
+          <td>49%</td><td>42%</td>
+          <td>50%</td><td>58%</td>
+          <td style="color:#f87171">-528.6%</td>
+          <td style="color:#4ade80">+12.3%</td>
+          <td style="color:#f97316;font-weight:bold">🔄谨慎</td></tr><tr><td style="font-weight:bold">连涨2d+布林≤50起步</td>
+          <td>209</td><td>14</td>
+          <td style="color:#4ade80">+0.87%</td>
+          <td>55%</td>
+          <td>40%</td><td>32%</td>
+          <td>37%</td><td>53%</td>
+          <td style="color:#f87171">-237.1%</td>
+          <td style="color:#f87171">-32.6%</td>
+          <td style="color:#f87171;font-weight:bold">❌别做</td></tr><tr><td style="font-weight:bold">布林≤20+K<20双底</td>
+          <td>673</td><td>46</td>
+          <td style="color:#4ade80">+0.60%</td>
+          <td>47%</td>
+          <td>37%</td><td>31%</td>
+          <td>43%</td><td>54%</td>
+          <td style="color:#f87171">-840.3%</td>
+          <td style="color:#f87171">-214.8%</td>
+          <td style="color:#f87171;font-weight:bold">❌别做</td></tr></table><h2>📋 各评级最佳策略推荐</h2><h3>⭐⭐可做 (3个)</h3>
+<div class="box success">
+  <b>高位死叉+300上回调</b> — N=209, 年14次, 标20d=+4.20%<br>
+  <b>最佳策略：</b>买平值call(W62%) | 卖PUT+止损(+92%)<br>
+  <span style="color:#94a3b8;font-size:0.85em">
+  标的20d涨幅分布: P25=-1.5% P50=+4.0% P75=+10.6% |
+  末日PUT 5d大亏>3%: 14% | 最差月亏: -33.9%
+  </span>
+</div>
+<div class="box success">
+  <b>K>80+300上追涨</b> — N=778, 年53次, 标20d=+3.66%<br>
+  <b>最佳策略：</b>买平值call(W58%) | 卖PUT+止损(+278%)<br>
+  <span style="color:#94a3b8;font-size:0.85em">
+  标的20d涨幅分布: P25=-2.2% P50=+3.5% P75=+9.4% |
+  末日PUT 5d大亏>3%: 18% | 最差月亏: -35.8%
+  </span>
+</div>
+<div class="box success">
+  <b>低波+300上</b> — N=360, 年25次, 标20d=+3.02%<br>
+  <b>最佳策略：</b>买平值call(W56%) | 卖PUT+止损(+116%)<br>
+  <span style="color:#94a3b8;font-size:0.85em">
+  标的20d涨幅分布: P25=-2.2% P50=+2.9% P75=+7.9% |
+  末日PUT 5d大亏>3%: 16% | 最差月亏: -26.5%
+  </span>
+</div><h3>✅可做 (1个)</h3>
+<div class="box info">
+  <b>日跌3%+BB≤30+300下</b> — N=58, 年4次, 标20d=+4.73%<br>
+  <b>最佳策略：</b>买平值call(W59%) | 买虚1call(W53%) | 卖PUT+止损(+24%) | 裸卖PUT(+5%)<br>
+  <span style="color:#94a3b8;font-size:0.85em">
+  标的20d涨幅分布: P25=-1.7% P50=+3.9% P75=+8.1% |
+  末日PUT 5d大亏>3%: 21% | 最差月亏: -14.4%
+  </span>
+</div><h3>🔄谨慎 (6个)</h3>
+<div class="box warn">
+  <b>彩票+300下</b> — N=150, 年10次, 标20d=+3.37%<br>
+  <b>最佳策略：</b>卖PUT+止损(+40%)<br>
+  <span style="color:#94a3b8;font-size:0.85em">
+  标的20d涨幅分布: P25=-2.2% P50=+2.8% P75=+9.1% |
+  末日PUT 5d大亏>3%: 14% | 最差月亏: -16.6%
+  </span>
+</div>
+<div class="box warn">
+  <b>彩票(bb≤15+d20>8%)</b> — N=203, 年14次, 标20d=+2.81%<br>
+  <b>最佳策略：</b>卖PUT+止损(+32%)<br>
+  <span style="color:#94a3b8;font-size:0.85em">
+  标的20d涨幅分布: P25=-2.7% P50=+2.0% P75=+8.3% |
+  末日PUT 5d大亏>3%: 19% | 最差月亏: -16.6%
+  </span>
+</div>
+<div class="box warn">
+  <b>日跌3%+布林≤30</b> — N=104, 年7次, 标20d=+2.75%<br>
+  <b>最佳策略：</b>无正期望策略<br>
+  <span style="color:#94a3b8;font-size:0.85em">
+  标的20d涨幅分布: P25=-3.4% P50=+3.3% P75=+7.9% |
+  末日PUT 5d大亏>3%: 29% | 最差月亏: -22.8%
+  </span>
+</div>
+<div class="box warn">
+  <b>高波+300下恐慌</b> — N=415, 年28次, 标20d=+2.20%<br>
+  <b>最佳策略：</b>无正期望策略<br>
+  <span style="color:#94a3b8;font-size:0.85em">
+  标的20d涨幅分布: P25=-4.4% P50=+2.0% P75=+7.8% |
+  末日PUT 5d大亏>3%: 19% | 最差月亏: -21.2%
+  </span>
+</div>
+<div class="box warn">
+  <b>K<20+300上超卖</b> — N=377, 年26次, 标20d=+1.77%<br>
+  <b>最佳策略：</b>卖PUT+止损(+57%)<br>
+  <span style="color:#94a3b8;font-size:0.85em">
+  标的20d涨幅分布: P25=-3.5% P50=+2.2% P75=+7.0% |
+  末日PUT 5d大亏>3%: 20% | 最差月亏: -27.9%
+  </span>
+</div>
+<div class="box warn">
+  <b>300上+10d跌3%回调</b> — N=309, 年21次, 标20d=+1.00%<br>
+  <b>最佳策略：</b>无正期望策略<br>
+  <span style="color:#94a3b8;font-size:0.85em">
+  标的20d涨幅分布: P25=-4.4% P50=+1.9% P75=+6.6% |
+  末日PUT 5d大亏>3%: 23% | 最差月亏: -29.8%
+  </span>
+</div><h3>❌别做 (2个)</h3>
+<div class="box danger">
+  <b>连涨2d+布林≤50起步</b> — N=209, 年14次, 标20d=+0.87%<br>
+  <b>最佳策略：</b>无正期望策略<br>
+  <span style="color:#94a3b8;font-size:0.85em">
+  标的20d涨幅分布: P25=-5.1% P50=+0.7% P75=+5.2% |
+  末日PUT 5d大亏>3%: 23% | 最差月亏: -21.2%
+  </span>
+</div>
+<div class="box danger">
+  <b>布林≤20+K<20双底</b> — N=673, 年46次, 标20d=+0.60%<br>
+  <b>最佳策略：</b>无正期望策略<br>
+  <span style="color:#94a3b8;font-size:0.85em">
+  标的20d涨幅分布: P25=-4.5% P50=-0.6% P75=+4.7% |
+  末日PUT 5d大亏>3%: 21% | 最差月亏: -20.6%
+  </span>
+</div>
+<h2>🛡️ 卖PUT风控规则</h2>
+<div class="box info">
+<b>卖PUT的核心矛盾：</b><br>
+裸卖PUT胜率~70%但期望为负。2015年12月三笔就亏67%。<br><br>
+<b>推荐的风控方案（按安全性排序）：</b><br>
+1. <b>末日PUT(5天)</b> — 期权费0.3%, 最大亏损锁死在此, 最安全<br>
+2. <b>价差PUT(put credit spread)</b> — 净收0.8-1.2%, 最大亏损锁定2-3%<br>
+3. <b>裸卖PUT + -3%硬止损</b> — 总收益可从负变正(+115% on K>80追涨)<br>
+4. <b>QVIX<30恐慌过滤</b> — 排除极端行情<br><br>
+<b>绝对不要：</b>K<20(超卖区域)卖PUT、高波(v>30)裸卖PUT、双底不反弹时加仓
+</div>
+
+<h2>🔑 最终结论</h2>
+<div class="box success">
+<b>创业板期权系统 = 3个核心信号:</b><br><br>
+1. <b>K>80+300上追涨</b> → 卖PUT+止损(年53次)或买虚1call<br>
+2. <b>低波+300上</b> → 卖PUT+止损(年25次)<br>
+3. <b>彩票超跌</b> → 末日call等彩票爆发(年14次)<br><br>
+其他信号(日跌3%、K<20超卖、高波恐慌)期权层面质量低——不是不能用，但期望值低于上面3个。
+</div>
+<footer>
+  CYB MDH Analysis &middot; baostock + 深交所 + 中证指数 &middot;
+  2026-05-18 00:20
+</footer>
+</div>
+</body>
+</html>

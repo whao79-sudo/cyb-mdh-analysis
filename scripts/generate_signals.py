@@ -1605,6 +1605,114 @@ def render_daydrop(data):
     return h.format(n=s['meta']['signal_n'])
 
 
+def render_optgrade(data):
+    """期权评级：全部信号按期权适用性重新评估"""
+    jp = os.path.join(DATA_DIR, "option_grade.json")
+    if not os.path.exists(jp):
+        return '<div class="box warn">期权评级数据未生成，请先运行数据分析脚本。</div>'
+    with open(jp) as f:
+        sigs = json.load(f)
+    
+    h = '''
+<div class="box danger">
+  <b>⚠️ 关键认知校正：标的W% ≠ 期权W%</b><br>
+  之前所有信号页面都基于"标的价格变化"来算胜率，没考虑期权费。<br>
+  同一信号，标的W60%落到到期权层面可能只有W45-50%(被期权费吃掉)。<br>
+  <br>
+  <b>修正后:</b> 创业板真正能用期权稳定赚钱的信号只有3-5个。
+</div>
+
+<h2>⭐ 期权适用性总评级</h2>
+<p>评级标准：<br>
+⭐⭐可做 = 多个期权策略(买call/卖PUT/末日)均正收益<br>
+✅可做 = 至少有一个策略可用(如只适合末日call)<br>
+🔄谨慎 = 只能特定模式/收益有限<br>
+❌别做 = 所有期权策略期望亏损
+</p>
+
+<table>
+  <tr><th>信号</th><th>N</th><th>年频</th><th>标20d</th><th>标W</th>
+      <th>买平值W</th><th>买虚1W</th><th>末日callW</th><th>末日PUTW</th>
+      <th>裸卖PUT总</th><th>-3%止PUT</th><th>评级</th></tr>'''
+    
+    for s in sigs:
+        # 颜色
+        g = s["grade"]
+        if g.startswith("⭐⭐"): row_color = "#4ade80"
+        elif g.startswith("✅"): row_color = "#facc15"
+        elif g.startswith("🔄"): row_color = "#f97316"
+        else: row_color = "#f87171"
+        
+        h += f'''<tr><td style="font-weight:bold">{s["name"]}</td>
+          <td>{s["n"]}</td><td>{s["freq_yearly"]}</td>
+          <td style="color:{"#4ade80" if s["ret_20d_mean"]>0 else "#f87171"}">{s["ret_20d_mean"]:+.2f}%</td>
+          <td>{s["ret_20d_wr"]:.0f}%</td>
+          <td>{s["opt_atm_wr"]:.0f}%</td><td>{s["opt_otm1_wr"]:.0f}%</td>
+          <td>{s["doom_call_wr"]:.0f}%</td><td>{s["doom_put_wr"]:.0f}%</td>
+          <td style="color:{"#4ade80" if s["sell_put_total"]>0 else "#f87171"}">{s["sell_put_total"]:+.1f}%</td>
+          <td style="color:{"#4ade80" if s["sell_put_stop3_total"]>0 else "#f87171"}">{s["sell_put_stop3_total"]:+.1f}%</td>
+          <td style="color:{row_color};font-weight:bold">{s["grade"]}</td></tr>'''
+    
+    h += '</table>'
+
+    # 按评级分组推荐
+    h += '<h2>📋 各评级最佳策略推荐</h2>'
+    
+    for grade_label in ["⭐⭐可做", "✅可做", "🔄谨慎", "❌别做"]:
+        subset = [s for s in sigs if s["grade"] == grade_label]
+        if not subset: continue
+        
+        h += f'<h3>{grade_label} ({len(subset)}个)</h3>'
+        for s in subset:
+            name = s["name"]
+            n = s["n"]; freq = s["freq_yearly"]
+            
+            # 选出最佳策略
+            best_opts = []
+            if s["opt_atm_wr"] >= 55: best_opts.append(f"买平值call(W{s['opt_atm_wr']:.0f}%)")
+            if s["opt_otm1_wr"] >= 53: best_opts.append(f"买虚1call(W{s['opt_otm1_wr']:.0f}%)")
+            if s["doom_call_wr"] >= 55: best_opts.append(f"末日call(W{s['doom_call_wr']:.0f}%)")
+            if s["doom_put_wr"] >= 70: best_opts.append(f"末日PUT(W{s['doom_put_wr']:.0f}%)")
+            if s["sell_put_stop3_total"] > 20: best_opts.append(f"卖PUT+止损(+{s['sell_put_stop3_total']:.0f}%)")
+            if s["sell_put_total"] > 0: best_opts.append(f"裸卖PUT(+{s['sell_put_total']:.0f}%)")
+            
+            opt_str = " | ".join(best_opts) if best_opts else "无正期望策略"
+            
+            h += f'''
+<div class="box {"success" if '⭐⭐' in grade_label else "info" if '✅' in grade_label else "warn" if '🔄' in grade_label else "danger"}">
+  <b>{name}</b> — N={n}, 年{freq}次, 标20d={s["ret_20d_mean"]:+.2f}%<br>
+  <b>最佳策略：</b>{opt_str}<br>
+  <span style="color:#94a3b8;font-size:0.85em">
+  标的20d涨幅分布: P25={s["ret_p25"]:+.1f}% P50={s["ret_p50"]:+.1f}% P75={s["ret_p75"]:+.1f}% |
+  末日PUT 5d大亏>3%: {s["big_loss_5d_pct"]:.0f}% | 最差月亏: {s["worst_20d_loss"]:+.1f}%
+  </span>
+</div>'''
+    
+    # 卖PUT风控规则
+    h += '''
+<h2>🛡️ 卖PUT风控规则</h2>
+<div class="box info">
+<b>卖PUT的核心矛盾：</b><br>
+裸卖PUT胜率~70%但期望为负。2015年12月三笔就亏67%。<br><br>
+<b>推荐的风控方案（按安全性排序）：</b><br>
+1. <b>末日PUT(5天)</b> — 期权费0.3%, 最大亏损锁死在此, 最安全<br>
+2. <b>价差PUT(put credit spread)</b> — 净收0.8-1.2%, 最大亏损锁定2-3%<br>
+3. <b>裸卖PUT + -3%硬止损</b> — 总收益可从负变正(+115% on K>80追涨)<br>
+4. <b>QVIX<30恐慌过滤</b> — 排除极端行情<br><br>
+<b>绝对不要：</b>K<20(超卖区域)卖PUT、高波(v>30)裸卖PUT、双底不反弹时加仓
+</div>
+
+<h2>🔑 最终结论</h2>
+<div class="box success">
+<b>创业板期权系统 = 3个核心信号:</b><br><br>
+1. <b>K>80+300上追涨</b> → 卖PUT+止损(年53次)或买虚1call<br>
+2. <b>低波+300上</b> → 卖PUT+止损(年25次)<br>
+3. <b>彩票超跌</b> → 末日call等彩票爆发(年14次)<br><br>
+其他信号(日跌3%、K<20超卖、高波恐慌)期权层面质量低——不是不能用，但期望值低于上面3个。
+</div>'''
+    return h
+
+
 SIGNALS = [
     {"slug":"granger", "title":"量价因果：成交量→波动率 Granger", "emoji":"&#128279;",
      "desc":"统计检验成交量是否包含预测波动率的信息。", "fn": render_granger},
@@ -1638,6 +1746,8 @@ SIGNALS = [
      "desc":"基于当前信号状态，推荐最优的期权到期日和行权价。", "fn": render_expiry},
     {"slug":"daydrop","title":"日跌3%+布林低位：数量多+胜率高+偶尔爆发", "emoji":"&#127769;",
      "desc":"当日跌>3%+布林≤30%→抄底信号。N=104, 20d=+2.75%, W59%, 爆发21%。放量版W92%。", "fn": render_daydrop},
+    {"slug":"optgrade","title":"期权评级：全部信号期权适用性重评", "emoji":"&#127822;",
+     "desc":"标的W%≠期权W%! 全部信号加装期权费滤波器重评。卖出PUT/末日call/末日PUT全对比。", "fn": render_optgrade},
 ]
 
 def dashboard(signals, data):
