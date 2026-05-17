@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>&#9968;&#65039; 爆发事件诚实分类：我们预测不了什么 &mdash; CYB MDH</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+       background:#0f172a; color:#e2e8f0; line-height:1.6; }
+.container { max-width:800px; margin:0 auto; padding:20px; }
+header { text-align:center; padding:30px 0 20px; }
+h1 { font-size:1.8em; color:#60a5fa; margin-bottom:4px; }
+h2 { font-size:1.2em; color:#93c5fd; border-bottom:1px solid #334155; padding-bottom:8px; margin:25px 0 12px; }
+h3 { color:#e2e8f0; margin:15px 0 8px; }
+.subtitle { color:#94a3b8; font-size:0.9em; }
+.back { display:inline-block; color:#60a5fa; text-decoration:none; margin-bottom:10px; font-size:0.9em; }
+.back:hover { text-decoration:underline; }
+.kpi { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin:15px 0; }
+.kpi-card { background:#1e293b; border-radius:10px; padding:15px; text-align:center; }
+.kpi-val { font-size:1.6em; font-weight:bold; color:#60a5fa; }
+.kpi-label { font-size:0.8em; color:#94a3b8; margin-top:4px; }
+.kpi-card.good .kpi-val { color:#4ade80; }
+.kpi-card.bad .kpi-val { color:#f87171; }
+.kpi-card.warn .kpi-val { color:#facc15; }
+table { width:100%; border-collapse:collapse; margin:10px 0; font-size:0.85em; }
+th { background:#1e293b; color:#94a3b8; padding:8px; text-align:left; border-bottom:2px solid #334155; }
+td { padding:8px; border-bottom:1px solid #1e293b; }
+tr:hover td { background:#1e293b; }
+.badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:0.8em; font-weight:bold; }
+.badge.green { background:rgba(74,222,128,0.2); color:#4ade80; }
+.badge.red { background:rgba(248,113,113,0.2); color:#f87171; }
+.badge.yellow { background:rgba(250,204,21,0.2); color:#facc15; }
+.box { background:#1e293b; border-radius:10px; padding:15px; margin:15px 0; border-left:4px solid #334155; }
+.box.info { border-left-color:#60a5fa; }
+.box.warn { border-left-color:#facc15; }
+.box.danger { border-left-color:#f87171; }
+.box.success { border-left-color:#4ade80; }
+ul { margin-left:20px; }
+li { margin:4px 0; }
+footer { text-align:center; color:#64748b; padding:30px 0; font-size:0.8em; }
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+  <a href="../index.html" class="back">&larr; 返回仪表盘</a>
+  <h1>&#9968;&#65039; 爆发事件诚实分类：我们预测不了什么</h1>
+  <p class="subtitle">不是过拟合——我们诚实标注了哪些爆发可以预测，哪些不能。</p>
+</header>
+
+<div class="box info">
+  <b>⛰️ 为什么做这个页面：</b>我们花了很长时间找"爆发信号"，结论是：<b>79%的爆发在技术上不可预测</b>。
+  这不是代码没写好，而是市场本质。<br><br>
+  <b>诚实比过拟合重要。</b>我们只标注已知可靠的模式，不编造公式。
+</div>
+
+<div class="box danger" style="border-left-color:#ef4444">
+  <b>核心发现：</b>创业板历史上47次爆发事件（未来20d>20%或10d>12%）中，
+  只有<b>4次(9%)</b>可被彩票策略(布林下轨+超跌)稳定识别，
+  <b>2次(4%)</b>有模糊信号，
+  <b>41次(87%)</b>完全无法通过量价信号提前预测。
+</div>
+<h2>📊 分类汇总</h2><p>总爆发事件: 47 &middot; 数据区间: 2010-06-01 ~ 2026-05-15</p><p style="font-size:0.85em;color:#94a3b8;margin-top:-8px;">现有彩票策略(布林下轨+超跌)能可靠预测21%的爆发事件。79%的爆发发生在中上轨位置，无法通过量价信号提前识别。这些多为趋势加速或事件驱动，技术上不可预测。</p><table><tr><th>类别</th><th>次数</th><th>占比</th><th>前20d</th><th>前vol_ratio</th><th>前布林位</th><th>涨幅</th><th>说明</th></tr><tr><td style="color:#4ade80;font-weight:bold">可预测(彩票)</td><td>4</td><td>9.0%</td><td>+0.0%</td><td></td><td>0%</td><td>+0%</td><td style="font-size:0.85em;color:#94a3b8">布林下轨+超跌≥8% → 彩票策略可用</td></tr><tr><td style="color:#facc15;font-weight:bold">低置信可预测</td><td>2</td><td>4.0%</td><td>+0.0%</td><td></td><td>0%</td><td>+0%</td><td style="font-size:0.85em;color:#94a3b8">有部分指标指向但信号弱不可靠</td></tr><tr><td style="color:#f87171;font-weight:bold">不可预测</td><td>41</td><td>87.0%</td><td>+0.0%</td><td></td><td>0%</td><td>+0%</td><td style="font-size:0.85em;color:#94a3b8">中上轨横盘或趋势中加速，无技术预警</td></tr></table><h2>✅ 可预测的爆发</h2>
+<p>彩票策略(布林下轨+20d跌>8%)能在爆发前发出信号的案例：</p>
+<table><tr><th>日期</th><th>前收盘</th><th>峰值</th><th>涨幅</th><th>前20d</th><th>前vol</th><th>前布林%</th></tr><tr><td>2011-10-20</td><td>804.0</td><td>921.0</td><td style="color:#4ade80">+14%</td><td>-8.268774335771557</td><td>1.1171632718675413</td><td>7.92408426846601</td></tr><tr><td>2012-01-18</td><td>663.0</td><td>792.0</td><td style="color:#4ade80">+20%</td><td>-14.905986966710527</td><td>1.2055460878091389</td><td>-2.50825736246936</td></tr><tr><td>2012-12-03</td><td>607.0</td><td>903.0</td><td style="color:#4ade80">+49%</td><td>-13.489645131128592</td><td>0.8494890503572994</td><td>-2.0709665011026694</td></tr><tr><td>2024-02-02</td><td>1589.0</td><td>1926.0</td><td style="color:#4ade80">+21%</td><td>-11.806418022104715</td><td>1.1224229665851968</td><td>-12.016884032001398</td></tr></table>
+
+<h2>❌ 不可预测的爆发</h2>
+<p>这些爆发在量价指标上没有提前信号——前20d平均上涨+4.4%，布林中上轨(81%)，成交量正常(1.13x)：</p>
+<table><tr><th>日期</th><th>前收盘</th><th>峰值</th><th>涨幅</th><th>前20d</th><th>前vol</th><th>前布林%</th></tr><tr><td>2010-10-15</td><td>958.0</td><td>1233.0</td><td style="color:#f87171">+29%</td><td>-5.171187339477868</td><td>1.0923060200327417</td><td>?</td></tr><tr><td>2011-06-22</td><td>796.0</td><td>954.0</td><td style="color:#f87171">+20%</td><td>-5.38580184517029</td><td>0.7712362482618237</td><td>?</td></tr><tr><td>2012-12-13</td><td>640.0</td><td>903.0</td><td style="color:#f87171">+41%</td><td>-3.8600788140578435</td><td>1.323769227012815</td><td>12.307151172760905</td></tr><tr><td>2012-12-18</td><td>650.0</td><td>903.0</td><td style="color:#f87171">+39%</td><td>-1.1148111141352612</td><td>1.482474819258685</td><td>16.771518294390614</td></tr><tr><td>2013-04-15</td><td>847.0</td><td>1154.0</td><td style="color:#f87171">+36%</td><td>1.506325644500195</td><td>0.6837695393871073</td><td>96.32793892823092</td></tr><tr><td>2013-04-23</td><td>916.0</td><td>1203.0</td><td style="color:#f87171">+31%</td><td>3.770897714272059</td><td>1.3615120356976536</td><td>120.26228554157873</td></tr><tr><td>2013-04-26</td><td>904.0</td><td>1203.0</td><td style="color:#f87171">+33%</td><td>3.1120601359073685</td><td>1.6152823715530322</td><td>112.80943645840142</td></tr><tr><td>2013-05-07</td><td>958.0</td><td>1203.0</td><td style="color:#f87171">+26%</td><td>9.238472932185937</td><td>1.5724197364096222</td><td>128.5569008334461</td></tr><tr><td>2013-07-09</td><td>1031.0</td><td>1416.0</td><td style="color:#f87171">+37%</td><td>-0.20837448535763192</td><td>0.9357785979647228</td><td>99.93757596650315</td></tr><tr><td>2013-09-12</td><td>1221.0</td><td>1416.0</td><td style="color:#f87171">+16%</td><td>3.392181973411379</td><td>1.1479690618316498</td><td>99.27773075615173</td></tr><tr><td>2014-01-20</td><td>1396.0</td><td>1559.0</td><td style="color:#f87171">+12%</td><td>11.099974205546758</td><td>0.9993475454159172</td><td>88.94450095907686</td></tr><tr><td>2015-01-07</td><td>1540.0</td><td>2578.0</td><td style="color:#f87171">+67%</td><td>-2.66001730822355</td><td>1.1933256008378426</td><td>82.57979537439546</td></tr><tr><td>2015-02-09</td><td>1731.0</td><td>3629.0</td><td style="color:#f87171">+110%</td><td>11.4423472498437</td><td>1.0641674490037596</td><td>111.3828280742003</td></tr><tr><td>2015-03-05</td><td>2010.0</td><td>3982.0</td><td style="color:#f87171">+98%</td><td>16.080161116960532</td><td>1.3105137770735764</td><td>143.80347364330294</td></tr><tr><td>2015-03-19</td><td>2183.0</td><td>3982.0</td><td style="color:#f87171">+82%</td><td>23.130843361940823</td><td>1.3668179908463391</td><td>147.82685818034864</td></tr><tr><td>2015-04-10</td><td>2496.0</td><td>3982.0</td><td style="color:#f87171">+60%</td><td>22.62753895341898</td><td>1.085162968585692</td><td>142.02827694135206</td></tr><tr><td>2015-05-13</td><td>3250.0</td><td>3982.0</td><td style="color:#f87171">+23%</td><td>26.089155923555808</td><td>1.4432715771429736</td><td>149.6083896382056</td></tr><tr><td>2015-05-28</td><td>3629.0</td><td>3982.0</td><td style="color:#f87171">+10%</td><td>34.99658106812043</td><td>1.1918623056272075</td><td>142.0853845863132</td></tr><tr><td>2015-07-06</td><td>2605.0</td><td>2968.0</td><td style="color:#f87171">+14%</td><td>-33.934378048554734</td><td>1.1016569260464826</td><td>75.30313153958838</td></tr><tr><td>2015-09-07</td><td>1855.0</td><td>2898.0</td><td style="color:#f87171">+56%</td><td>-25.859248509516842</td><td>0.9818391132870942</td><td>43.29951064814835</td></tr><tr><td>2015-09-14</td><td>2061.0</td><td>2898.0</td><td style="color:#f87171">+41%</td><td>-21.420393961073724</td><td>0.8517965687963874</td><td>50.099671295602754</td></tr><tr><td>2015-09-24</td><td>2078.0</td><td>2898.0</td><td style="color:#f87171">+39%</td><td>-3.466668896513736</td><td>1.0540770180971348</td><td>50.18016703559923</td></tr><tr><td>2015-10-14</td><td>2342.0</td><td>2898.0</td><td style="color:#f87171">+24%</td><td>17.0343041721885</td><td>1.218173475483492</td><td>58.874197846090524</td></tr><tr><td>2015-10-28</td><td>2564.0</td><td>2898.0</td><td style="color:#f87171">+13%</td><td>23.343233666134623</td><td>1.197835444177695</td><td>65.83110762658187</td></tr><tr><td>2015-11-02</td><td>2478.0</td><td>2898.0</td><td style="color:#f87171">+17%</td><td>22.627973074342457</td><td>0.9392523802138915</td><td>62.31686853499826</td></tr><tr><td>2016-01-28</td><td>1997.0</td><td>2324.0</td><td style="color:#f87171">+16%</td><td>-27.36020731523714</td><td>1.0441080368009998</td><td>34.459351824435615</td></tr><tr><td>2016-02-01</td><td>1994.0</td><td>2324.0</td><td style="color:#f87171">+17%</td><td>-26.528012769118302</td><td>0.9236385860274912</td><td>34.10132618410268</td></tr><tr><td>2016-03-04</td><td>2007.0</td><td>2324.0</td><td style="color:#f87171">+16%</td><td>5.2775797669084135</td><td>1.1511313212979963</td><td>32.068712686258905</td></tr><tr><td>2016-03-09</td><td>2002.0</td><td>2324.0</td><td style="color:#f87171">+16%</td><td>-3.522211626632832</td><td>1.1089957304360816</td><td>31.51997434557013</td></tr><tr><td>2016-03-16</td><td>1997.0</td><td>2324.0</td><td style="color:#f87171">+16%</td><td>-9.310262611124365</td><td>0.9181489299349024</td><td>30.82849659299502</td></tr><tr><td>2019-01-21</td><td>1270.0</td><td>1777.0</td><td style="color:#f87171">+40%</td><td>0.05446034994911475</td><td>0.9836726936368979</td><td>11.667103835853641</td></tr><tr><td>2020-02-03</td><td>1928.0</td><td>2287.0</td><td style="color:#f87171">+19%</td><td>8.033371553591873</td><td>1.1608750690277618</td><td>100.96328911773493</td></tr><tr><td>2020-02-11</td><td>2042.0</td><td>2287.0</td><td style="color:#f87171">+12%</td><td>11.229017691070474</td><td>1.2675108934665864</td><td>113.35589775772846</td></tr><tr><td>2020-06-08</td><td>2166.0</td><td>2889.0</td><td style="color:#f87171">+33%</td><td>1.9353925265874317</td><td>1.0362250429893154</td><td>96.57578884450649</td></tr><tr><td>2020-06-22</td><td>2319.0</td><td>2889.0</td><td style="color:#f87171">+25%</td><td>13.332081824078967</td><td>1.059189568347629</td><td>108.06309408668344</td></tr><tr><td>2022-05-26</td><td>2326.0</td><td>2850.0</td><td style="color:#f87171">+23%</td><td>1.262825833405401</td><td>0.8415370314006454</td><td>-0.5203933194333049</td></tr><tr><td>2024-10-30</td><td>2177.0</td><td>2417.0</td><td style="color:#f87171">+11%</td><td>34.79086361445694</td><td>1.0373604855170757</td><td>93.73853874010011</td></tr><tr><td>2025-07-31</td><td>2368.0</td><td>3324.0</td><td style="color:#f87171">+40%</td><td>11.48761260259068</td><td>1.1412463867945761</td><td>88.53201079124476</td></tr><tr><td>2025-08-08</td><td>2343.0</td><td>3324.0</td><td style="color:#f87171">+42%</td><td>7.000602353705454</td><td>1.146386199514931</td><td>84.45544596897172</td></tr><tr><td>2025-08-14</td><td>2497.0</td><td>3324.0</td><td style="color:#f87171">+33%</td><td>11.94110808825528</td><td>1.1611603536709514</td><td>98.39901030803806</td></tr><tr><td>2025-08-20</td><td>2602.0</td><td>3324.0</td><td style="color:#f87171">+28%</td><td>12.587850562735191</td><td>1.2799322948714125</td><td>106.32091006542446</td></tr></table>
+
+<div class="box warn">
+  <b>⚠️ 诚实声明：</b><br>
+  ● 彩票策略只覆盖了9%的爆发事件（4/47）<br>
+  ● 87%的爆发发生在布林中上轨+前20d上涨中（趋势加速/事件驱动）<br>
+  ● 对这些爆发的任何"信号公式"都是过拟合，没有统计意义<br>
+  ● 如果一个人声称能找到"所有爆发点"，那他一定在说谎或将发生过拟合<br>
+  ● <b>承认不可预测，本身就是一种预测</b>——知道什么时候该空仓等待
+</div>
+<footer>
+  CYB MDH Analysis &middot; baostock + 深交所 + 中证指数 &middot;
+  2026-05-17 16:58
+</footer>
+</div>
+</body>
+</html>

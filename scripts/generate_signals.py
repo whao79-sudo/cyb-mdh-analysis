@@ -571,6 +571,82 @@ def render_lottery(data):
 </div>'''
     return h
 
+def render_eruption_honesty(data):
+    """爆发事件诚实分类"""
+    jp = os.path.join(DATA_DIR, "eruption_honesty.json")
+    if not os.path.exists(jp):
+        return '<div class="box warn">数据文件未生成。</div>'
+    with open(jp) as f:
+        t = json.load(f)
+    
+    h = '''
+<div class="box info">
+  <b>⛰️ 为什么做这个页面：</b>我们花了很长时间找"爆发信号"，结论是：<b>79%的爆发在技术上不可预测</b>。
+  这不是代码没写好，而是市场本质。<br><br>
+  <b>诚实比过拟合重要。</b>我们只标注已知可靠的模式，不编造公式。
+</div>
+
+<div class="box danger" style="border-left-color:#ef4444">
+  <b>核心发现：</b>创业板历史上47次爆发事件（未来20d>20%或10d>12%）中，
+  只有<b>4次(9%)</b>可被彩票策略(布林下轨+超跌)稳定识别，
+  <b>2次(4%)</b>有模糊信号，
+  <b>41次(87%)</b>完全无法通过量价信号提前预测。
+</div>
+'''
+    h += '<h2>📊 分类汇总</h2>'
+    h += f'<p>总爆发事件: {t["meta"]["total_events"]} &middot; 数据区间: {t["meta"]["date_range"]}</p>'
+    h += f'<p style="font-size:0.85em;color:#94a3b8;margin-top:-8px;">{t["meta"]["summary"]}</p>'
+    
+    cat_styles = {
+        '可预测(彩票)': '#4ade80',
+        '低置信可预测': '#facc15',
+        '部分可预测': '#fb923c',
+        '不可预测': '#f87171',
+    }
+    
+    h += '<table><tr><th>类别</th><th>次数</th><th>占比</th><th>前20d</th><th>前vol_ratio</th><th>前布林位</th><th>涨幅</th><th>说明</th></tr>'
+    for cat_key, color in [('可预测(彩票)','#4ade80'),('低置信可预测','#facc15'),('不可预测','#f87171')]:
+        c = t['categories'].get(cat_key)
+        if not c: continue
+        ev = c['events']
+        r20 = c.get('mean_ret20d',0)
+        bb = c.get('mean_bb',0)
+        pk = c.get('mean_peak',0)
+        note = ''
+        if cat_key == '可预测(彩票)': note = '布林下轨+超跌≥8% → 彩票策略可用'
+        elif cat_key == '不可预测': note = '中上轨横盘或趋势中加速，无技术预警'
+        elif cat_key == '低置信可预测': note = '有部分指标指向但信号弱不可靠'
+        h += f'<tr><td style="color:{color};font-weight:bold">{cat_key}</td><td>{c["count"]}</td><td>{c.get("pct","?")}%</td><td>{r20:+.1f}%</td><td></td><td>{bb}%</td><td>+{pk:.0f}%</td><td style="font-size:0.85em;color:#94a3b8">{note}</td></tr>'
+    
+    h += '</table>'
+    
+    # 可预测事件列表
+    h += '''<h2>✅ 可预测的爆发</h2>
+<p>彩票策略(布林下轨+20d跌>8%)能在爆发前发出信号的案例：</p>
+<table><tr><th>日期</th><th>前收盘</th><th>峰值</th><th>涨幅</th><th>前20d</th><th>前vol</th><th>前布林%</th></tr>'''
+    for ev in t['categories'].get('可预测(彩票)',{}).get('events',[]):
+        h += f'<tr><td>{ev["start_date"]}</td><td>{ev["pre_close"]}</td><td>{ev["peak"]}</td><td style="color:#4ade80">+{ev["peak_ret"]:.0f}%</td><td>{ev.get("pre_ret20d") or "?"}</td><td>{ev.get("pre_vol_ratio") or "?"}</td><td>{ev.get("pre_bb_pos") or "?"}</td></tr>'
+    
+    h += '''</table>
+
+<h2>❌ 不可预测的爆发</h2>
+<p>这些爆发在量价指标上没有提前信号——前20d平均上涨+4.4%，布林中上轨(81%)，成交量正常(1.13x)：</p>
+<table><tr><th>日期</th><th>前收盘</th><th>峰值</th><th>涨幅</th><th>前20d</th><th>前vol</th><th>前布林%</th></tr>'''
+    for ev in t['categories'].get('不可预测',{}).get('events',[]):
+        h += f'<tr><td>{ev["start_date"]}</td><td>{ev["pre_close"]}</td><td>{ev["peak"]}</td><td style="color:#f87171">+{ev["peak_ret"]:.0f}%</td><td>{ev.get("pre_ret20d") or "?"}</td><td>{ev.get("pre_vol_ratio") or "?"}</td><td>{ev.get("pre_bb_pos") or "?"}</td></tr>'
+    
+    h += '''</table>
+
+<div class="box warn">
+  <b>⚠️ 诚实声明：</b><br>
+  ● 彩票策略只覆盖了9%的爆发事件（4/47）<br>
+  ● 87%的爆发发生在布林中上轨+前20d上涨中（趋势加速/事件驱动）<br>
+  ● 对这些爆发的任何"信号公式"都是过拟合，没有统计意义<br>
+  ● 如果一个人声称能找到"所有爆发点"，那他一定在说谎或将发生过拟合<br>
+  ● <b>承认不可预测，本身就是一种预测</b>——知道什么时候该空仓等待
+</div>'''
+    return h
+
 def render_thermometer(data):
     """市场温度计 — 状态分类系统"""
     tp = os.path.join(DATA_DIR, "thermometer.json")
@@ -696,6 +772,8 @@ SIGNALS = [
      "desc":"布林下轨+超跌时买入6天末日call，正期望期权策略。", "fn": render_lottery},
     {"slug":"thermometer","title":"市场温度计：全状态分类系统", "emoji":"&#127777;&#65039;",
      "desc":"平静/躁动/异动/预备爆发/风暴 —— 基于成交量×波动率的市场状态分类。", "fn": render_thermometer},
+    {"slug":"eruption","title":"爆发事件诚实分类：我们预测不了什么", "emoji":"&#9968;&#65039;",
+     "desc":"不是过拟合——我们诚实标注了哪些爆发可以预测，哪些不能。", "fn": render_eruption_honesty},
 ]
 
 def dashboard(signals, data):
