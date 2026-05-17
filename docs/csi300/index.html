@@ -1,0 +1,79 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>沪深300(000300) 期权策略参考</title>
+<link rel="stylesheet" href="../style.css"></head><body>
+<header><h1>&#127185; 沪深300(000300) 期权策略参考</h1>
+<p class="subtitle">深交所300ETF(510300/159919) 标底指数 &middot; 2012-2026回测</p></header>
+
+<div class="kpi">
+  <div class="kpi-card" style="border-color:#60a5fa"><div class="kpi-val" style="color:#60a5fa">13.2%</div><div class="kpi-label">当前HV22</div></div>
+  <div class="kpi-card" style="border-color:#60a5fa"><div class="kpi-val" style="color:#60a5fa">60%</div><div class="kpi-label">布林位置</div></div>
+  <div class="kpi-card" style="border-color:#60a5fa"><div class="kpi-val" style="color:#60a5fa">&#128200;上</div><div class="kpi-label">300均线</div></div>
+  <div class="kpi-card" style="border-color:#60a5fa"><div class="kpi-val" style="color:#60a5fa">+3.4%</div><div class="kpi-label">20日涨跌</div></div>
+  <div class="kpi-card" style="border-color:#60a5fa"><div class="kpi-val" style="color:#60a5fa">38%分位</div><div class="kpi-label">vol_rank</div></div>
+</div>
+
+<div class="box info">
+  <b>&#127185; 沪深300 vs 创业板 核心差异</b><br>
+  &#8226; HV均值19.0% — 三个指数中最稳定，波动最小<br>
+  &#8226; 彩票N=73（2.1%时间），介于创业板(35)和中证500(505)之间<br>
+  &#8226; <b style="color:#f87171">恐慌暴跌反弹效应极弱</b> — 300下恐慌20d仅+0.53%（中证500=+3.23%）<br>
+  &#8226; <b style="color:#f87171">恐慌反弹(300上)全部负收益</b> — 别在300上方恐慌时买call<br>
+  &#8226; 高波(vol>30)区间整体负收益 — 沪深300高波是卖出信号<br>
+  &#8226; <b>机构化程度最高</b> — 波动率曲面定价效率高，期权套利空间小
+</div>
+
+<h2>&#127922; 彩票超跌（布林<15 + 20d跌>8%）, N=73</h2>
+<table><tr><th>条件</th><th>N</th><th>5d</th><th>5dW</th><th>10d</th><th>20d</th><th>20dW</th><th>30d</th><th>30dW</th><th>>10%</th></tr><tr><td>彩票(全)</td><td>74</td><td style="color:#4ade80">+1.1%</td><td>70.27027027027027%</td><td style="color:#4ade80">+1.7%</td><td style="color:#4ade80">+1.3%<br><small style="color:#94a3b8">W65%</small></td><td style="color:#4ade80">+2.0%</td><td>54.054054054054056%</td><td>15%</td></tr><tr><td>彩票+低波(v<20)</td><td>13</td><td style="color:#4ade80">+2.0%</td><td>69.23076923076923%</td><td style="color:#4ade80">+4.1%</td><td style="color:#4ade80">+5.4%<br><small style="color:#94a3b8">W85%</small></td><td style="color:#4ade80">+5.8%</td><td>46.15384615384615%</td><td>38%</td></tr><tr><td>彩票+高波(v>=30)</td><td>43</td><td style="color:#4ade80">+0.6%</td><td>69.76744186046511%</td><td style="color:#4ade80">+1.0%</td><td style="color:#f87171">-0.3%<br><small style="color:#94a3b8">W53%</small></td><td style="color:#4ade80">+1.6%</td><td>62.7906976744186%</td><td>12%</td></tr></table>
+
+<div class="box warn">
+  <b>&#127922; 沪深300彩票的特殊性</b><br>
+  &#8226; N=73偏小，但比创业板(35)大了一倍<br>
+  &#8226; 最佳到期日：<b>6-15天</b>（6d=+1.20%胜率71%，15d=+1.86%胜率70%）<br>
+  &#8226; 与中证500的"20-30d"不同——沪深300反弹节奏更快（因机构资金涌入）<br>
+  &#8226; 高波(v>=30)时彩票N=43但20d=-0.33%——高波区彩票无效<br>
+  &#8226; 行权价建议：<b>平值-5%</b>（P90收益小，>10%概率仅3-15%）
+</div>
+
+<h2>&#128163; 恐慌模式</h2>
+<table><tr><th>条件</th><th>N</th><th>3d</th><th>5d</th><th>10d</th><th>20d</th><th>20dW</th><th>30d</th></tr><tr><td>恐慌暴跌(vol>90+300下)</td><td>192</td><td style="color:#4ade80">+0.2%</td><td style="color:#4ade80">+0.1%</td><td style="color:#4ade80">+0.2%</td><td style="color:#4ade80">+0.5%<br><small>W55%</small></td><td style="color:#4ade80">+1.2%</td></tr><tr><td>恐慌反弹(vol>90+300上)</td><td>291</td><td style="color:#f87171">-0.0%</td><td style="color:#f87171">-0.2%</td><td style="color:#f87171">-0.8%</td><td style="color:#f87171">-2.1%<br><small>W48%</small></td><td style="color:#f87171">-2.7%</td></tr></table>
+
+<div class="box warn">
+  <b>&#128163; 沪深300恐慌：三个品种中最差</b><br>
+  &#8226; 恐慌暴跌(300下) N=192: 20d=+0.53%胜率55% — 基本没反弹<br>
+  &#8226; 恐慌反弹(300上) N=291: <b style="color:#f87171">所有到期日全部负收益</b> — 30d=-2.66%<br>
+  &#8226; <b>结论：</b>沪深300不需要恐慌抄底策略。高波本身就是卖出信号。
+</div>
+
+<h2>&#128200; 趋势策略</h2>
+<table><tr><th>模式</th><th>N</th><th>3d</th><th>5d</th><th>10d</th><th>20d</th><th>30d</th></tr><tr style="color:#fb923c"><td>高波+300下(反弹)</td><td>154</td><td style="color:#4ade80">+0.1%</td><td style="color:#4ade80">+0.4%</td><td style="color:#4ade80">+1.1%</td><td style="color:#4ade80">+2.0%</td><td style="color:#4ade80">+3.7%</td></tr><tr style="color:#f87171"><td>高波+300上(负)别碰</td><td>220</td><td style="color:#f87171">-0.4%</td><td style="color:#f87171">-0.7%</td><td style="color:#f87171">-1.0%</td><td style="color:#f87171">-2.1%</td><td style="color:#f87171">-3.3%</td></tr><tr style="color:#4ade80"><td>低波+300上(慢牛)</td><td>1227</td><td style="color:#4ade80">+0.1%</td><td style="color:#4ade80">+0.3%</td><td style="color:#4ade80">+0.6%</td><td style="color:#4ade80">+1.3%</td><td style="color:#4ade80">+2.1%</td></tr><tr style="color:#94a3b8"><td>低波+300下(观望)</td><td>1207</td><td style="color:#4ade80">+0.0%</td><td style="color:#4ade80">+0.0%</td><td style="color:#f87171">-0.0%</td><td style="color:#4ade80">+0.0%</td><td style="color:#4ade80">+0.3%</td></tr></table>
+
+<div class="box good">
+  <b>&#128200; 沪深300唯一可靠的策略</b><br>
+  &#8226; <b>高波+300下(N=154)：</b>20d=+2.04%胜率70%，30d=+3.71%胜率75%←<b style="color:#4ade80">最佳信号</b><br>
+  &#8226; <b>低波+300上(N=1245,36%时间)：</b>20d=+1.33%胜率60%←主策略<br>
+  &#8226; <span style="color:#f87171">高波+300上(别碰)：</span>所有到期日负收益，30d=-3.33%<br>
+  &#8226; <span style="color:#94a3b8">低波+300下(观望)：</span>N=1207(35%时间)但收益几乎为0，别买
+</div>
+
+<h2>&#128197; 到期日选择指南（沪深300）</h2>
+<table>
+  <tr><th>模式</th><th>最佳到期日</th><th>均值</th><th>胜率</th><th>行权价</th><th>优先级</th></tr>
+  <tr><td>&#127922; 彩票</td><td>6-15d</td><td>+1.2~1.9%</td><td>64-71%</td><td>平值-5%</td><td>N=73可用</td></tr>
+  <tr><td>&#128200; 高波+300下</td><td>15-30d</td><td>+2.0~3.7%</td><td>70-75%</td><td>平值-5%</td><td>&#9733;最佳</td></tr>
+  <tr><td>&#128200; 低波+300上</td><td>22-30d</td><td>+1.3~2.1%</td><td>60-61%</td><td>平值</td><td>主策略</td></tr>
+  <tr><td>&#128163; 恐慌暴跌(300下)</td><td>不用</td><td>+0.5%</td><td>~55%</td><td>—</td><td>不值得</td></tr>
+  <tr><td>&#128163; 恐慌反弹(300上)</td><td>不买</td><td>-</td><td>-</td><td>—</td><td>全负</td></tr>
+  <tr><td>&#128683; 低波+300下</td><td>观望</td><td>~0%</td><td>42-45%</td><td>不适合</td><td>不做</td></tr>
+</table>
+
+<div class="box">
+  <b>&#128276; 策略总结</b><br>
+  &#8226; <b>沪深300不适合彩票策略</b> — 反弹慢、胜率低、>10%概率极小<br>
+  &#8226; <b>恐慌信号在这里是反向指标</b> — 300上方恐慌20d=-2.05%<br>
+  &#8226; <b>唯一赚钱策略：趋势</b> — 低波+300上慢牛(36%时间) 或 高波+300下反弹<br>
+  &#8226; <b>当前（{cur.date()}）：</b>HV={hv:.1f}%，300{"上方" if ab300 else "下方"}，布林{bbp:.0f}%，20日{drink:+.1f}%
+</div>
+
+<footer><p>数据源：baostock &#8226; 回测：2012-2026</p></footer>
+</body></html>
