@@ -4,7 +4,7 @@
     "data_start": "2018-03-05",
     "data_end": "2026-05-15",
     "trading_days": 1973,
-    "generated_at": "2026-05-17 08:54:14"
+    "generated_at": "2026-05-17 08:57:12"
   },
   "latest_price": {
     "date": "2026-05-15",
@@ -107,10 +107,54 @@
       "oi_pcr_return": 0.3046240185487623
     },
     "signals": {
-      "high_pcr_fwd_return": 0.4345403626497468,
-      "high_pcr_down_pct": 47.183098591549296,
-      "low_pcr_fwd_return": 1.3681936864580466,
-      "low_pcr_up_pct": 52.89855072463768
+      "低PCR(<0.7)_极度看涨": {
+        "signal_count": 65,
+        "avg_5d_return": 2.442669583742328,
+        "up_probability": 60.0,
+        "down_probability": 40.0
+      },
+      "低PCR(<0.8)_看涨": {
+        "signal_count": 207,
+        "avg_5d_return": 1.0237199610760888,
+        "up_probability": 49.75845410628019,
+        "down_probability": 50.24154589371981
+      },
+      "高PCR(>1.0)_看跌": {
+        "signal_count": 151,
+        "avg_5d_return": 0.4014298803907682,
+        "up_probability": 51.65562913907284,
+        "down_probability": 48.34437086092716
+      },
+      "高PCR(>1.2)_极度看跌": {
+        "signal_count": 31,
+        "avg_5d_return": -0.41409215209787825,
+        "up_probability": 41.935483870967744,
+        "down_probability": 58.06451612903226
+      },
+      "近60日高PCR分位(>85%)": {
+        "signal_count": 120,
+        "avg_5d_return": 0.260015027871296,
+        "up_probability": 54.166666666666664,
+        "down_probability": 45.83333333333333
+      },
+      "近60日低PCR分位(<15%)": {
+        "signal_count": 105,
+        "avg_5d_return": 1.5174729402515235,
+        "up_probability": 52.38095238095239,
+        "down_probability": 47.61904761904761
+      },
+      "[旧]全量20%分位低PCR": {
+        "signal_count": 138,
+        "avg_5d_return": 1.3681936864580466,
+        "up_probability": 52.89855072463768,
+        "down_probability": 47.10144927536232
+      },
+      "[旧]全量80%分位高PCR": {
+        "signal_count": 142,
+        "avg_5d_return": 0.4345403626497468,
+        "up_probability": 52.816901408450704,
+        "down_probability": 47.183098591549296
+      }
     },
     "divergence": {
       "divergence_count": 413,

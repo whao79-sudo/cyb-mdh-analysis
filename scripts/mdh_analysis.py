@@ -955,45 +955,66 @@ def run_pcr_analysis(pcr_df, cyb_df):
         }
     
     # --- PCR 极端信号分析 ---
-    # 高 vol_pcr (认沽>认购) → 看跌情绪 → 后续可能下跌
-    # 低 vol_pcr (认购>认沽) → 看涨情绪 → 后续可能上涨
-    highs = merged[merged['vol_pcr'] > merged['vol_pcr'].quantile(0.8)].copy()
-    lows = merged[merged['vol_pcr'] < merged['vol_pcr'].quantile(0.2)].copy()
+    # 结合绝对阈值 + 滚动分位阈值
+    # 经验阈值:
+    #   vol_pcr > 1.0 = 认沽>认购 → 看跌情绪浓厚
+    #   vol_pcr < 0.7 = 认购>认沽 → 看涨情绪浓厚 (极端乐观)
+    #   vol_pcr < 0.8 = 轻度看涨
+    # 同时使用最近 60 个交易日的滚动 15%/85% 分位作为动态阈值
+    merged['vol_pcr_60d_high'] = merged['vol_pcr'].rolling(60).quantile(0.85)
+    merged['vol_pcr_60d_low'] = merged['vol_pcr'].rolling(60).quantile(0.15)
     
+    # 绝对阈值判断
+    soft_bullish = merged[merged['vol_pcr'] < 0.8].copy()
+    extreme_bullish = merged[merged['vol_pcr'] < 0.7].copy()
+    soft_bearish = merged[merged['vol_pcr'] > 1.0].copy()
+    extreme_bearish = merged[merged['vol_pcr'] > 1.2].copy()
+    
+    # 滚动分位判断 (近60日极端)
+    high_regime = merged[merged['vol_pcr'] > merged['vol_pcr_60d_high']].copy()
+    low_regime = merged[merged['vol_pcr'] < merged['vol_pcr_60d_low']].copy()
+    
+    # 实际用: 绝对阈值 <0.8 + 近60日低分位 的综合
+    # 更合理: 取两者的并集，但分别报告
     signal_results = {}
     
-    if len(highs) > 5:
-        # 高 PCR 后 N 天的涨跌
-        high_signals = []
-        for idx in highs.index:
+    def calc_fwd_signal(df, label, condition_df):
+        """计算条件发生后的 N 日收益"""
+        if len(condition_df) < 3:
+            return
+        fwd_rets = []
+        for idx in condition_df.index:
             pos = merged.index.get_loc(idx)
             if pos + 5 < len(merged):
                 fwd_ret = merged.iloc[pos+1:pos+6]['pct_return'].sum()
-                high_signals.append(fwd_ret)
-        if high_signals:
-            avg_high_fwd = np.mean(high_signals)
-            pct_negative = sum(1 for r in high_signals if r < 0) / len(high_signals) * 100
-            print(f"\n▶ PCR 极端信号分析 (80%/20%分位):")
-            print(f"   高 vol_pcr (>80分位) 后5日平均收益: {avg_high_fwd:+.4f}%")
-            print(f"   高 vol_pcr 后5日下跌概率: {pct_negative:.0f}%")
-            signal_results['high_pcr_fwd_return'] = float(avg_high_fwd)
-            signal_results['high_pcr_down_pct'] = float(pct_negative)
+                fwd_rets.append(fwd_ret)
+        if not fwd_rets:
+            return
+        avg = np.mean(fwd_rets)
+        pct_up = sum(1 for r in fwd_rets if r > 0) / len(fwd_rets) * 100
+        pct_down = sum(1 for r in fwd_rets if r < 0) / len(fwd_rets) * 100
+        print(f"   {label}: 共{len(fwd_rets)}次信号, 后5日均值 {avg:+.4f}%, 上涨概率 {pct_up:.0f}%, 下跌概率 {pct_down:.0f}%")
+        signal_results[label.replace(' ', '_')] = {
+            'signal_count': len(fwd_rets),
+            'avg_5d_return': float(avg),
+            'up_probability': float(pct_up),
+            'down_probability': float(pct_down)
+        }
     
-    if len(lows) > 5:
-        low_signals = []
-        for idx in lows.index:
-            pos = merged.index.get_loc(idx)
-            if pos + 5 < len(merged):
-                fwd_ret = merged.iloc[pos+1:pos+6]['pct_return'].sum()
-                low_signals.append(fwd_ret)
-        if low_signals:
-            avg_low_fwd = np.mean(low_signals)
-            pct_positive = sum(1 for r in low_signals if r > 0) / len(low_signals) * 100
-            print(f"   低 vol_pcr (<20分位) 后5日平均收益: {avg_low_fwd:+.4f}%")
-            print(f"   低 vol_pcr 后5日上涨概率: {pct_positive:.0f}%")
-            signal_results['low_pcr_fwd_return'] = float(avg_low_fwd)
-            signal_results['low_pcr_up_pct'] = float(pct_positive)
+    print(f"\n▶ PCR 极端信号分析:")
+    calc_fwd_signal(merged, "低PCR(<0.7)_极度看涨", extreme_bullish)
+    calc_fwd_signal(merged, "低PCR(<0.8)_看涨", soft_bullish)
+    calc_fwd_signal(merged, "高PCR(>1.0)_看跌", soft_bearish)
+    calc_fwd_signal(merged, "高PCR(>1.2)_极度看跌", extreme_bearish)
+    calc_fwd_signal(merged, "近60日高PCR分位(>85%)", high_regime)
+    calc_fwd_signal(merged, "近60日低PCR分位(<15%)", low_regime)
     
+    # 新旧阈值对比诊断
+    old_low = merged[merged['vol_pcr'] < merged['vol_pcr'].quantile(0.2)].copy()
+    old_high = merged[merged['vol_pcr'] > merged['vol_pcr'].quantile(0.8)].copy()
+    calc_fwd_signal(merged, "[旧]全量20%分位低PCR", old_low)
+    calc_fwd_signal(merged, "[旧]全量80%分位高PCR", old_high)
+
     results['signals'] = signal_results
     
     # --- vol_pcr vs oi_pcr 背离分析 ---
@@ -1159,11 +1180,17 @@ def generate_pcr_report_section(pcr_results):
     
     signals = pcr_results.get('signals', {})
     if signals:
-        lines.append("\n### PCR 极端信号\n")
-        lines.append(f"- **高 PCR (>80分位)** 后5日平均收益: {signals['high_pcr_fwd_return']:+.4f}%\n")
-        lines.append(f"- **高 PCR (>80分位)** 后5日下跌概率: {signals['high_pcr_down_pct']:.0f}%\n")
-        lines.append(f"- **低 PCR (<20分位)** 后5日平均收益: {signals['low_pcr_fwd_return']:+.4f}%\n")
-        lines.append(f"- **低 PCR (<20分位)** 后5日上涨概率: {signals['low_pcr_up_pct']:.0f}%\n")
+        lines.append("\n### PCR 极端信号 (后5日收益)\n")
+        lines.append("**判断依据**: 结合绝对阈值 + 滚动60日分位\n")
+        lines.append("- **<0.7** = 极度低估, 后市看涨预期\n")
+        lines.append("- **0.7~0.8** = 轻度低估\n")
+        lines.append("- **>1.0** = 轻度看跌预期\n")
+        lines.append("- **>1.2** = 极度看跌预期\n")
+        lines.append("- **近60日15%/85%分位** = 捕捉近期异常情绪\n")
+        lines.append("")
+        for key, val in signals.items():
+            if isinstance(val, dict) and 'avg_5d_return' in val:
+                lines.append(f"- **{key}**: 信号{val['signal_count']}次 | 后5日均值 {val['avg_5d_return']:+.4f}% | 上涨概率 {val['up_probability']:.0f}%\n")
     
     granger = pcr_results.get('granger_pcr_to_vol', {})
     if granger:
