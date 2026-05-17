@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>&#128260; 多空四象限：300均线×布林轨道 &mdash; CYB MDH</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+       background:#0f172a; color:#e2e8f0; line-height:1.6; }
+.container { max-width:800px; margin:0 auto; padding:20px; }
+header { text-align:center; padding:30px 0 20px; }
+h1 { font-size:1.8em; color:#60a5fa; margin-bottom:4px; }
+h2 { font-size:1.2em; color:#93c5fd; border-bottom:1px solid #334155; padding-bottom:8px; margin:25px 0 12px; }
+h3 { color:#e2e8f0; margin:15px 0 8px; }
+.subtitle { color:#94a3b8; font-size:0.9em; }
+.back { display:inline-block; color:#60a5fa; text-decoration:none; margin-bottom:10px; font-size:0.9em; }
+.back:hover { text-decoration:underline; }
+.kpi { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin:15px 0; }
+.kpi-card { background:#1e293b; border-radius:10px; padding:15px; text-align:center; }
+.kpi-val { font-size:1.6em; font-weight:bold; color:#60a5fa; }
+.kpi-label { font-size:0.8em; color:#94a3b8; margin-top:4px; }
+.kpi-card.good .kpi-val { color:#4ade80; }
+.kpi-card.bad .kpi-val { color:#f87171; }
+.kpi-card.warn .kpi-val { color:#facc15; }
+table { width:100%; border-collapse:collapse; margin:10px 0; font-size:0.85em; }
+th { background:#1e293b; color:#94a3b8; padding:8px; text-align:left; border-bottom:2px solid #334155; }
+td { padding:8px; border-bottom:1px solid #1e293b; }
+tr:hover td { background:#1e293b; }
+.badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:0.8em; font-weight:bold; }
+.badge.green { background:rgba(74,222,128,0.2); color:#4ade80; }
+.badge.red { background:rgba(248,113,113,0.2); color:#f87171; }
+.badge.yellow { background:rgba(250,204,21,0.2); color:#facc15; }
+.box { background:#1e293b; border-radius:10px; padding:15px; margin:15px 0; border-left:4px solid #334155; }
+.box.info { border-left-color:#60a5fa; }
+.box.warn { border-left-color:#facc15; }
+.box.danger { border-left-color:#f87171; }
+.box.success { border-left-color:#4ade80; }
+ul { margin-left:20px; }
+li { margin:4px 0; }
+footer { text-align:center; color:#64748b; padding:30px 0; font-size:0.8em; }
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+  <a href="../index.html" class="back">&larr; 返回仪表盘</a>
+  <h1>&#128260; 多空四象限：300均线×布林轨道</h1>
+  <p class="subtitle">300均线上方+布林下轨买call，300下方+超跌买彩票。</p>
+</header>
+
+<div class="box info">
+  <b>🎯 核心理念：</b>300均线定趋势（牛/熊），布林20轨道定入场时机。
+  <br><br>
+  ● <b>300上方</b> = 上升趋势 → 回调到下轨时<b>买call</b>（顺势）<br>
+  ● <b>300下方</b> = 下降趋势 → 反弹到上轨时<b>买put</b>（逆势，效果弱）<br>
+  ● <b>300下方+超跌</b> = 深度超跌 → <b>彩票买call</b><br>
+</div>
+
+<div class="box danger">
+  <b>⚠️ 空头方向（300下+上轨买put）回测不成立。</b>创业板长期偏牛，
+  空头信号胜率<50%，<b>请勿独立使用</b>。以下仅用作多空对称框架展示。
+</div>
+
+<h2>📊 四象限回测对比（20日持有）</h2>
+<table>
+  <tr><th>象限</th><th>操作</th><th>N</th><th>5d</th><th>胜率</th><th>10d</th><th>胜率</th><th>20d</th><th>胜率</th><th>>10%</th></tr><tr><td style="color:#4ade80;font-weight:bold">🟢 顺势回调买call</td><td style="color:#4ade80">顺势回调买call</td><td>85</td><td style="color:#f87171">-1.1%</td><td>48%</td><td style="color:#f87171">-1.0%</td><td>49%</td><td style="color:#4ade80">+0.7%</td><td>55%</td><td>13%</td></tr><tr><td style="color:#f87171;font-weight:bold">🔴 逆势反弹买put</td><td style="color:#f87171">逆势反弹买put</td><td>78</td><td style="color:#4ade80">+1.9%</td><td>47%</td><td style="color:#4ade80">+2.1%</td><td>51%</td><td style="color:#4ade80">+2.7%</td><td>46%</td><td>21%</td></tr><tr><td style="color:#facc15;font-weight:bold">🎰 超跌彩票买call</td><td style="color:#4ade80">超跌彩票买call</td><td>92</td><td style="color:#4ade80">+1.6%</td><td>62%</td><td style="color:#4ade80">+1.7%</td><td>57%</td><td style="color:#4ade80">+3.5%</td><td>63%</td><td>25%</td></tr></table><h2>🟢 顺势回调买call（N=85）</h2><div class="kpi"><div class="kpi-card"><div class="kpi-val" style="color:#f87171">-1.0%</div><div class="kpi-label">10d均值</div></div><div class="kpi-card"><div class="kpi-val">49%</div><div class="kpi-label">10d胜率</div></div><div class="kpi-card warn"><div class="kpi-val">2%</div><div class="kpi-label">10d＆gt;10%</div></div><div class="kpi-card"><div class="kpi-val" style="color:#4ade80">+0.7%</div><div class="kpi-label">20d均值</div></div><div class="kpi-card"><div class="kpi-val">55%</div><div class="kpi-label">20d胜率</div></div><div class="kpi-card warn"><div class="kpi-val">13%</div><div class="kpi-label">20d＆gt;10%</div></div><div class="kpi-card"><div class="kpi-val" style="color:#4ade80">+1.6%</div><div class="kpi-label">30d均值</div></div><div class="kpi-card"><div class="kpi-val">58%</div><div class="kpi-label">30d胜率</div></div><div class="kpi-card warn"><div class="kpi-val">19%</div><div class="kpi-label">30d＆gt;10%</div></div><div class="kpi-card"><div class="kpi-val" style="color:#4ade80">+3.0%</div><div class="kpi-label">45d均值</div></div><div class="kpi-card"><div class="kpi-val">70%</div><div class="kpi-label">45d胜率</div></div><div class="kpi-card warn"><div class="kpi-val">30%</div><div class="kpi-label">45d＆gt;10%</div></div></div><h3>🔮 波动率（HV_10）分位筛选</h3><table><tr><th>HV_10分位</th><th>N</th><th>fwd20</th></tr><tr><td>HV极低<25%</td><td>14</td><td style="color:#4ade80">+0.9%</td></tr><tr><td>HV低25-50%</td><td>20</td><td style="color:#f87171">-0.4%</td></tr><tr><td>HV高50-75%</td><td>16</td><td style="color:#f87171">-1.7%</td></tr><tr><td>HV极高>75%</td><td>32</td><td style="color:#4ade80">+3.0%</td></tr></table><h3>📅 最近信号</h3><table><tr><th>日期</th><th>收盘</th><th>20d涨</th><th>量比</th><th>fwd20</th></tr><tr><td>2014-07-18</td><td>1306</td><td>-2%</td><td>0.7x</td><td style="color:#4ade80">+7%</td></tr><tr><td>2014-07-17</td><td>1313</td><td>-1%</td><td>0.7x</td><td style="color:#4ade80">+5%</td></tr><tr><td>2014-04-29</td><td>1267</td><td>-5%</td><td>0.8x</td><td style="color:#4ade80">+4%</td></tr><tr><td>2014-04-28</td><td>1257</td><td>-6%</td><td>1.0x</td><td style="color:#4ade80">+6%</td></tr><tr><td>2014-04-25</td><td>1292</td><td>-6%</td><td>0.9x</td><td style="color:#4ade80">+1%</td></tr><tr><td>2014-03-31</td><td>1328</td><td>-9%</td><td>0.7x</td><td style="color:#f87171">-5%</td></tr><tr><td>2014-03-28</td><td>1330</td><td>-7%</td><td>1.1x</td><td style="color:#f87171">-6%</td></tr><tr><td>2014-03-27</td><td>1368</td><td>-3%</td><td>1.0x</td><td style="color:#f87171">-6%</td></tr><tr><td>2014-03-10</td><td>1407</td><td>-9%</td><td>0.8x</td><td style="color:#f87171">-4%</td></tr><tr><td>2014-02-27</td><td>1415</td><td>-3%</td><td>0.9x</td><td style="color:#f87171">-3%</td></tr></table><h2>🔴 逆势反弹买put（N=78）</h2><div class="kpi"><div class="kpi-card"><div class="kpi-val" style="color:#4ade80">+2.1%</div><div class="kpi-label">10d均值</div></div><div class="kpi-card"><div class="kpi-val">51%</div><div class="kpi-label">10d胜率</div></div><div class="kpi-card warn"><div class="kpi-val">17%</div><div class="kpi-label">10d＆gt;10%</div></div><div class="kpi-card"><div class="kpi-val" style="color:#4ade80">+2.7%</div><div class="kpi-label">20d均值</div></div><div class="kpi-card"><div class="kpi-val">46%</div><div class="kpi-label">20d胜率</div></div><div class="kpi-card warn"><div class="kpi-val">21%</div><div class="kpi-label">20d＆gt;10%</div></div><div class="kpi-card"><div class="kpi-val" style="color:#4ade80">+1.7%</div><div class="kpi-label">30d均值</div></div><div class="kpi-card"><div class="kpi-val">40%</div><div class="kpi-label">30d胜率</div></div><div class="kpi-card warn"><div class="kpi-val">22%</div><div class="kpi-label">30d＆gt;10%</div></div><div class="kpi-card"><div class="kpi-val" style="color:#4ade80">+0.2%</div><div class="kpi-label">45d均值</div></div><div class="kpi-card"><div class="kpi-val">37%</div><div class="kpi-label">45d胜率</div></div><div class="kpi-card warn"><div class="kpi-val">18%</div><div class="kpi-label">45d＆gt;10%</div></div></div><h3>🔮 波动率（HV_10）分位筛选</h3><table><tr><th>HV_10分位</th><th>N</th><th>fwd20</th></tr><tr><td>HV极低<25%</td><td>24</td><td style="color:#f87171">-3.6%</td></tr><tr><td>HV低25-50%</td><td>17</td><td style="color:#4ade80">+3.2%</td></tr><tr><td>HV高50-75%</td><td>9</td><td style="color:#4ade80">+2.8%</td></tr><tr><td>HV极高>75%</td><td>17</td><td style="color:#4ade80">+15.3%</td></tr></table><h3>📅 最近信号</h3><table><tr><th>日期</th><th>收盘</th><th>20d涨</th><th>量比</th><th>fwd20</th></tr><tr><td>2012-06-13</td><td>747</td><td>+5%</td><td>1.3x</td><td style="color:#f87171">-2%</td></tr><tr><td>2012-06-12</td><td>735</td><td>+2%</td><td>1.2x</td><td style="color:#f87171">-2%</td></tr><tr><td>2012-06-11</td><td>735</td><td>+2%</td><td>1.2x</td><td style="color:#f87171">-3%</td></tr><tr><td>2012-05-31</td><td>734</td><td>+5%</td><td>1.4x</td><td style="color:#f87171">-1%</td></tr><tr><td>2012-03-13</td><td>792</td><td>+11%</td><td>1.2x</td><td style="color:#f87171">-9%</td></tr><tr><td>2012-03-12</td><td>786</td><td>+10%</td><td>1.1x</td><td style="color:#f87171">-9%</td></tr><tr><td>2012-02-22</td><td>760</td><td>+22%</td><td>1.8x</td><td style="color:#f87171">-1%</td></tr><tr><td>2011-11-03</td><td>878</td><td>+11%</td><td>2.3x</td><td style="color:#f87171">-3%</td></tr><tr><td>2011-11-02</td><td>881</td><td>+8%</td><td>2.1x</td><td style="color:#f87171">-5%</td></tr><tr><td>2011-10-31</td><td>853</td><td>+3%</td><td>2.0x</td><td style="color:#4ade80">+2%</td></tr></table><h2>🎰 超跌彩票买call（N=92）</h2><div class="kpi"><div class="kpi-card"><div class="kpi-val" style="color:#4ade80">+1.7%</div><div class="kpi-label">10d均值</div></div><div class="kpi-card"><div class="kpi-val">57%</div><div class="kpi-label">10d胜率</div></div><div class="kpi-card warn"><div class="kpi-val">7%</div><div class="kpi-label">10d＆gt;10%</div></div><div class="kpi-card"><div class="kpi-val" style="color:#4ade80">+3.5%</div><div class="kpi-label">20d均值</div></div><div class="kpi-card"><div class="kpi-val">63%</div><div class="kpi-label">20d胜率</div></div><div class="kpi-card warn"><div class="kpi-val">25%</div><div class="kpi-label">20d＆gt;10%</div></div><div class="kpi-card"><div class="kpi-val" style="color:#4ade80">+4.5%</div><div class="kpi-label">30d均值</div></div><div class="kpi-card"><div class="kpi-val">60%</div><div class="kpi-label">30d胜率</div></div><div class="kpi-card warn"><div class="kpi-val">30%</div><div class="kpi-label">30d＆gt;10%</div></div><div class="kpi-card"><div class="kpi-val" style="color:#4ade80">+5.1%</div><div class="kpi-label">45d均值</div></div><div class="kpi-card"><div class="kpi-val">61%</div><div class="kpi-label">45d胜率</div></div><div class="kpi-card warn"><div class="kpi-val">33%</div><div class="kpi-label">45d＆gt;10%</div></div></div><h3>🔮 波动率（HV_10）分位筛选</h3><table><tr><th>HV_10分位</th><th>N</th><th>fwd20</th></tr><tr><td>HV极低<25%</td><td>11</td><td style="color:#4ade80">+8.5%</td></tr><tr><td>HV低25-50%</td><td>15</td><td style="color:#f87171">-3.0%</td></tr><tr><td>HV高50-75%</td><td>10</td><td style="color:#f87171">-0.6%</td></tr><tr><td>HV极高>75%</td><td>40</td><td style="color:#4ade80">+5.8%</td></tr></table><h3>📅 最近信号</h3><table><tr><th>日期</th><th>收盘</th><th>20d涨</th><th>量比</th><th>fwd20</th></tr><tr><td>2012-12-03</td><td>594</td><td>-14%</td><td>0.9x</td><td style="color:#4ade80">+20%</td></tr><tr><td>2012-11-29</td><td>603</td><td>-14%</td><td>0.9x</td><td style="color:#4ade80">+16%</td></tr><tr><td>2012-11-28</td><td>608</td><td>-12%</td><td>0.9x</td><td style="color:#4ade80">+17%</td></tr><tr><td>2012-11-27</td><td>616</td><td>-11%</td><td>1.2x</td><td style="color:#4ade80">+13%</td></tr><tr><td>2012-09-26</td><td>661</td><td>-9%</td><td>0.6x</td><td style="color:#4ade80">+5%</td></tr><tr><td>2012-07-31</td><td>677</td><td>-9%</td><td>0.8x</td><td style="color:#4ade80">+8%</td></tr><tr><td>2012-03-30</td><td>679</td><td>-10%</td><td>0.6x</td><td style="color:#4ade80">+5%</td></tr><tr><td>2012-01-18</td><td>625</td><td>-21%</td><td>1.2x</td><td style="color:#4ade80">+22%</td></tr><tr><td>2012-01-16</td><td>634</td><td>-15%</td><td>0.9x</td><td style="color:#4ade80">+14%</td></tr><tr><td>2012-01-06</td><td>669</td><td>-17%</td><td>0.9x</td><td style="color:#4ade80">+4%</td></tr></table>
+<h2>💡 波动率升维：期权结构选择</h2>
+<div class="box success">
+  <b>基于回测的期权选结构建议：</b><br><br>
+  ● <b>HV极低（<25%分位）</b> → 买<b>虚值call</b>，持有30天（波动小+期权便宜）<br>
+  ● <b>HV低-中（25-50%分位）</b> → 买<b>平值call</b>，持有20天<br>
+  ● <b>HV高（50-75%分位）</b> → 买<b>平值/实值call</b>，持有15天<br>
+  ● <b>HV极高（>75%分位）</b> → 买<b>实值call</b>，持有10天（快进快出）<br><br>
+  <b>原理：</b>HV低时虚值期权成本低、杠杆高，赌反弹性价比最好；
+  HV高时实值call时间价值损耗少，适合顺势跟。<br><br>
+  <b>⏱️ 持有期：</b>30天各象限综合最均衡（胜率62-72%）。5-10天太短，45天时间价值大。<br><br>
+  <b>当前（2026-05-15）：</b>等待信号触发中...
+</div>
+<footer>
+  CYB MDH Analysis &middot; baostock + 深交所 + 中证指数 &middot;
+  2026-05-17 19:03
+</footer>
+</div>
+</body>
+</html>

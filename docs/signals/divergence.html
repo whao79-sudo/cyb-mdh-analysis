@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>&#9888;&#65039; 背离信号：价格&波动率恐慌背离 &mdash; CYB MDH</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+       background:#0f172a; color:#e2e8f0; line-height:1.6; }
+.container { max-width:800px; margin:0 auto; padding:20px; }
+header { text-align:center; padding:30px 0 20px; }
+h1 { font-size:1.8em; color:#60a5fa; margin-bottom:4px; }
+h2 { font-size:1.2em; color:#93c5fd; border-bottom:1px solid #334155; padding-bottom:8px; margin:25px 0 12px; }
+h3 { color:#e2e8f0; margin:15px 0 8px; }
+.subtitle { color:#94a3b8; font-size:0.9em; }
+.back { display:inline-block; color:#60a5fa; text-decoration:none; margin-bottom:10px; font-size:0.9em; }
+.back:hover { text-decoration:underline; }
+.kpi { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin:15px 0; }
+.kpi-card { background:#1e293b; border-radius:10px; padding:15px; text-align:center; }
+.kpi-val { font-size:1.6em; font-weight:bold; color:#60a5fa; }
+.kpi-label { font-size:0.8em; color:#94a3b8; margin-top:4px; }
+.kpi-card.good .kpi-val { color:#4ade80; }
+.kpi-card.bad .kpi-val { color:#f87171; }
+.kpi-card.warn .kpi-val { color:#facc15; }
+table { width:100%; border-collapse:collapse; margin:10px 0; font-size:0.85em; }
+th { background:#1e293b; color:#94a3b8; padding:8px; text-align:left; border-bottom:2px solid #334155; }
+td { padding:8px; border-bottom:1px solid #1e293b; }
+tr:hover td { background:#1e293b; }
+.badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:0.8em; font-weight:bold; }
+.badge.green { background:rgba(74,222,128,0.2); color:#4ade80; }
+.badge.red { background:rgba(248,113,113,0.2); color:#f87171; }
+.badge.yellow { background:rgba(250,204,21,0.2); color:#facc15; }
+.box { background:#1e293b; border-radius:10px; padding:15px; margin:15px 0; border-left:4px solid #334155; }
+.box.info { border-left-color:#60a5fa; }
+.box.warn { border-left-color:#facc15; }
+.box.danger { border-left-color:#f87171; }
+.box.success { border-left-color:#4ade80; }
+ul { margin-left:20px; }
+li { margin:4px 0; }
+footer { text-align:center; color:#64748b; padding:30px 0; font-size:0.8em; }
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+  <a href="../index.html" class="back">&larr; 返回仪表盘</a>
+  <h1>&#9888;&#65039; 背离信号：价格&波动率恐慌背离</h1>
+  <p class="subtitle">多维度恐慌背离/机构背离检测（HV/QVIX/PCR/OI）。</p>
+</header>
+
+<div class="box info">
+  <b>🎯 核心理念：</b>当价格下跌但波动率/PCR等指标反向上升时，称为"背离"。
+  背离信号捕捉市场情绪极端化时刻——恐慌或机构对冲，通常预示后续反转。
+</div>
+<h2>📡 当前背离状态 (2026-05-15)</h2>
+<div class="qt">
+  <div class="qtc" style="border-color:#facc15">
+    <div class="qtv" style="color:#facc15">2/5</div>
+    <div class="qtl">恐慌分数</div>
+  </div>
+  <div class="qtc" style="border-color:#60a5fa">
+    <div class="qtv" style="font-size:1em;color:#60a5fa">🏛️ OI>>vol机构背离、⚡ 波动率加速</div>
+    <div class="qtl">活跃背离信号</div>
+  </div>
+</div>
+<p style="color:#facc15;font-weight:bold;text-align:center;">🏛️ OI>>vol机构背离、⚡ 波动率加速</p>
+<h2>🔍 背离信号分类回测</h2>
+<p>每个信号触发后未来20日收益统计。</p>
+<div class="box" style="border-left-color:#8b5cf6">
+  <h3 style="color:#8b5cf6">OI>>vol(机构背离)</h3>
+  <p style="color:#94a3b8;">机构大量持有卖权远超成交量：防御性对冲（总N=103次）</p>
+  <div class="kpi">
+    <div class="kpi-card good"><div class="kpi-val">103</div><div class="kpi-label">总信号</div></div>
+    <div class="kpi-card good"><div class="kpi-val">+4.2%</div><div class="kpi-label">20d均值</div></div>
+    <div class="kpi-card good"><div class="kpi-val">64%</div><div class="kpi-label">20d胜率</div></div>
+    <div class="kpi-card warn"><div class="kpi-val">23%</div><div class="kpi-label">>10%概率</div></div>
+  </div>
+  <p> <span style="color:#4ade80">5d: +1.6%</span> <span style="color:#4ade80">10d: +2.8%</span> <span style="color:#4ade80">20d: +4.2%</span> <span style="color:#4ade80">30d: +5.4%</span></p></div>
+<div class="box" style="border-left-color:#f87171">
+  <h3 style="color:#f87171">HV恐慌背离</h3>
+  <p style="color:#94a3b8;">HV_10分位短期急升同时价格下跌（总N=433次）</p>
+  <div class="kpi">
+    <div class="kpi-card good"><div class="kpi-val">433</div><div class="kpi-label">总信号</div></div>
+    <div class="kpi-card good"><div class="kpi-val">+2.7%</div><div class="kpi-label">20d均值</div></div>
+    <div class="kpi-card good"><div class="kpi-val">57%</div><div class="kpi-label">20d胜率</div></div>
+    <div class="kpi-card warn"><div class="kpi-val">19%</div><div class="kpi-label">>10%概率</div></div>
+  </div>
+  <p> <span style="color:#4ade80">5d: +0.9%</span> <span style="color:#4ade80">10d: +1.3%</span> <span style="color:#4ade80">20d: +2.7%</span> <span style="color:#4ade80">30d: +3.4%</span></p></div>
+<div class="box" style="border-left-color:#fb923c">
+  <h3 style="color:#fb923c">波动率加速</h3>
+  <p style="color:#94a3b8;">短期HV分位 > 长期HV分位+20pp（总N=673次）</p>
+  <div class="kpi">
+    <div class="kpi-card good"><div class="kpi-val">673</div><div class="kpi-label">总信号</div></div>
+    <div class="kpi-card good"><div class="kpi-val">+2.3%</div><div class="kpi-label">20d均值</div></div>
+    <div class="kpi-card normal"><div class="kpi-val">54%</div><div class="kpi-label">20d胜率</div></div>
+    <div class="kpi-card warn"><div class="kpi-val">20%</div><div class="kpi-label">>10%概率</div></div>
+  </div>
+  <p> <span style="color:#4ade80">5d: +1.0%</span> <span style="color:#4ade80">10d: +1.4%</span> <span style="color:#4ade80">20d: +2.3%</span> <span style="color:#4ade80">30d: +2.7%</span></p></div>
+<div class="box" style="border-left-color:#f97316">
+  <h3 style="color:#f97316">QVIX恐慌背离</h3>
+  <p style="color:#94a3b8;">隐含波动率上升同时价格下跌（总N=225次）</p>
+  <div class="kpi">
+    <div class="kpi-card good"><div class="kpi-val">225</div><div class="kpi-label">总信号</div></div>
+    <div class="kpi-card good"><div class="kpi-val">+2.0%</div><div class="kpi-label">20d均值</div></div>
+    <div class="kpi-card normal"><div class="kpi-val">52%</div><div class="kpi-label">20d胜率</div></div>
+    <div class="kpi-card warn"><div class="kpi-val">11%</div><div class="kpi-label">>10%概率</div></div>
+  </div>
+  <p> <span style="color:#4ade80">5d: +0.7%</span> <span style="color:#4ade80">10d: +1.4%</span> <span style="color:#4ade80">20d: +2.0%</span> <span style="color:#4ade80">30d: +2.0%</span></p></div>
+<div class="box" style="border-left-color:#e879f9">
+  <h3 style="color:#e879f9">vol>>OI(散户恐慌)</h3>
+  <p style="color:#94a3b8;">成交量PCR远超持仓量PCR：散户恐慌买入认沽（总N=146次）</p>
+  <div class="kpi">
+    <div class="kpi-card good"><div class="kpi-val">146</div><div class="kpi-label">总信号</div></div>
+    <div class="kpi-card good"><div class="kpi-val">+1.0%</div><div class="kpi-label">20d均值</div></div>
+    <div class="kpi-card normal"><div class="kpi-val">47%</div><div class="kpi-label">20d胜率</div></div>
+    <div class="kpi-card warn"><div class="kpi-val">10%</div><div class="kpi-label">>10%概率</div></div>
+  </div>
+  <p> <span style="color:#4ade80">5d: +0.3%</span> <span style="color:#4ade80">10d: +0.2%</span> <span style="color:#4ade80">20d: +1.0%</span> <span style="color:#4ade80">30d: +2.1%</span></p></div>
+<div class="box" style="border-left-color:#a78bfa">
+  <h3 style="color:#a78bfa">PCR恐慌背离</h3>
+  <p style="color:#94a3b8;">PCR成交量短期急升同时价格下跌（总N=186次）</p>
+  <div class="kpi">
+    <div class="kpi-card good"><div class="kpi-val">186</div><div class="kpi-label">总信号</div></div>
+    <div class="kpi-card good"><div class="kpi-val">+1.1%</div><div class="kpi-label">20d均值</div></div>
+    <div class="kpi-card normal"><div class="kpi-val">47%</div><div class="kpi-label">20d胜率</div></div>
+    <div class="kpi-card warn"><div class="kpi-val">8%</div><div class="kpi-label">>10%概率</div></div>
+  </div>
+  <p> <span style="color:#4ade80">5d: +0.1%</span> <span style="color:#4ade80">10d: +0.2%</span> <span style="color:#4ade80">20d: +1.1%</span> <span style="color:#4ade80">30d: +1.6%</span></p></div>
+<h2>📅 近期背离事件</h2>
+<table><tr><th>日期</th><th>收盘</th><th>背离信号</th><th>分数</th><th>之后20d</th></tr><tr><td>2026-01-21</td><td>3296</td><td style="color:#facc15;font-size:0.9em">PCR恐慌</td><td>1</td><td style="color:#4ade80">+2%</td></tr><tr><td>2026-01-20</td><td>3278</td><td style="color:#facc15;font-size:0.9em">PCR恐慌</td><td>1</td><td style="color:#4ade80">+2%</td></tr><tr><td>2026-01-19</td><td>3338</td><td style="color:#facc15;font-size:0.9em">PCR恐慌</td><td>1</td><td style="color:#f87171">-1%</td></tr><tr><td>2026-01-14</td><td>3349</td><td style="color:#facc15;font-size:0.9em">OI>>vol</td><td>1</td><td style="color:#f87171">-2%</td></tr><tr><td>2026-01-13</td><td>3322</td><td style="color:#facc15;font-size:0.9em">OI>>vol</td><td>1</td><td style="color:#94a3b8">-0%</td></tr><tr><td>2026-01-12</td><td>3388</td><td style="color:#facc15;font-size:0.9em">OI>>vol</td><td>1</td><td style="color:#f87171">-2%</td></tr><tr><td>2026-01-09</td><td>3328</td><td style="color:#facc15;font-size:0.9em">OI>>vol</td><td>1</td><td style="color:#f87171">-3%</td></tr><tr><td>2026-01-07</td><td>3330</td><td style="color:#facc15;font-size:0.9em">OI>>vol</td><td>1</td><td style="color:#f87171">-0%</td></tr><tr><td>2026-01-06</td><td>3319</td><td style="color:#facc15;font-size:0.9em">OI>>vol</td><td>1</td><td style="color:#4ade80">+0%</td></tr><tr><td>2025-12-31</td><td>3203</td><td style="color:#facc15;font-size:0.9em">QVIX恐慌 + PCR恐慌</td><td>2</td><td style="color:#4ade80">+4%</td></tr><tr><td>2025-12-26</td><td>3244</td><td style="color:#facc15;font-size:0.9em">OI>>vol</td><td>1</td><td style="color:#4ade80">+3%</td></tr><tr><td>2025-12-23</td><td>3205</td><td style="color:#facc15;font-size:0.9em">OI>>vol</td><td>1</td><td style="color:#4ade80">+4%</td></tr><tr><td>2025-12-22</td><td>3192</td><td style="color:#facc15;font-size:0.9em">OI>>vol</td><td>1</td><td style="color:#4ade80">+3%</td></tr><tr><td>2025-12-19</td><td>3122</td><td style="color:#facc15;font-size:0.9em">HV恐慌 + QVIX恐慌 + OI>>vol</td><td>3</td><td style="color:#4ade80">+5%</td></tr><tr><td>2025-12-18</td><td>3107</td><td style="color:#facc15;font-size:0.9em">HV恐慌 + QVIX恐慌 + PCR恐慌</td><td>4</td><td style="color:#4ade80">+7%</td></tr><tr><td>2025-12-17</td><td>3176</td><td style="color:#facc15;font-size:0.9em">HV恐慌 + QVIX恐慌 + OI>>vol</td><td>3</td><td style="color:#4ade80">+6%</td></tr><tr><td>2025-12-16</td><td>3072</td><td style="color:#facc15;font-size:0.9em">HV恐慌 + QVIX恐慌 + PCR恐慌</td><td>3</td><td style="color:#4ade80">+10%</td></tr><tr><td>2025-12-15</td><td>3138</td><td style="color:#facc15;font-size:0.9em">QVIX恐慌 + PCR恐慌</td><td>3</td><td style="color:#4ade80">+7%</td></tr><tr><td>2025-12-12</td><td>3194</td><td style="color:#facc15;font-size:0.9em">OI>>vol</td><td>1</td><td style="color:#4ade80">+4%</td></tr><tr><td>2025-12-11</td><td>3164</td><td style="color:#facc15;font-size:0.9em">OI>>vol</td><td>1</td><td style="color:#4ade80">+7%</td></tr></table>
+<div class="box warn">
+  <b>💡 背离信号 vs 其他信号：</b><br>
+  ● 背离信号频率高（每年20-50次），但大部分只是正常波动，不是反转前兆<br>
+  ● <b>OI>>vol(机构背离)</b>质量最高（N=103, fwd20=+4.2%, 胜率64%），但信号稀少<br>
+  ● <b>HV恐慌背离</b>频率最高（N=433），fwd20=+2.7%<br>
+  ● 背离的最佳用法：作为其他信号的<u>确认器</u>，并非独立交易信号
+</div>
+<footer>
+  CYB MDH Analysis &middot; baostock + 深交所 + 中证指数 &middot;
+  2026-05-17 19:03
+</footer>
+</div>
+</body>
+</html>

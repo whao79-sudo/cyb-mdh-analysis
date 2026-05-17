@@ -753,6 +753,192 @@ def render_thermometer(data):
     h += '</table>'
     return h
 
+
+
+def render_divergence(data):
+    """背离信号检测 — 多维度恐慌背离/机构背离"""
+    dp = os.path.join(DATA_DIR, "divergence_signal.json")
+    if not os.path.exists(dp):
+        return '<div class="box warn">数据文件未生成，请先运行分析脚本。</div>'
+    with open(dp) as f:
+        d = json.load(f)
+    cur = d['current']
+    ec = []
+    if cur.get('hv_panic'): ec.append("📉 HV恐慌背离")
+    if cur.get('qvix_panic'): ec.append("⚠️ QVIX恐慌背离")
+    if cur.get('pcr_panic'): ec.append("📊 PCR恐慌背离")
+    if cur.get('oi_gt_vol'): ec.append("🏛️ OI>>vol机构背离")
+    if cur.get('vol_gt_oi'): ec.append("😱 vol>>OI散户恐慌")
+    if cur.get('hv_accel'): ec.append("⚡ 波动率加速")
+    now_signals = '、'.join(ec) if ec else '无活跃背离信号'
+    now_color = '#f87171' if cur.get('panic_score',0) >= 3 else '#facc15' if cur.get('panic_score',0) >= 1 else '#4ade80'
+    h = f'''
+<div class="box info">
+  <b>🎯 核心理念：</b>当价格下跌但波动率/PCR等指标反向上升时，称为"背离"。
+  背离信号捕捉市场情绪极端化时刻——恐慌或机构对冲，通常预示后续反转。
+</div>
+<h2>📡 当前背离状态 ({cur.get("date","")})</h2>
+<div class="qt">
+  <div class="qtc" style="border-color:{now_color}">
+    <div class="qtv" style="color:{now_color}">{cur.get("panic_score",0)}/5</div>
+    <div class="qtl">恐慌分数</div>
+  </div>
+  <div class="qtc" style="border-color:#60a5fa">
+    <div class="qtv" style="font-size:1em;color:#60a5fa">{now_signals[:40]}</div>
+    <div class="qtl">活跃背离信号</div>
+  </div>
+</div>
+<p style="color:{now_color};font-weight:bold;text-align:center;">{now_signals}</p>
+<h2>🔍 背离信号分类回测</h2>
+<p>每个信号触发后未来20日收益统计。</p>'''
+    sig_order = [
+        ("oi_gt_vol", "OI>>vol(机构背离)", "#8b5cf6", "机构大量持有卖权远超成交量：防御性对冲"),
+        ("hv_panic", "HV恐慌背离", "#f87171", "HV_10分位短期急升同时价格下跌"),
+        ("hv_accel", "波动率加速", "#fb923c", "短期HV分位 > 长期HV分位+20pp"),
+        ("qvix_panic", "QVIX恐慌背离", "#f97316", "隐含波动率上升同时价格下跌"),
+        ("vol_gt_oi", "vol>>OI(散户恐慌)", "#e879f9", "成交量PCR远超持仓量PCR：散户恐慌买入认沽"),
+        ("pcr_panic", "PCR恐慌背离", "#a78bfa", "PCR成交量短期急升同时价格下跌"),
+    ]
+    for sk, sname, scol, sdesc in sig_order:
+        if sk not in d["signals"]: continue
+        s = d["signals"][sk]
+        h20 = s["fwd_holding"].get("20d", {})
+        m = h20.get("mean", 0)
+        wr = h20.get("win_rate", 50)
+        gt10 = h20.get("gt10_pct", 0)
+        h += f'''
+<div class="box" style="border-left-color:{scol}">
+  <h3 style="color:{scol}">{sname}</h3>
+  <p style="color:#94a3b8;">{sdesc}（总N={s["n"]}次）</p>
+  <div class="kpi">
+    <div class="kpi-card good"><div class="kpi-val">{s["n"]}</div><div class="kpi-label">总信号</div></div>
+    <div class="kpi-card {"good" if m>0 else "bad"}"><div class="kpi-val">{m:+.1f}%</div><div class="kpi-label">20d均值</div></div>
+    <div class="kpi-card {"good" if wr>=55 else "normal"}"><div class="kpi-val">{wr:.0f}%</div><div class="kpi-label">20d胜率</div></div>
+    <div class="kpi-card warn"><div class="kpi-val">{gt10:.0f}%</div><div class="kpi-label">>10%概率</div></div>
+  </div>
+  <p>'''
+        for dk in ["5d","10d","20d","30d"]:
+            if dk in s["fwd_holding"]:
+                hd = s["fwd_holding"][dk]
+                c = "#4ade80" if hd["mean"]>0 else "#f87171"
+                h += f' <span style="color:{c}">{dk}: {hd["mean"]:+.1f}%</span>'
+        h += '</p></div>'
+    
+    h += '''
+<h2>📅 近期背离事件</h2>
+<table><tr><th>日期</th><th>收盘</th><th>背离信号</th><th>分数</th><th>之后20d</th></tr>'''
+    for ev in d.get("recent_events", [])[::-1][-20:]:
+        sig_str = " + ".join(ev["signals"])
+        f20 = f'{ev["fwd20"]:+.0f}%' if ev.get("fwd20") is not None else '--'
+        c20 = '#4ade80' if (ev.get("fwd20") or 0) > 0 else '#f87171' if (ev.get("fwd20") or 0) < 0 else '#94a3b8'
+        h += f'<tr><td>{ev["date"]}</td><td>{ev["close"]:.0f}</td><td style="color:#facc15;font-size:0.9em">{sig_str}</td><td>{ev["score"]}</td><td style="color:{c20}">{f20}</td></tr>'
+    h += '''</table>
+<div class="box warn">
+  <b>💡 背离信号 vs 其他信号：</b><br>
+  ● 背离信号频率高（每年20-50次），但大部分只是正常波动，不是反转前兆<br>
+  ● <b>OI>>vol(机构背离)</b>质量最高（N=103, fwd20=+4.2%, 胜率64%），但信号稀少<br>
+  ● <b>HV恐慌背离</b>频率最高（N=433），fwd20=+2.7%<br>
+  ● 背离的最佳用法：作为其他信号的<u>确认器</u>，并非独立交易信号
+</div>'''
+    return h
+
+
+def render_quadrant(data):
+    """多空四象限框架 — 300均线 × 布林20轨道"""
+    qp = os.path.join(DATA_DIR, "quadrant_framework.json")
+    if not os.path.exists(qp):
+        return '<div class="box warn">数据文件未生成，请先运行分析脚本。</div>'
+    with open(qp) as f:
+        q = json.load(f)
+    
+    quads = [
+        ("long", "🟢", "顺势回调买call", "#4ade80"),
+        ("short", "🔴", "逆势反弹买put", "#f87171"),
+        ("lottery", "🎰", "超跌彩票买call", "#facc15"),
+    ]
+    
+    h = '''
+<div class="box info">
+  <b>🎯 核心理念：</b>300均线定趋势（牛/熊），布林20轨道定入场时机。
+  <br><br>
+  ● <b>300上方</b> = 上升趋势 → 回调到下轨时<b>买call</b>（顺势）<br>
+  ● <b>300下方</b> = 下降趋势 → 反弹到上轨时<b>买put</b>（逆势，效果弱）<br>
+  ● <b>300下方+超跌</b> = 深度超跌 → <b>彩票买call</b><br>
+</div>
+
+<div class="box danger">
+  <b>⚠️ 空头方向（300下+上轨买put）回测不成立。</b>创业板长期偏牛，
+  空头信号胜率<50%，<b>请勿独立使用</b>。以下仅用作多空对称框架展示。
+</div>
+
+<h2>📊 四象限回测对比（20日持有）</h2>
+<table>
+  <tr><th>象限</th><th>操作</th><th>N</th><th>5d</th><th>胜率</th><th>10d</th><th>胜率</th><th>20d</th><th>胜率</th><th>>10%</th></tr>'''
+    for qk, emoji, name, color in quads:
+        if qk not in q["quadrants"]: continue
+        qd = q["quadrants"][qk]
+        h += f'<tr><td style="color:{color};font-weight:bold">{emoji} {name}</td>'
+        h += f'<td style="color:{"#4ade80" if qk!="short" else "#f87171"}">{name}</td><td>{qd["n"]}</td>'
+        for dk in ["5d","10d","20d"]:
+            if dk in qd["holding"]:
+                hd = qd["holding"][dk]
+                c = "#4ade80" if hd["mean"]>0 else "#f87171"
+                h += f'<td style="color:{c}">{hd["mean"]:+.1f}%</td><td>{hd["win_rate"]:.0f}%</td>'
+            else:
+                h += "<td>--</td><td>--</td>"
+        h20 = qd["holding"].get("20d", {})
+        h += f'<td>{h20.get("gt10_pct",0):.0f}%</td></tr>'
+    h += '</table>'
+    
+    for qk, emoji, name, color in quads:
+        if qk not in q["quadrants"]: continue
+        qd = q["quadrants"][qk]
+        h += f'<h2>{emoji} {name}（N={qd["n"]}）</h2><div class="kpi">'
+        for dk in ["10d","20d","30d","45d"]:
+            if dk in qd["holding"]:
+                hd = qd["holding"][dk]
+                c = "#4ade80" if hd["mean"]>0 else "#f87171"
+                h += f'<div class="kpi-card"><div class="kpi-val" style="color:{c}">{hd["mean"]:+.1f}%</div><div class="kpi-label">{dk}均值</div></div>'
+                h += f'<div class="kpi-card"><div class="kpi-val">{hd["win_rate"]:.0f}%</div><div class="kpi-label">{dk}胜率</div></div>'
+                h += f'<div class="kpi-card warn"><div class="kpi-val">{hd["gt10_pct"]:.0f}%</div><div class="kpi-label">{dk}＆gt;10%</div></div>'
+        h += '</div>'
+        
+        # HV分位
+        if qd.get("hv_rets"):
+            h += '<h3>🔮 波动率（HV_10）分位筛选</h3><table><tr><th>HV_10分位</th><th>N</th><th>fwd20</th></tr>'
+            lab_map = {"hv_super_low":"HV极低<25%","hv_low":"HV低25-50%","hv_high":"HV高50-75%","hv_super_high":"HV极高>75%"}
+            for lab, lab_name in lab_map.items():
+                if lab in qd["hv_rets"]:
+                    hd = qd["hv_rets"][lab]
+                    c = "#4ade80" if hd["fwd20"]>0 else "#f87171"
+                    h += f'<tr><td>{lab_name}</td><td>{hd["n"]}</td><td style="color:{c}">{hd["fwd20"]:+.1f}%</td></tr>'
+            h += '</table>'
+        
+        # 最近信号
+        h += '<h3>📅 最近信号</h3><table><tr><th>日期</th><th>收盘</th><th>20d涨</th><th>量比</th><th>fwd20</th></tr>'
+        for sig in qd.get("recent_signals", [])[::-1][-10:]:
+            f20 = f'{sig["fwd20"]:+.0f}%' if sig.get("fwd20") is not None else '--'
+            c20 = "#4ade80" if (sig.get("fwd20") or 0) > 0 else "#f87171" if (sig.get("fwd20") or 0) < 0 else "#94a3b8"
+            h += f'<tr><td>{sig["date"]}</td><td>{sig["close"]:.0f}</td><td>{sig["ret_20d"]:+.0f}%</td><td>{sig["vol_ratio"]:.1f}x</td><td style="color:{c20}">{f20}</td></tr>'
+        h += '</table>'
+    
+    h += '''
+<h2>💡 波动率升维：期权结构选择</h2>
+<div class="box success">
+  <b>基于回测的期权选结构建议：</b><br><br>
+  ● <b>HV极低（<25%分位）</b> → 买<b>虚值call</b>，持有30天（波动小+期权便宜）<br>
+  ● <b>HV低-中（25-50%分位）</b> → 买<b>平值call</b>，持有20天<br>
+  ● <b>HV高（50-75%分位）</b> → 买<b>平值/实值call</b>，持有15天<br>
+  ● <b>HV极高（>75%分位）</b> → 买<b>实值call</b>，持有10天（快进快出）<br><br>
+  <b>原理：</b>HV低时虚值期权成本低、杠杆高，赌反弹性价比最好；
+  HV高时实值call时间价值损耗少，适合顺势跟。<br><br>
+  <b>⏱️ 持有期：</b>30天各象限综合最均衡（胜率62-72%）。5-10天太短，45天时间价值大。<br><br>
+  <b>当前（2026-05-15）：</b>等待信号触发中...
+</div>'''
+    return h
+
+
+
 SIGNALS = [
     {"slug":"granger", "title":"量价因果：成交量→波动率 Granger", "emoji":"&#128279;",
      "desc":"统计检验成交量是否包含预测波动率的信息。", "fn": render_granger},
@@ -774,6 +960,10 @@ SIGNALS = [
      "desc":"平静/躁动/异动/预备爆发/风暴 —— 基于成交量×波动率的市场状态分类。", "fn": render_thermometer},
     {"slug":"eruption","title":"爆发事件诚实分类：我们预测不了什么", "emoji":"&#9968;&#65039;",
      "desc":"不是过拟合——我们诚实标注了哪些爆发可以预测，哪些不能。", "fn": render_eruption_honesty},
+    {"slug":"divergence","title":"背离信号：价格&波动率恐慌背离", "emoji":"&#9888;&#65039;",
+     "desc":"多维度恐慌背离/机构背离检测（HV/QVIX/PCR/OI）。", "fn": render_divergence},
+    {"slug":"quadrant","title":"多空四象限：300均线×布林轨道", "emoji":"&#128260;",
+     "desc":"300均线上方+布林下轨买call，300下方+超跌买彩票。", "fn": render_quadrant},
 ]
 
 def dashboard(signals, data):
