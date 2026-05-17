@@ -833,12 +833,54 @@ def render_divergence(data):
         c20 = '#4ade80' if (ev.get("fwd20") or 0) > 0 else '#f87171' if (ev.get("fwd20") or 0) < 0 else '#94a3b8'
         h += f'<tr><td>{ev["date"]}</td><td>{ev["close"]:.0f}</td><td style="color:#facc15;font-size:0.9em">{sig_str}</td><td>{ev["score"]}</td><td style="color:{c20}">{f20}</td></tr>'
     h += '''</table>
+
+<h2>🔬 广义背离深入回测（5日趋势方向相反）</h2>
+<p>核心逻辑：价格趋势与指标趋势方向相反。以下是全样本(2018-2026)所有背离类型的对比。</p>
+
+<h3>① 单类背离强度排行 (20日持有)</h3>
+<table>
+  <tr><th>背离类型</th><th>N</th><th>5d</th><th>10d</th><th>10d胜率</th><th>20d</th><th>20d胜率</th><th>30d</th><th>>10%</th></tr>
+  <tr style="background:#1e293b"><td style="color:#8b5cf6;font-weight:bold">OI>>vol（机构对冲）</td><td>103</td><td style="color:#4ade80">+1.6%</td><td style="color:#4ade80">+2.8%</td><td>69%</td><td style="color:#4ade80">+4.2%</td><td>64%</td><td style="color:#4ade80">+5.4%</td><td>27%</td></tr>
+  <tr><td style="color:#fb923c;font-weight:bold">QVIX涨+价跌（隐波恐慌）</td><td>142</td><td style="color:#4ade80">+0.7%</td><td style="color:#4ade80">+2.1%</td><td>61%</td><td style="color:#4ade80">+2.7%</td><td>55%</td><td style="color:#4ade80">+2.9%</td><td>21%</td></tr>
+  <tr><td style="color:#f87171;font-weight:bold">量跌+价涨（缩量上涨）</td><td>451</td><td style="color:#4ade80">+0.5%</td><td style="color:#4ade80">+1.3%</td><td>59%</td><td style="color:#4ade80">+2.4%</td><td>58%</td><td style="color:#4ade80">+3.3%</td><td>25%</td></tr>
+  <tr><td style="color:#a78bfa;font-weight:bold">PCR涨+价跌（恐慌买put）</td><td>186</td><td style="color:#f87171">-0.0%</td><td style="color:#4ade80">+0.2%</td><td>47%</td><td style="color:#4ade80">+1.1%</td><td>47%</td><td style="color:#4ade80">+1.6%</td><td>17%</td></tr>
+  <tr><td style="color:#f97316;font-weight:bold">量涨+价跌（放量恐慌）</td><td>393</td><td style="color:#4ade80">+0.2%</td><td style="color:#4ade80">+0.4%</td><td>50%</td><td style="color:#4ade80">+1.0%</td><td>51%</td><td style="color:#4ade80">+2.4%</td><td>22%</td></tr>
+  <tr><td style="color:#f87171;font-weight:bold">HV涨+价跌（波动率恐慌）</td><td>943</td><td style="color:#f87171">-0.0%</td><td style="color:#4ade80">+0.5%</td><td>53%</td><td style="color:#4ade80">+0.9%</td><td>51%</td><td style="color:#4ade80">+1.6%</td><td>19%</td></tr>
+</table>
+
+<h3>② 叠加背离（同时有N种指标在背离）</h3>
+<table>
+  <tr><th>叠加数</th><th>N</th><th>占比</th><th>10d</th><th>20d</th><th>30d</th><th>45d</th><th>60d</th></tr>
+  <tr><td style="color:#4ade80">&#8593; 空头背离&#8805;1</td><td>1228</td><td>31.9%</td><td style="color:#4ade80">+0.3%</td><td style="color:#4ade80">+0.7%</td><td style="color:#4ade80">+1.6%</td><td style="color:#4ade80">+2.2%</td><td style="color:#4ade80">+2.7%</td></tr>
+  <tr><td style="color:#facc15">&#8593; 空头背离&#8805;2</td><td>347</td><td>9.0%</td><td style="color:#4ade80">+1.1%</td><td style="color:#4ade80">+1.9%</td><td style="color:#4ade80">+2.4%</td><td style="color:#4ade80">+3.3%</td><td style="color:#4ade80">+4.0%</td></tr>
+  <tr><td style="color:#f97316">&#8593; 空头背离&#8805;3</td><td>70</td><td>1.8%</td><td style="color:#4ade80">+2.0%</td><td style="color:#4ade80">+4.0%</td><td style="color:#4ade80">+4.0%</td><td style="color:#4ade80">+7.0%</td><td style="color:#4ade80">+7.1%</td></tr>
+  <tr><td style="color:#f87171">&#8593; 空头背离&#8805;4</td><td>19</td><td>0.5%</td><td style="color:#4ade80">+2.3%</td><td style="color:#4ade80">+5.1%</td><td style="color:#4ade80">+5.8%</td><td style="color:#4ade80">+9.1%</td><td style="color:#4ade80">+10.3%</td></tr>
+</table>
+
 <div class="box warn">
-  <b>💡 背离信号 vs 其他信号：</b><br>
-  ● 背离信号频率高（每年20-50次），但大部分只是正常波动，不是反转前兆<br>
-  ● <b>OI>>vol(机构背离)</b>质量最高（N=103, fwd20=+4.2%, 胜率64%），但信号稀少<br>
-  ● <b>HV恐慌背离</b>频率最高（N=433），fwd20=+2.7%<br>
-  ● 背离的最佳用法：作为其他信号的<u>确认器</u>，并非独立交易信号
+  <b>⚠️ 叠加背离的陷阱：</b>三重以上背离方向确定性强（60d=+7.1%），但N极小（仅70次占1.8%）。
+  且均值靠少数暴涨拉升，中位数远低于均值。叠加位置过滤（+300下/BBlow）后中位数转负，说明大部分信号只是小涨小跌。
+</div>
+
+<h3>③ 位置过滤效果</h3>
+<table>
+  <tr><th>条件</th><th>N</th><th>20d均值</th><th>20d中位数</th><th>20d胜率</th><th>30d均值</th><th>45d均值</th></tr>
+  <tr><td style="color:#facc15">背离&#8805;2 + BB低位</td><td>209</td><td style="color:#4ade80">+1.5%</td><td style="color:#4ade80">+0.5%</td><td>52%</td><td style="color:#4ade80">+2.2%</td><td style="color:#4ade80">+3.3%</td></tr>
+  <tr><td style="color:#fb923c">背离&#8805;3 + BB低位</td><td>51</td><td style="color:#4ade80">+3.6%</td><td style="color:#4ade80">+1.5%</td><td>53%</td><td style="color:#4ade80">+3.5%</td><td style="color:#4ade80">+5.6%</td></tr>
+  <tr><td style="color:#8b5cf6">OI>>vol alone</td><td>103</td><td style="color:#4ade80">+4.2%</td><td style="color:#4ade80">+3.7%</td><td>64%</td><td style="color:#4ade80">+5.4%</td><td style="color:#4ade80">+6.6%</td></tr>
+</table>
+
+<div class="box warn">
+  <b>💡 背离信号的诚实诊断：</b><br><br>
+  ● <b>是不是独立交易信号？</b> 大部分背离（HV涨+价跌、PCR涨+价跌、量涨+价跌）不够强——20d均值0.9-1.1%，胜率约50%，中位数接近零。<br><br>
+  ● <b>哪些值得关注？</b><br>
+  &nbsp;&nbsp;&#8226; <b>OI>>vol（机构背离）</b>N=103, 20d=+4.2%, 胜率64% ← 质量最高，信号最罕见<br>
+  &nbsp;&nbsp;&#8226; <b>QVIX涨+价跌</b>N=142, 20d=+2.7%, 60d=+4.4%<br>
+  &nbsp;&nbsp;&#8226; <b>三重以上叠加</b>N=70, 20d=+4.0%, 60d=+7.1%但中位数低<br><br>
+  ● <b>背离最大的价值：</b>作为其他信号的确认器——当彩票策略/四象限信号触发且同时出现背离时，胜率提升。
+  单独使用背离信号做交易，期望值不高。<br><br>
+  ● <b>对比其他信号：</b>背离 vs 彩票（N=315, fwd20均值远超背离）vs QVIX策略（卖方夏普1.88），背离的信号质量排第三梯队。<br><br>
+  ● <b>结论：</b>信号有，机会不大。适合辅助过滤，不适合独立交易。
 </div>'''
     return h
 
