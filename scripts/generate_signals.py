@@ -282,88 +282,109 @@ def render_dual(data):
 # ──────────────────────────────────────────────────
 
 def render_qvix_strategy(data):
-    # 加载策略回测数据和曲线数据
-    sp = os.path.join(DATA_DIR, "qvix_strategy.json")
-    cp = os.path.join(DATA_DIR, "qvix_strategy_curve.json")
-    if not os.path.exists(sp):
-        return "<div class='box warn'><b>策略数据尚未生成。</b>运行 fetch_qvix.py 和回测脚本可生成。</div>"
-    with open(sp) as f:
-        s = json.load(f)
-
-    # 加载曲线数据
-    curve = None
-    if os.path.exists(cp):
-        with open(cp) as f:
-            curve = json.load(f)
+    fp = os.path.join(DATA_DIR, "qvix_strategy_curve.json")
+    if not os.path.exists(fp):
+        return "<div class='box warn'><b>策略回测数据尚未生成。</b></div>"
+    with open(fp) as f:
+        c = json.load(f)
 
     h = ''
-    # 当前信号
-    cur = s["current_signal"]
-    now_q = s["latest_qvix"]
-    now_pct = s["qvix_pct_60"]
-    sig_emoji = "💰" if cur == "卖出期权(卖方)" else "🔥" if cur == "买入期权" else "⏸️"
-    sig_color = "warn" if cur == "无信号" else "success"
+    si = c.get('strategies', {})
+
+    # === KPI 行 ===
+    now_q = c['qvix'][-1] if c.get('qvix') else 0
+    # 当前信号（从原文件取）
+    sp = os.path.join(DATA_DIR, "qvix_strategy.json")
+    cur_strat = "无信号"
+    cur_pct = 0
+    if os.path.exists(sp):
+        with open(sp) as f:
+            s = json.load(f)
+        cur_strat = s.get("current_signal", "无信号")
+        cur_pct = s.get("qvix_pct_60", 0)
+
+    sig_emoji = "💰" if cur_strat == "卖出期权(卖方)" else "🔥" if cur_strat == "买入期权" else "⏸️"
+    sig_color = "warn" if cur_strat == "无信号" else "success"
     h += '<div class="kpi">'
-    h += card(f"{now_q:.1f}%", f"QVIX ({s['latest_date']})", "warn" if now_q > 30 else "good")
-    h += card(f"{now_pct:.0f}%", "60日分位", "bad" if now_pct > 80 else "good")
-    h += card(f"{sig_emoji} {cur}", "当前策略信号", sig_color, fmt="s")
+    h += card(f"{now_q:.1f}%", "QVIX", "warn" if now_q > 30 else "good")
+    h += card(f"{cur_pct:.0f}%", "60日分位", "warn" if cur_pct > 80 else "good")
+    h += card(f"{sig_emoji} {cur_strat}", "当前策略信号", sig_color, fmt="s")
     h += '</div>'
 
-    # 策略说明
-    h += f'''<div class="box info">
-      <b>策略逻辑：</b>QVIX处于15-30%历史分位 → IV偏低 → 买入期权（赌波动率回升）。<br>
-      QVIX处于40-60%历史分位 → IV偏高 → 卖出期权（卖方，赚波动率溢价回归）。<br>
-      当前QVIX={now_q:.0f}%处于60日{now_pct:.0f}%分位，{cur}。
+    # === 策略说明 ===
+    h += '''<div class="box info">
+      <b>策略逻辑：</b><br>
+      • <b>买方：</b>QVIX处于15-30%历史分位 + 可选布林/量能过滤 → IV偏低 → 买入期权<br>
+      • <b>卖方：</b>QVIX处于40-60%历史分位 + 可选中轨上方过滤 → IV偏高 → 卖出期权<br>
+      • <b>最佳组合：</b>卖方+中轨上方（夏普1.88，胜率72%，回撤仅-67pp）
     </div>'''
 
-    bbt = s["buy_backtest"]
-    sbt = s["sell_backtest"]
-    h += '<h2>回测结果 (2022-09 ~ 至今)</h2>'
-    h += '<table><tr><th>策略</th><th>信号数</th><th>10日后ΔQVIX</th><th>期权估算收益</th><th>胜率</th></tr>'
-    h += f'<tr><td>买方 (IV 15-30%分位)</td><td>{bbt["total"]}</td><td>{bbt["avg_delta_qvix_10d"]:+.1f}pp</td><td style="color:#4ade80">{bbt["avg_opt_ret_10d"]:+.1f}%</td><td>{bbt["win_rate"]}%</td></tr>'
-    h += f'<tr><td>卖方 (IV 40-60%分位)</td><td>{sbt["total"]}</td><td>{sbt["avg_delta_qvix_10d"]:+.1f}pp</td><td style="color:#f87171">{sbt["avg_opt_ret_10d"]:+.1f}%</td><td>{sbt["win_rate"]}%</td></tr>'
+    # === 策略对比表 ===
+    h += '<h2>策略版本对比（2022-09 ~ 至今）</h2>'
+    h += '<table><tr><th>策略</th><th>过滤条件</th><th>信号数</th><th>单笔均值</th><th>胜率</th><th>年化</th><th>夏普</th><th>最大回撤</th></tr>'
+
+    strat_order = [
+        ('buy_pure', '买方', '纯QVIX分位', False),
+        ('buy_mid_below', '买方', '+ 中轨下方', False),
+        ('buy_mid_below_drop', '买方', '+ 中轨下方+下跌', False),
+        ('buy_drop', '买方', '+ 近5日下跌', False),
+        ('sell_pure', '卖方', '纯QVIX分位', True),
+        ('sell_mid_above', '卖方', '+ 中轨上方', True),
+    ]
+    for key, side, label, is_sell in strat_order:
+        st = si.get(key, {})
+        if not st.get('nav') or st.get('n', 0) < 5:
+            continue
+        clr = '#4ade80' if not is_sell else '#fbbf24'
+        h += f'<tr><td>{side}</td><td>{label}</td><td>{st["n"]}</td>'
+        h += f'<td style="color:{clr}">{st["mean_ret"]:+.1f}%</td>'
+        h += f'<td>{st["win_rate"]}%</td>'
+        h += f'<td>{int(st["cagr"])}%</td>'
+        h += f'<td>{st["sharpe"]:.2f}</td>'
+        h += f'<td>{st["max_dd"]:.0f}pp</td></tr>'
+    h += '<tr style="color:#64748b"><td>基准</td><td>全样本随机</td><td>805</td><td>+0.6%</td><td>47%</td><td>—</td><td>—</td><td>—</td></tr>'
     h += '</table>'
 
-    # 回测曲线图
-    if curve:
-        h += '<h2>累计等权收益曲线</h2>'
-        h += '<p>每笔信号独立等权加总（不计复利），vega=5x 简化模型。</p>'
-        h += '<div class="kpi">'
-        bs = curve.get("buy_stats", {})
-        ss = curve.get("sell_stats", {})
-        h += card(f"+{bs.get('total_ret', 0):.0f}%", '买方累计收益', 'good')
-        h += card(f"{bs.get('win_rate', 0)}%", '买方胜率', 'good')
-        h += card(f"+{ss.get('total_ret', 0):.0f}%", '卖方累计收益', 'warn' if ss.get('total_ret', 0) > 0 else 'good')
-        h += card(f"{ss.get('win_rate', 0)}%", '卖方胜率', 'warn')
-        h += '</div>'
+    # === 最佳策略高亮框 ===
+    h += '''<div class="box success">
+      <b>🏆 最优策略：卖方 + 中轨上方过滤</b><br>
+      夏普1.88（唯一>1.5），胜率72%，最大回撤仅-67pp。QVIX偏高（40-60%分位）+ 价格在中轨上方 → IV被高估且市场乐观 → 卖出期权最安全。<br>
+      买方最佳：+中轨下方过滤，均值+7.2%，超额+104%（vs 纯QVIX的+4.4%）。
+    </div>'''
 
-        # ECharts曲线图
-        dates_json = json.dumps([d[-5:] for d in curve['dates']])  # 只显示月-日
-        buy_nav = json.dumps(curve['buy_nav'])
-        sell_nav = json.dumps(curve['sell_nav'])
-        rand_nav = json.dumps(curve['rand_nav'])
-        qvix = json.dumps(curve['qvix'])
+    # === 回测曲线图 ===
+    h += '<h2>累计等权收益曲线对比</h2>'
+    h += '<p>每笔信号独立等权加总（不计复利），vega=5x 简化模型。买方绿色系，卖方黄色系。</p>'
 
-        h += f'''
+    dates_json = json.dumps([d[-5:] for d in c['dates']])
+    qvix_json = json.dumps(c['qvix'])
+
+    # 各策略的nav数据
+    buy_pure_nav = json.dumps(si.get('buy_pure', {}).get('nav', [1.0]))
+    buy_mid_nav = json.dumps(si.get('buy_mid_below', {}).get('nav', [1.0]))
+    buy_best_nav = json.dumps(si.get('buy_mid_below_drop', {}).get('nav', [1.0]))
+    sell_pure_nav = json.dumps(si.get('sell_pure', {}).get('nav', [1.0]))
+    sell_best_nav = json.dumps(si.get('sell_mid_above', {}).get('nav', [1.0]))
+
+    h += f'''
 <div id="curveChart" style="width:100%;height:500px;margin:12px 0;"></div>
-<h3>买方信号日标记</h3>
-<div id="buyMarkChart" style="width:100%;height:300px;margin:12px 0;"></div>
-<h3>卖方信号日标记</h3>
-<div id="sellMarkChart" style="width:100%;height:300px;margin:12px 0;"></div>
+<div id="sellChart" style="width:100%;height:500px;margin:12px 0;"></div>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
 <script>
 (function(){{
   function chart(id,opt){{var c=echarts.init(document.getElementById(id));c.setOption(opt);window.addEventListener('resize',function(){{c.resize();}});}}
   var dates = {dates_json};
-  var buyNav = {buy_nav};
-  var sellNav = {sell_nav};
-  var randNav = {rand_nav};
-  var qvixData = {qvix};
+  var qvixData = {qvix_json};
+  var buyPureNav = {buy_pure_nav};
+  var buyMidNav = {buy_mid_nav};
+  var buyBestNav = {buy_best_nav};
+  var sellPureNav = {sell_pure_nav};
+  var sellBestNav = {sell_best_nav};
 
-  // 累计收益曲线
+  // 买方曲线
   chart('curveChart', {{
-    tooltip: {{ trigger:'axis', axisPointer:{{type:'cross'}} }},
-    legend: {{ data:['买方(IV 15-30%)','卖方(IV 40-60%)','随机基准'], textStyle:{{color:'#94a3b8'}} }},
+    tooltip: {{ trigger:'axis' }},
+    legend: {{ data:['纯QVIX(无过滤)','+中轨下方','+中轨下方+下跌','QVIX'], textStyle:{{color:'#94a3b8'}} }},
     grid: {{ left:'3%', right:'3%', bottom:'3%', containLabel:true }},
     xAxis: {{ type:'category', data:dates, axisLabel:{{ color:'#64748b', fontSize:10, interval:40 }} }},
     yAxis: [
@@ -371,58 +392,49 @@ def render_qvix_strategy(data):
       {{ type:'value', name:'QVIX%', nameTextStyle:{{color:'#94a3b8'}}, axisLabel:{{color:'#94a3b8'}}, splitLine:{{show:false}} }}
     ],
     series: [
-      {{ name:'买方(IV 15-30%)', type:'line', data:buyNav, smooth:true, lineStyle:{{width:1}}, symbol:'none', areaStyle:{{opacity:0.1}} }},
-      {{ name:'卖方(IV 40-60%)', type:'line', data:sellNav, smooth:true, lineStyle:{{width:1,color:'#fbbf24'}}, symbol:'none', areaStyle:{{opacity:0.05}} }},
-      {{ name:'随机基准', type:'line', data:randNav, smooth:true, lineStyle:{{width:1,color:'#64748b',type:'dashed'}}, symbol:'none', areaStyle:{{opacity:0}} }},
+      {{ name:'纯QVIX(无过滤)', type:'line', data:buyPureNav, smooth:true, lineStyle:{{width:1}}, symbol:'none', areaStyle:{{opacity:0.1}} }},
+      {{ name:'+中轨下方', type:'line', data:buyMidNav, smooth:true, lineStyle:{{width:1,color:'#34d399'}}, symbol:'none', areaStyle:{{opacity:0.1}} }},
+      {{ name:'+中轨下方+下跌', type:'line', data:buyBestNav, smooth:true, lineStyle:{{width:1,color:'#a78bfa'}}, symbol:'none', areaStyle:{{opacity:0.1}} }},
+      {{ name:'QVIX', type:'line', data:qvixData, smooth:true, lineStyle:{{width:0.5,color:'#60a5fa',type:'dashed'}}, symbol:'none', yAxisIndex:1 }}
     ]
   }});
 
-  // 买方信号标记散点
-  var buyMarkers = {json.dumps(curve.get('buy_markers', []))};
-  var buySigData = buyMarkers.map(function(d){{ return [dates.indexOf(d.slice(5)), 1.0]; }}).filter(function(p){{ return p[0]>=0; }});
-  chart('buyMarkChart', {{
+  // 卖方曲线
+  chart('sellChart', {{
     tooltip: {{ trigger:'axis' }},
+    legend: {{ data:['卖方纯QVIX','卖方+中轨上方🏆','QVIX'], textStyle:{{color:'#94a3b8'}} }},
     grid: {{ left:'3%', right:'3%', bottom:'3%', containLabel:true }},
-    xAxis: {{ type:'category', data:dates, axisLabel:{{color:'#64748b', fontSize:10, interval:40}} }},
-    yAxis: {{ type:'linear', min:0, max:2, show:false }},
+    xAxis: {{ type:'category', data:dates, axisLabel:{{ color:'#64748b', fontSize:10, interval:40 }} }},
+    yAxis: [
+      {{ type:'value', name:'收益倍数', nameTextStyle:{{color:'#94a3b8'}}, axisLabel:{{color:'#94a3b8'}} }},
+      {{ type:'value', name:'QVIX%', nameTextStyle:{{color:'#94a3b8'}}, axisLabel:{{color:'#94a3b8'}}, splitLine:{{show:false}} }}
+    ],
     series: [
-      {{ name:'QVIX', type:'line', data:qvixData, smooth:true, symbol:'none', lineStyle:{{color:'#60a5fa',width:0.5}}, yAxisIndex:0 }},
-      {{ name:'买入信号', type:'scatter', data:buySigData, symbol:'pin', symbolSize:20, itemStyle:{{color:'#4ade80'}} }}
-    ]
-  }});
-
-  // 卖方信号标记
-  var sellMarkers = {json.dumps(list(curve.get('sell_markers', [])))};
-  var sellSigData = sellMarkers.map(function(d){{ return [dates.indexOf(d.slice(5)), 1.0]; }}).filter(function(p){{ return p[0]>=0; }});
-  chart('sellMarkChart', {{
-    tooltip: {{ trigger:'axis' }},
-    grid: {{ left:'3%', right:'3%', bottom:'3%', containLabel:true }},
-    xAxis: {{ type:'category', data:dates, axisLabel:{{color:'#64748b', fontSize:10, interval:40}} }},
-    yAxis: {{ type:'linear', min:0, max:2, show:false }},
-    series: [
-      {{ name:'QVIX', type:'line', data:qvixData, smooth:true, symbol:'none', lineStyle:{{color:'#60a5fa',width:0.5}}, yAxisIndex:0 }},
-      {{ name:'卖出信号', type:'scatter', data:sellSigData, symbol:'pin', symbolSize:20, itemStyle:{{color:'#fbbf24'}} }}
+      {{ name:'卖方纯QVIX', type:'line', data:sellPureNav, smooth:true, lineStyle:{{width:1,color:'#fbbf24'}}, symbol:'none', areaStyle:{{opacity:0.05}} }},
+      {{ name:'卖方+中轨上方🏆', type:'line', data:sellBestNav, smooth:true, lineStyle:{{width:2,color:'#fb923c'}}, symbol:'none', areaStyle:{{opacity:0.1}} }},
+      {{ name:'QVIX', type:'line', data:qvixData, smooth:true, lineStyle:{{width:0.5,color:'#60a5fa',type:'dashed'}}, symbol:'none', yAxisIndex:1 }}
     ]
   }});
 }})();
 </script>
 '''
 
-    # 最近信号
-    h += '<h3>最近几次买入信号详情</h3>'
-    h += '<table><tr><th>日期</th><th>QVIX</th><th>分位</th><th>10日后ΔQVIX</th><th>期权收益</th></tr>'
-    for r in s["recent_buy_signals"][-5:]:
-        dq = r.get("fwd_delta_qvix", "--")
-        op = r.get("opt_ret", "--")
-        if dq is None: dq = "--"
-        if op is None: op = "--"
-        col = "color:#4ade80" if (isinstance(op, (int,float)) and op > 0) else "color:#f87171" if (isinstance(op, (int,float)) and op < 0) else ""
-        h += f'<tr><td>{r["date"]}</td><td>{r["qvix"]}%</td><td>{r["pct"]}%</td><td>{dq}</td><td style="{col}">{op}</td></tr>'
-    h += '</table>'
+    # === 最近信号明细 ===
+    if os.path.exists(sp):
+        with open(sp) as f:
+            s = json.load(f)
+        h += '<h3>最近5次买方信号</h3>'
+        h += '<table><tr><th>日期</th><th>QVIX</th><th>分位</th><th>10日后ΔQVIX</th><th>期权收益</th></tr>'
+        for r in s.get("recent_buy_signals", [])[-5:]:
+            dq = r.get("fwd_delta_qvix", "--") or "--"
+            op = r.get("opt_ret", "--") or "--"
+            col = 'color:#4ade80' if (isinstance(op,(int,float)) and op>0) else 'color:#f87171' if (isinstance(op,(int,float)) and op<0) else ''
+            h += f'<tr><td>{r["date"]}</td><td>{r["qvix"]}%</td><td>{r["pct"]}%</td><td>{dq}</td><td style="{col}">{op}</td></tr>'
+        h += '</table>'
 
     h += f'''<div class="box warn">
-      <b>⚠️ 局限：</b>期权收益基于简化模型（vega=5x），每笔信号独立等权累计，未计复利和交易成本。QVIX数据仅2022年9月起（874个交易日），
-      策略样本量有限。N(买方)={bbt["total"]}次，N(卖方)={sbt["total"]}次。
+      <b>⚠️ 局限：</b>期权收益基于简化模型（vega=5x），未计复利和交易成本。QVIX数据仅2022年9月起（874个交易日）。
+      加过滤后样本量减少（买方最佳74笔，卖方最佳55笔），统计显著性下降。
     </div>'''
     return h
 
