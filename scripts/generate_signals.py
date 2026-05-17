@@ -541,6 +541,27 @@ def render_lottery(data):
     
     h += '''</table>
 
+<h2>🏷️ 不同行权价 × 到期日对比</h2>
+<p>同样信号下，选择不同行权价的末日期权结果完全不同。时间价值少（实值）不一定更好。</p>
+<table>
+  <tr><th>行权价</th><th>到期</th><th>权利金%</th><th>归零%</th><th>胜率%</th><th>avg赚%</th><th>avg亏%</th><th>R/R</th><th>期望/100</th></tr>'''
+    for r in s.get("strike_comparison", []):
+        css = 'good' if r['rr'] >= 2 else 'normal'
+        h += f'<tr><td>{r["strike"]}</td><td>{r["days"]}d</td><td>{r["prem_pct"]:.1f}%</td><td>{r["zero_pct"]:.0f}%</td><td>{r["win_rate"]:.0f}%</td><td>+{r["avg_win_pct"]:.0f}%</td><td>-{r["avg_loss_pct"]:.0f}%</td><td style="font-weight:bold;color:#{"4ade80" if r["rr"]>=3 else "facc15" if r["rr"]>=1 else "f87171"}">{r["rr"]}x</td><td style="font-weight:bold;color:#{"4ade80" if r["exp_per_100"]>0 else "f87171"}">{r["exp_per_100"]:+.0f}</td></tr>'''
+
+    h += '''</table>
+
+<div class="box warn">
+  <b>💡 关键发现：</b><br><br>
+  <b>时间价值越少（实值）≠ 越好。</b><br>
+  ● ITM90%行权价（低10%）：权利金10.8%，归零仅2%，但盈利空间受限，R/R仅0.9x<br>
+  ● ATM平值：权利金1.5%，R/R 2.9x，最均衡的选择<br>
+  ● OTM103%轻度虚值（高3%）：权利金仅0.3%，R/R 8.5x，期望+264元/100元 — 最高期望<br>
+  ● OTM110%深度虚值：权利金0.1%，但归零率98%，期望为负<br><br>
+  <b>推荐：轻度虚值(OTM103%) + 21天到期</b> — R/R 12.9x，期望+685元/100元，且归零率仅39%<br>
+  或<b>平值ATM + 10天到期</b> — 最稳定正期望，R/R 3.0x，期望+108元/100元
+</div>
+
 <div class="box success">
   <b>✅ 总结：</b>布林下轨+超跌买入末日call是<u>正期望策略</u>（期望+97元/100元）。
   每3次中约1次归零，但每次中奖平均赚237%。适合小仓位（1-2%账户）长期执行。
