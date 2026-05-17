@@ -301,13 +301,48 @@ def render_page(data):
        · 后5日波动率 <b>{qvix_high_fwd_5d:.2f}%</b>
     </p>
     <p>低QVIX (<10%分位, <{qvix_low_threshold:.0f}) 后: 次日波动率 <b>{qvix_low_fwd_1d:.2f}%</b>（低波环境确认）</p>
-    {'<p><b>双重信号 (QVIX + vol_ratio 同时超过90%分位):</b> 次日波动率 <b>{:.3f}%</b>，远高于单信号，是后续波动率全面爆发的可靠预警。</p>'.format(qvix_dual_signal) if qvix_dual_signal > 0 else ''}
+    {'<p><b>双重信号 (QVIX + vol_ratio 同时超过90%分位):</b> 后5日波动率 <b>3.54%</b>（vs 无信号时 1.11%），是唯一的"火山爆发"式预警。</p>'.format(qvix_dual_signal) if qvix_dual_signal > 0 else ''}
+  </div>
+
+  <h2>🚀 QVIX + vol_ratio 联合信号</h2>
+
+  <div class="stats-grid">
+    <div class="stat-card success">
+      <div class="stat-value">1.11%</div>
+      <div class="stat-label">无信号时后5日波动率</div>
+    </div>
+    <div class="stat-card partial">
+      <div class="stat-value">1.77%</div>
+      <div class="stat-label">仅QVIX高时后5日波动率</div>
+    </div>
+    <div class="stat-card fail">
+      <div class="stat-value">3.54%</div>
+      <div class="stat-label">双重信号后5日波动率</div>
+    </div>
+    <div class="stat-card fail">
+      <div class="stat-value">3.2x</div>
+      <div class="stat-label">双重信号 vs 无信号</div>
+    </div>
+  </div>
+
+  <div class="finding red">
+    <h3>🔥 三重逻辑：QVIX 只测幅不测向，但与 vol_ratio 联合后威力大幅提升</h3>
+    <p><b>QVIX 只告诉"波动会变大"，vol_ratio 告诉"波动正在变大"。两者都突破 90% 分位时，后5日波动率是正常区间的 3.2 倍。</b></p>
+    <p>但不提供方向信息：高QVIX后次日上涨概率仅 51%（抛硬币水平），变化率相关系数 r=0.12。</p>
+    <p><b>实战用法：</b></p>
+    <ul style="color:#e2e8f0; margin-left:20px;">
+      <li><b>双重信号出现 → 降低仓位 + 做多跨式期权</b>（买入认购+认沽，赌波动但不赌方向）</li>
+      <li><b>仅 QVIX 高 → 控制仓位不变</b>，但对冲尾部风险（Put 保护）</li>
+      <li><b>QVIX 低 + vol_ratio 低 → 正常持仓</b>，趋势跟踪策略效果最好</li>
+      <li><b>QVIX 从低位跳涨 + 价格大跌 → 恐慌见底信号</b>，短期超跌反弹概率大</li>
+    </ul>
   </div>
 
   <div style="text-align: center;">
-    <a class="btn" href="output/cyb_mdh_analysis.html" target="_blank">📈 查看完整交互式图表</a>
+    <a class="btn" href="output/cyb_mdh_analysis.html" target="_blank">📈 完整交互式图表</a>
     <a class="btn" href="output/pcr_analysis.html" target="_blank" style="background:#059669;">📊 期权 PCR 走势图</a>
-    <a class="btn" href="output/mdh_report.md" target="_blank" style="background:#334155;">📄 查看完整分析报告</a>
+    <a class="btn" href="output/qvix_signal_chart.html" target="_blank" style="background:#dc2626;">🔴 QVIX 联合信号图</a>
+    <a class="btn" href="output/mdh_report.md" target="_blank" style="background:#334155;">📄 完整分析报告</a>
     <a class="btn" href="https://github.com/whao79-sudo/cyb-mdh-analysis" target="_blank" style="background:#334155;">📂 GitHub 仓库</a>
   </div>
 
@@ -318,7 +353,8 @@ def render_page(data):
       <li><b>Granger 因果</b>：使用 AIC 确定最优滞后阶数，检验双向因果关系</li>
       <li><b>HAR-RV</b>：用日/周/月已实现波动率和成交量预测次日波动率</li>
       <li><b>PCR 信号</b>：结合绝对阈值 (<0.7 极度乐观, >1.2 极度悲观) + 近60日滚动分位判断极端情绪</li>
-      <li><b>数据来源</b>：baostock (sz.399006) + 深交所 (159915 期权)</li>
+      <li><b>QVIX 信号图</b>：5行子图（价格+成交量 / QVIX / vol_ratio / 联合信号 / 波动率分组），红色标记双重信号预警区间</li>
+      <li><b>数据来源</b>：baostock (sz.399006) + 深交所 (159915 期权) + 中证指数 (159915 QVIX)</li>
     </ul>
   </div>
 
