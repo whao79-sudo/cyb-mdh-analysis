@@ -16,6 +16,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 DB_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "cyb_data.db")
+PCR_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "option_pcr.csv")
 OUTPUT_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "output")
 
 def get_data():
@@ -456,17 +457,18 @@ def generate_report(garch_results, granger_results, harrv_results, df):
     
     return report_content
 
-def generate_plotly_chart(df, garch_results, harrv_results, segment_results=None):
+def generate_plotly_chart(df, garch_results, harrv_results, segment_results=None, pcr_df=None):
     """生成交互式 HTML 图表"""
     import plotly.graph_objects as go
     from plotly.subplots import make_subplots
     
     fig = make_subplots(
-        rows=4, cols=1,
+        rows=5, cols=1,
         subplot_titles=('创业板指数收盘价', '日收益率 & 波动率',
-                        '成交量 & 换手率', 'HAR-RV 预测对比 (测试集)'),
-        row_heights=[0.25, 0.25, 0.25, 0.25],
-        vertical_spacing=0.08
+                        '成交量 & 换手率', 'HAR-RV 预测对比 (测试集)',
+                        '期权 PCR (159915 创业板ETF)'),
+        row_heights=[0.2, 0.2, 0.2, 0.2, 0.2],
+        vertical_spacing=0.06
     )
     
     # 1. 收盘价
@@ -538,10 +540,30 @@ def generate_plotly_chart(df, garch_results, harrv_results, segment_results=None
         row=4, col=1
     )
     
+    # 5. PCR 数据 (如果有)
+    if pcr_df is not None and len(pcr_df) > 10:
+        # 对齐到指数日期范围
+        pcr_range = pcr_df[['vol_pcr', 'oi_pcr']].copy()
+        cyb_range = df[['close']].copy()
+        merged_pcr = pcr_range.join(cyb_range, how='inner')
+        
+        fig.add_trace(
+            go.Scatter(x=merged_pcr.index, y=merged_pcr['vol_pcr'],
+                       name='成交量PCR', line=dict(color='#ff6b6b', width=1.5)),
+            row=5, col=1
+        )
+        fig.add_trace(
+            go.Scatter(x=merged_pcr.index, y=merged_pcr['oi_pcr'],
+                       name='持仓量PCR', line=dict(color='#ffd93d', width=1.5)),
+            row=5, col=1
+        )
+        fig.add_hline(y=1.0, line_dash="dash", line_color="gray", row=5, col=1)
+        fig.add_hline(y=0.7, line_dash="dash", line_color="rgba(74, 222, 128, 0.3)", row=5, col=1)
+    
     # 布局
     fig.update_layout(
         title_text=f"🦞 创业板指数 MDH 假说验证 ({df.index.min().strftime('%Y-%m-%d')} ~ {df.index.max().strftime('%Y-%m-%d')})",
-        height=1400,
+        height=1600,
         template='plotly_dark',
         hovermode='x unified',
         showlegend=True,
@@ -805,31 +827,351 @@ def main():
     segment_results = run_segmented_analysis(df)
     segment_report = generate_segment_report(segment_results)
     
-    # 8. 生成报告
+    # 8. PCR 分析
+    print("\n" + "="*60)
+    print("📊 加载 PCR 数据...")
+    print("="*60)
+    pcr_df = load_pcr_data()
+    pcr_results = run_pcr_analysis(pcr_df, df) if pcr_df is not None else None
+    pcr_report = generate_pcr_report_section(pcr_results) if pcr_results else ""
+    
+    # 9. 生成报告
     print("\n" + "="*60)
     print("📝 生成报告...")
     report_md = generate_report(garch_results, granger_results, harrv_results, df)
     
-    # 追加分段分析报告
-    report_full = report_md + segment_report
+    # 追加分段分析报告 + PCR 报告
+    report_full = report_md + segment_report + pcr_report
     report_path = os.path.join(OUTPUT_DIR, "mdh_report.md")
     with open(report_path, 'w', encoding='utf-8') as f:
         f.write(report_full)
-    print(f"✅ 完整报告已保存: {report_path} (含分段分析)")
+    print(f"✅ 完整报告已保存: {report_path} (含分段分析 + PCR)")
     
-    generate_json_report(garch_results, granger_results, harrv_results, df)
+    json_data = generate_json_report(garch_results, granger_results, harrv_results, df)
+    # PCR 结果也写入 JSON
+    if pcr_results:
+        json_data['pcr_analysis'] = pcr_results
+        json_path = os.path.join(OUTPUT_DIR, "mdh_report.json")
+        with open(json_path, 'w', encoding='utf-8') as f:
+            json.dump(json_data, f, ensure_ascii=False, indent=2, default=str)
     
-    # 9. 生成图表
+    # 10. 生成图表
     print("\n📈 生成图表...")
-    chart_path = generate_plotly_chart(df, garch_results, harrv_results, segment_results)
+    chart_path = generate_plotly_chart(df, garch_results, harrv_results, segment_results, pcr_df)
+    
+    # PCR 图表
+    print("\n📈 生成 PCR 图表...")
+    pcr_chart_path = generate_pcr_chart(pcr_df, df) if pcr_df is not None else None
     
     print("\n" + "="*60)
     print("🎉 分析完成!")
     print(f"   报告: {os.path.join(OUTPUT_DIR, 'mdh_report.md')}")
     print(f"   图表: {chart_path}")
+    if pcr_chart_path:
+        print(f"   PCR图表: {pcr_chart_path}")
     print(f"   JSON: {os.path.join(OUTPUT_DIR, 'mdh_report.json')}")
     print(f"   全周期分段: {len(segment_results)} 段")
     print("="*60)
+
+# ====================================================================
+# PCR 分析模块 - 新增
+# ====================================================================
+
+def load_pcr_data():
+    """加载期权 PCR 数据"""
+    if not os.path.exists(PCR_PATH):
+        print("⚠️ PCR数据文件不存在，跳过PCR分析")
+        return None
+    df = pd.read_csv(PCR_PATH)
+    if len(df) == 0:
+        return None
+    df['date'] = pd.to_datetime(df['date'])
+    df = df.set_index('date').sort_index()
+    # 取最近 3 年数据用于分析
+    three_years_ago = pd.Timestamp.now() - pd.DateOffset(years=3)
+    df = df[df.index >= three_years_ago]
+    print(f"📊 PCR数据: {len(df)}条 ({df.index.min().strftime('%Y-%m-%d')} ~ {df.index.max().strftime('%Y-%m-%d')})")
+    return df
+
+def run_pcr_analysis(pcr_df, cyb_df):
+    """
+    PCR 数据分析：走势、与指数的关系、PCR 对标的的预测信号
+    """
+    print("\n" + "="*60)
+    print("📊 期权 PCR 分析 (159915 创业板ETF)")
+    print("="*60)
+    
+    if pcr_df is None or len(pcr_df) < 10:
+        print("⚠️ PCR 数据不足，跳过")
+        return None
+    
+    results = {}
+    
+    # --- 基础统计 ---
+    print("\n▶ 基础统计:")
+    print(f"   vol_pcr 均值: {pcr_df['vol_pcr'].mean():.4f}")
+    print(f"   oi_pcr 均值: {pcr_df['oi_pcr'].mean():.4f}")
+    print(f"   vol_pcr 范围: {pcr_df['vol_pcr'].min():.4f} ~ {pcr_df['vol_pcr'].max():.4f}")
+    print(f"   oi_pcr 范围: {pcr_df['oi_pcr'].min():.4f} ~ {pcr_df['oi_pcr'].max():.4f}")
+    
+    results['basic_stats'] = {
+        'vol_pcr_mean': float(pcr_df['vol_pcr'].mean()),
+        'vol_pcr_std': float(pcr_df['vol_pcr'].std()),
+        'oi_pcr_mean': float(pcr_df['oi_pcr'].mean()),
+        'oi_pcr_std': float(pcr_df['oi_pcr'].std()),
+        'vol_pcr_min': float(pcr_df['vol_pcr'].min()),
+        'vol_pcr_max': float(pcr_df['vol_pcr'].max()),
+        'oi_pcr_min': float(pcr_df['oi_pcr'].min()),
+        'oi_pcr_max': float(pcr_df['oi_pcr'].max()),
+    }
+    
+    # --- 与创业板指数的相关性 ---
+    # 合并 PCR 和指数数据（按日期对齐）
+    pcr_close = pcr_df[['vol_pcr', 'oi_pcr']].copy()
+    cyb_close = cyb_df[['close', 'pct_return', 'volume']].copy()
+    
+    merged = pcr_close.join(cyb_close, how='inner')
+    
+    if len(merged) > 20:
+        vol_pcr_close_corr = merged['vol_pcr'].corr(merged['close'])
+        vol_pcr_ret_corr = merged['vol_pcr'].corr(merged['pct_return'])
+        oi_pcr_close_corr = merged['oi_pcr'].corr(merged['close'])
+        oi_pcr_ret_corr = merged['oi_pcr'].corr(merged['pct_return'])
+        vol_pcr_return_corr = merged['vol_pcr'].corr(merged['pct_return'].abs())
+        
+        print(f"\n▶ PCR vs 指数相关性:")
+        print(f"   vol_pcr vs 收盘价: {vol_pcr_close_corr:+.4f}")
+        print(f"   vol_pcr vs 日收益率: {vol_pcr_ret_corr:+.4f}")
+        print(f"   vol_pcr vs 波动率(|收益率|): {vol_pcr_return_corr:+.4f}")
+        print(f"   oi_pcr vs 收盘价: {oi_pcr_close_corr:+.4f}")
+        print(f"   oi_pcr vs 日收益率: {oi_pcr_ret_corr:+.4f}")
+        
+        results['correlation'] = {
+            'vol_pcr_close': float(vol_pcr_close_corr),
+            'vol_pcr_return': float(vol_pcr_ret_corr),
+            'vol_pcr_volatility': float(vol_pcr_return_corr),
+            'oi_pcr_close': float(oi_pcr_close_corr),
+            'oi_pcr_return': float(oi_pcr_ret_corr)
+        }
+    
+    # --- PCR 极端信号分析 ---
+    # 高 vol_pcr (认沽>认购) → 看跌情绪 → 后续可能下跌
+    # 低 vol_pcr (认购>认沽) → 看涨情绪 → 后续可能上涨
+    highs = merged[merged['vol_pcr'] > merged['vol_pcr'].quantile(0.8)].copy()
+    lows = merged[merged['vol_pcr'] < merged['vol_pcr'].quantile(0.2)].copy()
+    
+    signal_results = {}
+    
+    if len(highs) > 5:
+        # 高 PCR 后 N 天的涨跌
+        high_signals = []
+        for idx in highs.index:
+            pos = merged.index.get_loc(idx)
+            if pos + 5 < len(merged):
+                fwd_ret = merged.iloc[pos+1:pos+6]['pct_return'].sum()
+                high_signals.append(fwd_ret)
+        if high_signals:
+            avg_high_fwd = np.mean(high_signals)
+            pct_negative = sum(1 for r in high_signals if r < 0) / len(high_signals) * 100
+            print(f"\n▶ PCR 极端信号分析 (80%/20%分位):")
+            print(f"   高 vol_pcr (>80分位) 后5日平均收益: {avg_high_fwd:+.4f}%")
+            print(f"   高 vol_pcr 后5日下跌概率: {pct_negative:.0f}%")
+            signal_results['high_pcr_fwd_return'] = float(avg_high_fwd)
+            signal_results['high_pcr_down_pct'] = float(pct_negative)
+    
+    if len(lows) > 5:
+        low_signals = []
+        for idx in lows.index:
+            pos = merged.index.get_loc(idx)
+            if pos + 5 < len(merged):
+                fwd_ret = merged.iloc[pos+1:pos+6]['pct_return'].sum()
+                low_signals.append(fwd_ret)
+        if low_signals:
+            avg_low_fwd = np.mean(low_signals)
+            pct_positive = sum(1 for r in low_signals if r > 0) / len(low_signals) * 100
+            print(f"   低 vol_pcr (<20分位) 后5日平均收益: {avg_low_fwd:+.4f}%")
+            print(f"   低 vol_pcr 后5日上涨概率: {pct_positive:.0f}%")
+            signal_results['low_pcr_fwd_return'] = float(avg_low_fwd)
+            signal_results['low_pcr_up_pct'] = float(pct_positive)
+    
+    results['signals'] = signal_results
+    
+    # --- vol_pcr vs oi_pcr 背离分析 ---
+    # 成交量 PCR 和持仓量 PCR 走势背离时更有意义
+    if len(merged) > 20:
+        pcr_df_s = pcr_df.copy()
+        pcr_df_s['vol_pcr_5ma'] = pcr_df_s['vol_pcr'].rolling(5).mean()
+        pcr_df_s['oi_pcr_5ma'] = pcr_df_s['oi_pcr'].rolling(5).mean()
+        
+        # 计算 vol_pcr 和 oi_pcr 的 5日变化方向
+        pcr_df_s['vol_direction'] = np.sign(pcr_df_s['vol_pcr_5ma'].diff())
+        pcr_df_s['oi_direction'] = np.sign(pcr_df_s['oi_pcr_5ma'].diff())
+        
+        # 背离：方向相反
+        divergences = pcr_df_s[(pcr_df_s['vol_direction'] != pcr_df_s['oi_direction']) & 
+                                pcr_df_s['vol_direction'].notna() & 
+                                pcr_df_s['oi_direction'].notna()]
+        
+        print(f"\n▶ vol_pcr 与 oi_pcr 方向背离:")
+        print(f"   背离次数: {len(divergences)} 次 (共{len(pcr_df_s.dropna())}个交易日)")
+        print(f"   背离比例: {len(divergences)/len(pcr_df_s.dropna())*100:.1f}%")
+        
+        results['divergence'] = {
+            'divergence_count': int(len(divergences)),
+            'total_days': int(len(pcr_df_s.dropna())),
+            'divergence_pct': float(len(divergences)/len(pcr_df_s.dropna())*100)
+        }
+    
+    # --- PCR 对波动率的 Granger 因果 ---
+    merged_granger = merged[['vol_pcr', 'pct_return']].dropna()
+    if len(merged_granger) > 60:
+        from statsmodels.tsa.stattools import grangercausalitytests
+        try:
+            vol_pcr_abs_ret = pd.DataFrame({
+                'vol_pcr': merged_granger['vol_pcr'],
+                'abs_return': merged_granger['pct_return'].abs()
+            }).dropna()
+            
+            gc = grangercausalitytests(vol_pcr_abs_ret[['vol_pcr', 'abs_return']].values, maxlag=5, verbose=False)
+            best_p = 1.0
+            best_lag = 0
+            for lag in range(1, 6):
+                p = gc[lag][0]['ssr_chi2test'][1]
+                if p < best_p:
+                    best_p = p
+                    best_lag = lag
+            sig = best_p < 0.05
+            print(f"\n▶ PCR → 波动率 Granger 因果:")
+            print(f"   最优滞后: {best_lag}期")
+            print(f"   p-value: {best_p:.6f}")
+            print(f"   {'✅ 显著: PCR 对波动率有预测力' if sig else '❌ 不显著'}")
+            results['granger_pcr_to_vol'] = {
+                'best_lag': best_lag,
+                'best_p_value': float(best_p),
+                'significant': sig
+            }
+        except Exception as e:
+            print(f"   跳过 Granger 检验: {e}")
+    
+    print("\n✅ PCR 分析完成")
+    return results
+
+def generate_pcr_chart(pcr_df, cyb_df):
+    """生成 PCR 走势图子图 (嵌入现有图表下方作为第5行)"""
+    if pcr_df is None or len(pcr_df) < 10:
+        return None
+    
+    from plotly.subplots import make_subplots
+    import plotly.graph_objects as go
+    
+    # 合并数据做相关性对比
+    pcr_close = pcr_df[['vol_pcr', 'oi_pcr']].copy()
+    cyb_close = cyb_df[['close', 'pct_return', 'volume']].copy()
+    merged = pcr_close.join(cyb_close, how='inner')
+    
+    fig = make_subplots(
+        rows=3, cols=1,
+        subplot_titles=('成交量 PCR (认沽/认购比率)', 
+                        '持仓量 PCR (认沽/认购未平仓比率)', 
+                        'PCR vs 指数走势 (归一化)'),
+        row_heights=[0.33, 0.33, 0.33],
+        vertical_spacing=0.1
+    )
+    
+    # 1. vol_pcr 走势
+    fig.add_trace(
+        go.Scatter(x=merged.index, y=merged['vol_pcr'], 
+                   name='成交量PCR', line=dict(color='#ff6b6b', width=1.5)),
+        row=1, col=1
+    )
+    
+    # 添加 0.7 和 1.0 参考线（常规情绪分界）
+    fig.add_hline(y=1.0, line_dash="dash", line_color="gray", row=1, col=1)
+    fig.add_hline(y=0.7, line_dash="dash", line_color="rgba(74, 222, 128, 0.3)", row=1, col=1)
+    
+    # 2. oi_pcr 走势
+    fig.add_trace(
+        go.Scatter(x=merged.index, y=merged['oi_pcr'],
+                   name='持仓量PCR', line=dict(color='#ffd93d', width=1.5)),
+        row=2, col=1
+    )
+    fig.add_hline(y=1.0, line_dash="dash", line_color="gray", row=2, col=1)
+    
+    # 3. PCR vs 指数（归一化对比）
+    from sklearn.preprocessing import MinMaxScaler
+    scaler = MinMaxScaler()
+    norm_data = pd.DataFrame(index=merged.index)
+    norm_data['close_norm'] = scaler.fit_transform(merged[['close']])
+    norm_data['vol_pcr_norm'] = scaler.fit_transform(merged[['vol_pcr']])
+    norm_data['oi_pcr_norm'] = scaler.fit_transform(merged[['oi_pcr']])
+    
+    fig.add_trace(
+        go.Scatter(x=norm_data.index, y=norm_data['close_norm'],
+                   name='指数 (归一化)', line=dict(color='#60a5fa', width=2)),
+        row=3, col=1
+    )
+    fig.add_trace(
+        go.Scatter(x=norm_data.index, y=norm_data['vol_pcr_norm'],
+                   name='成交量PCR (归一化)', line=dict(color='#ff6b6b', width=1.5, dash='dot')),
+        row=3, col=1
+    )
+    fig.add_trace(
+        go.Scatter(x=norm_data.index, y=norm_data['oi_pcr_norm'],
+                   name='持仓量PCR (归一化)', line=dict(color='#ffd93d', width=1.5, dash='dot')),
+        row=3, col=1
+    )
+    
+    fig.update_layout(
+        title_text="📊 期权 PCR 走势分析 (159915 创业板ETF)",
+        height=900,
+        template='plotly_dark',
+        hovermode='x unified',
+        showlegend=True,
+        legend=dict(orientation='h', y=1.02)
+    )
+    
+    pcr_chart_path = os.path.join(OUTPUT_DIR, "pcr_analysis.html")
+    fig.write_html(pcr_chart_path)
+    print(f"✅ PCR图表已保存: {pcr_chart_path}")
+    
+    return pcr_chart_path
+
+def generate_pcr_report_section(pcr_results):
+    """生成 PCR 分析报告文本"""
+    if pcr_results is None:
+        return ""
+    
+    lines = []
+    lines.append("\n\n## 📊 期权 PCR 分析 (159915 创业板ETF)\n")
+    
+    bs = pcr_results.get('basic_stats', {})
+    if bs:
+        lines.append(f"- **成交量PCR均值**: {bs['vol_pcr_mean']:.3f} (范围: {bs['vol_pcr_min']:.3f} ~ {bs['vol_pcr_max']:.3f})\n")
+        lines.append(f"- **持仓量PCR均值**: {bs['oi_pcr_mean']:.3f} (范围: {bs['oi_pcr_min']:.3f} ~ {bs['oi_pcr_max']:.3f})\n")
+    
+    corr = pcr_results.get('correlation', {})
+    if corr:
+        lines.append("\n### PCR vs 指数相关性\n")
+        lines.append(f"- **成交量PCR vs 收盘价**: {corr['vol_pcr_close']:+.3f}\n")
+        lines.append(f"- **成交量PCR vs 波动率**: {corr['vol_pcr_volatility']:+.3f}\n")
+        lines.append(f"- **持仓量PCR vs 收盘价**: {corr['oi_pcr_close']:+.3f}\n")
+        lines.append(f"- **持仓量PCR vs 收益率**: {corr['oi_pcr_return']:+.3f}\n")
+    
+    signals = pcr_results.get('signals', {})
+    if signals:
+        lines.append("\n### PCR 极端信号\n")
+        lines.append(f"- **高 PCR (>80分位)** 后5日平均收益: {signals['high_pcr_fwd_return']:+.4f}%\n")
+        lines.append(f"- **高 PCR (>80分位)** 后5日下跌概率: {signals['high_pcr_down_pct']:.0f}%\n")
+        lines.append(f"- **低 PCR (<20分位)** 后5日平均收益: {signals['low_pcr_fwd_return']:+.4f}%\n")
+        lines.append(f"- **低 PCR (<20分位)** 后5日上涨概率: {signals['low_pcr_up_pct']:.0f}%\n")
+    
+    granger = pcr_results.get('granger_pcr_to_vol', {})
+    if granger:
+        sig = "✅ 显著" if granger.get('significant') else "❌ 不显著"
+        lines.append(f"\n### PCR → 波动率 Granger 因果\n")
+        lines.append(f"- p={granger['best_p_value']:.4f} (滞后{granger['best_lag']}期) {sig}\n")
+    
+    return "".join(lines)
 
 if __name__ == "__main__":
     main()

@@ -4,7 +4,7 @@
     "data_start": "2018-03-05",
     "data_end": "2026-05-15",
     "trading_days": 1973,
-    "generated_at": "2026-05-17 08:49:33"
+    "generated_at": "2026-05-17 08:54:14"
   },
   "latest_price": {
     "date": "2026-05-15",
@@ -87,5 +87,40 @@
       0.23540174855816223,
       -1.1420163834524009e-05
     ]
+  },
+  "pcr_analysis": {
+    "basic_stats": {
+      "vol_pcr_mean": 0.8881957123098201,
+      "vol_pcr_std": 0.16640755203698554,
+      "oi_pcr_mean": 0.8563467496542185,
+      "oi_pcr_std": 0.27705206681838757,
+      "vol_pcr_min": 0.4527,
+      "vol_pcr_max": 1.6539,
+      "oi_pcr_min": 0.4048,
+      "oi_pcr_max": 1.8758
+    },
+    "correlation": {
+      "vol_pcr_close": 0.2377719706601586,
+      "vol_pcr_return": -0.18292193924936645,
+      "vol_pcr_volatility": 0.03918215872493463,
+      "oi_pcr_close": 0.721006491631752,
+      "oi_pcr_return": 0.3046240185487623
+    },
+    "signals": {
+      "high_pcr_fwd_return": 0.4345403626497468,
+      "high_pcr_down_pct": 47.183098591549296,
+      "low_pcr_fwd_return": 1.3681936864580466,
+      "low_pcr_up_pct": 52.89855072463768
+    },
+    "divergence": {
+      "divergence_count": 413,
+      "total_days": 718,
+      "divergence_pct": 57.5208913649025
+    },
+    "granger_pcr_to_vol": {
+      "best_lag": 4,
+      "best_p_value": 0.4843505910789183,
+      "significant": "False"
+    }
   }
 }
