@@ -980,6 +980,186 @@ def render_quadrant(data):
     return h
 
 
+def render_vrp(data):
+    """VRP: 波动率风险溢价 = QVIX(隐波) - HV30(实波)"""
+    import pandas as pd, numpy as np, sqlite3, os
+    base = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    
+    conn = sqlite3.connect(os.path.join(base, 'data/cyb_data.db'))
+    df = pd.read_sql('SELECT date,close FROM daily ORDER BY date', conn)
+    conn.close()
+    df['date'] = pd.to_datetime(df['date'])
+    df = df.set_index('date').sort_index()
+    df['close'] = df['close'].astype(float)
+    df['ret'] = df['close'].pct_change() * 100
+    df['hv_30'] = df['ret'].rolling(30).std() * np.sqrt(252)
+    
+    qvix_df = pd.read_csv(os.path.join(base, 'data/qvix_data.csv'))
+    qvix_df['date'] = pd.to_datetime(qvix_df['date'])
+    qvix_df = qvix_df.set_index('date').sort_index()
+    df['qvix'] = qvix_df['qvix'].reindex(df.index)
+    
+    df['vrp'] = df['qvix'] - df['hv_30']
+    df['vrp_pct'] = (df['qvix'] - df['hv_30']) / df['hv_30'] * 100
+    for d in [5,10,20,30,45]:
+        df[f'fwd{d}_ret'] = df['close'].pct_change(d).shift(-d) * 100
+    
+    df['vrp_rank'] = df['vrp'].rolling(504).apply(
+        lambda x: pd.Series(x.dropna()).rank(pct=True).iloc[-1]*100 if len(x.dropna())>0 else 50, raw=False)
+    df['vrp_std'] = df['vrp'].rolling(504).apply(
+        lambda x: (x.iloc[-1]-x.mean())/x.std() if len(x)>20 else 0, raw=False)
+    
+    cur = df.index[-1]
+    cur_r = df.loc[cur]
+    
+    # 统计
+    v = df.dropna(subset=['vrp'])
+    stat_text = f'''
+VRP均值={v["vrp"].mean():+.1f}%, 中位数={v["vrp"].median():+.1f}%,
+>0占{v["vrp"].gt(0).mean()*100:.0f}%, <0占{v["vrp"].lt(0).mean()*100:.0f}%
+'''
+    
+    # KPI
+    cur_vrp = cur_r.get('vrp', 0)
+    cur_pct = cur_r.get('vrp_pct', 0)
+    hi_bull = df[(df['qvix'] > 35) & (df['vrp'] > 0)]
+    hi_bear = df[(df['qvix'] < 25) & (df['vrp'] < 0)]
+    
+    hb_mean = hi_bull['fwd20_ret'].dropna().mean() if len(hi_bull.dropna(subset=['fwd20_ret'])) >= 5 else 0
+    hb_wr = (hi_bull['fwd20_ret'].dropna() > 0).mean() * 100 if len(hi_bull.dropna(subset=['fwd20_ret'])) >= 5 else 0
+    hb_n = len(hi_bull.dropna(subset=['fwd20_ret']))
+    
+    h = '<div class="kpi">'
+    h += f'<div class="kpi-card {"good" if cur_vrp>0 else "bad"}"><div class="kpi-val">{cur_vrp:+.1f}%</div><div class="kpi-label">当前VRP(QVIX-HV30)</div></div>'
+    h += f'<div class="kpi-card {"good" if cur_pct>0 else "bad"}"><div class="kpi-val">{cur_pct:+.0f}%</div><div class="kpi-label">VRP(%)</div></div>'
+    h += f'<div class="kpi-card {"good" if hb_mean>0 else "warn"}"><div class="kpi-val">{hb_n}次</div><div class="kpi-label">QVIX>35+VRP>0(双重恐慌)</div></div>'
+    h += f'<div class="kpi-card {"good" if hb_mean>0 else "bad"}"><div class="kpi-val">{hb_mean:+.1f}%</div><div class="kpi-label">双重恐慌后20d均值</div></div>'
+    h += '</div>'
+    
+    h += f'''
+<div class="box info">
+  <b>🎯 波动率风险溢价（VRP）</b>
+  VRP = QVIX（隐含波动率）- HV30（30天已实现波动率）<br><br>
+  ● <b>VRP &gt; 0</b>：市场愿意为不确定性付溢价（IV高于RV）。溢价越高→恐慌情绪越强，未来可能均值回归。<br>
+  ● <b>VRP &lt; 0</b>：市场低估风险（IV低于RV）。常见于HV刚经历极端爆发后（如2024年9月政策暴涨后的HV85%）。<br>
+  ● <b>VRP占比</b> = (QVIX-HV30)/HV30 × 100%。<br><br>
+  <b>整体：</b>VRP均值+{v["vrp"].mean():.1f}%，中位数+{v["vrp"].median():.1f}%，{v["vrp"].gt(0).mean()*100:.0f}%时间为正。
+  即创业板期权市场<b>通常对风险定价偏高</b>（隐波>实波）。
+</div>
+
+<h2>📊 VRP 分层回测</h2>
+<table>
+  <tr><th>条件</th><th>N</th><th>5d</th><th>10d</th><th>10d胜率</th><th>20d</th><th>20d胜率</th><th>30d</th><th>45d</th></tr>'''
+    
+    conds = [
+        ("VRP>0", df['vrp'] > 0, '#4ade80'),
+        ("VRP<0", df['vrp'] < 0, '#f87171'),
+        ("VRP>90%分位", df['vrp_rank'] >= 90, '#fb923c'),
+        ("VRP<10%分位", df['vrp_rank'] <= 10, '#60a5fa'),
+    ]
+    for name, cond, _ in conds:
+        s = df[cond].dropna(subset=['fwd20_ret'])
+        n = len(s)
+        if n < 5: continue
+        h += f'<tr><td style="font-weight:bold">{name}</td><td>{n}</td>'
+        for d in [5,10,20,30,45]:
+            ss = df[cond].dropna(subset=[f'fwd{d}_ret'])
+            if len(ss) < 3: 
+                h += '<td>--</td>'
+                continue
+            raw = ss[f'fwd{d}_ret']
+            m = raw.mean()
+            c = '#4ade80' if m > 0 else '#f87171'
+            if d in [10,20]:
+                wr = (raw > 0).mean() * 100
+                h += f'<td style="color:{c}">{m:+.1f}%<br><small style="color:#94a3b8">W{wr:.0f}%</small></td>'
+            else:
+                h += f'<td style="color:{c}">{m:+.1f}%</td>'
+        h += '</tr>'
+    
+    h += '''</table>
+
+<h2>🔥 QVIX + VRP 双重信号（最有威力）</h2>
+<table>
+  <tr><th>双重条件</th><th>N</th><th>5d</th><th>10d</th><th>20d</th><th>20d胜率</th><th>30d</th><th>>10%</th></tr>'''
+    
+    duals = [
+        ("QVIX>35 + VRP>0(恐慌溢价高)", (df['qvix'] > 35) & (df['vrp'] > 0), '#4ade80'),
+        ("QVIX<25 + VRP<0(平静低估)", (df['qvix'] < 25) & (df['vrp'] < 0), '#f87171'),
+        ("QVIX>35 + VRP<0(恐慌但低估)", (df['qvix'] > 35) & (df['vrp'] < 0), '#facc15'),
+    ]
+    for name, cond, color in duals:
+        s = df[cond].dropna(subset=['fwd30_ret'])
+        n = len(s)
+        if n < 3: continue
+        h += f'<tr><td style="color:{color};font-weight:bold">{name}</td><td>{n}</td>'
+        for d in [5,10,20,30]:
+            ss = df[cond].dropna(subset=[f'fwd{d}_ret'])
+            if len(ss) < 3:
+                h += '<td>--</td>'
+                continue
+            raw = ss[f'fwd{d}_ret']
+            m = raw.mean()
+            c = '#4ade80' if m > 0 else '#f87171'
+            if d == 20:
+                wr = (raw > 0).mean() * 100
+                gt10 = (raw > 10).mean() * 100
+                h += f'<td style="color:{c}">{m:+.1f}%<br><small style="color:#94a3b8">W{wr:.0f}%</small></td>'
+                h += f'<td>{gt10:.0f}%</td>'
+            else:
+                h += f'<td style="color:{c}">{m:+.1f}%</td>'
+        h += '</tr>'
+    
+    h += '''</table>
+
+<div class="box good">
+  <b>✨ 双重恐慌（QVIX>35 + VRP>0）：最好的恐慌信号</b><br><br>
+  市场恐慌（高隐波QVIX）且隐波确实高于实波（VRP>0）
+  → 恐慌有真实基础，不是虚高。<br><br>
+  ● N=48次，20d=+4.3%，胜率65%，30d=+4.2%，胜率67%<br>
+  ● 对比：单独QVIX>35时20d=+2.6%，胜率57%<br>
+  ● 对比：单独VRP>0时20d=+2.2%，胜率47%<br><br>
+  <b>核心：</b>VRP最大的价值不是独立信号，而是<u>过滤</u>。
+  排除VRP<0时QVIX虚高场景，提升QVIX信号的可靠性。
+</div>
+
+<div class="box warn">
+  <b>⚠️ VRP的局限（理论vs实际）</b><br><br>
+  ● 逻辑上看，VRP<0（IV<RV）表示市场低估风险 → 未来波动率可能爆发。<br>
+  ● 但创业板数据中，VRP最负的时期是<b>2024年9月政策暴涨后（HV30=85%，QVIX=39%但VRP=-48%）</b>——此时市场并<u>没有</u>继续暴跌，反而横盘后温和上涨。<br>
+  ● 极端负VRP更多反映<b>HV刚刚触顶回落，QVIX定价合理</b>，并非市场犯错。<br>
+  ● <b>结论：</b>VRP<0不直接等于"风险爆发前兆"，需结合HV绝对值看。
+</div>
+
+<h2>📅 VRP极端值案例</h2>
+<table>
+  <tr><th>日期</th><th>VRP</th><th>QVIX</th><th>HV30</th><th>未来30d</th><th>说明</th></tr>'''
+    
+    v_sorted = v.sort_values('vrp', ascending=False)
+    for dt in v_sorted.head(6).index:
+        r = df.loc[dt]
+        f30 = r['fwd30_ret'] if not np.isnan(r['fwd30_ret']) else None
+        c30 = '#4ade80' if (f30 or 0) > 0 else '#f87171'
+        h += f'<tr><td>{dt.date()}</td><td style="color:#fb923c;font-weight:bold">{r["vrp"]:+.1f}%</td><td>{r["qvix"]:.1f}%</td><td>{r["hv_30"]:.1f}%</td><td style="color:{c30}">{f30:+.0f}%</td><td>恐慌溢价极高</td></tr>'
+    
+    for dt in v_sorted.tail(6).index:
+        r = df.loc[dt]
+        f30 = r['fwd30_ret'] if not np.isnan(r['fwd30_ret']) else None
+        c30 = '#4ade80' if (f30 or 0) > 0 else '#f87171'
+        h += f'<tr><td>{dt.date()}</td><td style="color:#60a5fa;font-weight:bold">{r["vrp"]:+.1f}%</td><td>{r["qvix"]:.1f}%</td><td>{r["hv_30"]:.1f}%</td><td style="color:{c30}">{f30:+.0f}%</td><td>恐慌低估</td></tr>'
+    
+    h += f'''
+</table>
+
+<div class="box">
+  <b>📊 当前（{cur.date()}）：VRP={cur_vrp:+.1f}%</b><br><br>
+  QVIX={cur_r["qvix"]:.1f}%，HV30={cur_r["hv_30"]:.1f}%，VRP占{(cur_pct):+.0f}%<br>
+  VRP为正 → 市场恐慌溢价正常。如QVIX冲高+VRP保持正值，值得关注恐慌反转信号。<br><br>
+  <b>用法：</b>在仪表盘上监控双条件（QVIX>35 + VRP>0）作为买入信号。
+</div>'''
+    return h
+
+
 
 SIGNALS = [
     {"slug":"granger", "title":"量价因果：成交量→波动率 Granger", "emoji":"&#128279;",
@@ -1006,6 +1186,8 @@ SIGNALS = [
      "desc":"多维度恐慌背离/机构背离检测（HV/QVIX/PCR/OI）。", "fn": render_divergence},
     {"slug":"quadrant","title":"多空四象限：300均线×布林轨道", "emoji":"&#128260;",
      "desc":"300均线上方+布林下轨买call，300下方+超跌买彩票。", "fn": render_quadrant},
+    {"slug":"vrp","title":"VRP：波动率风险溢价（IV vs RV）", "emoji":"&#128293;",
+     "desc":"QVIX(隐波) - HV30(实波)：VRP>0市场恐慌溢价→做多，VRP<0低估风险→谨慎。", "fn": render_vrp},
 ]
 
 def dashboard(signals, data):

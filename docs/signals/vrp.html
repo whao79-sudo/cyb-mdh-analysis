@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>&#128293; VRP：波动率风险溢价（IV vs RV） &mdash; CYB MDH</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+       background:#0f172a; color:#e2e8f0; line-height:1.6; }
+.container { max-width:800px; margin:0 auto; padding:20px; }
+header { text-align:center; padding:30px 0 20px; }
+h1 { font-size:1.8em; color:#60a5fa; margin-bottom:4px; }
+h2 { font-size:1.2em; color:#93c5fd; border-bottom:1px solid #334155; padding-bottom:8px; margin:25px 0 12px; }
+h3 { color:#e2e8f0; margin:15px 0 8px; }
+.subtitle { color:#94a3b8; font-size:0.9em; }
+.back { display:inline-block; color:#60a5fa; text-decoration:none; margin-bottom:10px; font-size:0.9em; }
+.back:hover { text-decoration:underline; }
+.kpi { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin:15px 0; }
+.kpi-card { background:#1e293b; border-radius:10px; padding:15px; text-align:center; }
+.kpi-val { font-size:1.6em; font-weight:bold; color:#60a5fa; }
+.kpi-label { font-size:0.8em; color:#94a3b8; margin-top:4px; }
+.kpi-card.good .kpi-val { color:#4ade80; }
+.kpi-card.bad .kpi-val { color:#f87171; }
+.kpi-card.warn .kpi-val { color:#facc15; }
+table { width:100%; border-collapse:collapse; margin:10px 0; font-size:0.85em; }
+th { background:#1e293b; color:#94a3b8; padding:8px; text-align:left; border-bottom:2px solid #334155; }
+td { padding:8px; border-bottom:1px solid #1e293b; }
+tr:hover td { background:#1e293b; }
+.badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:0.8em; font-weight:bold; }
+.badge.green { background:rgba(74,222,128,0.2); color:#4ade80; }
+.badge.red { background:rgba(248,113,113,0.2); color:#f87171; }
+.badge.yellow { background:rgba(250,204,21,0.2); color:#facc15; }
+.box { background:#1e293b; border-radius:10px; padding:15px; margin:15px 0; border-left:4px solid #334155; }
+.box.info { border-left-color:#60a5fa; }
+.box.warn { border-left-color:#facc15; }
+.box.danger { border-left-color:#f87171; }
+.box.success { border-left-color:#4ade80; }
+ul { margin-left:20px; }
+li { margin:4px 0; }
+footer { text-align:center; color:#64748b; padding:30px 0; font-size:0.8em; }
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+  <a href="../index.html" class="back">&larr; 返回仪表盘</a>
+  <h1>&#128293; VRP：波动率风险溢价（IV vs RV）</h1>
+  <p class="subtitle">QVIX(隐波) - HV30(实波)：VRP>0市场恐慌溢价→做多，VRP<0低估风险→谨慎。</p>
+</header>
+<div class="kpi"><div class="kpi-card good"><div class="kpi-val">+2.4%</div><div class="kpi-label">当前VRP(QVIX-HV30)</div></div><div class="kpi-card good"><div class="kpi-val">+7%</div><div class="kpi-label">VRP(%)</div></div><div class="kpi-card good"><div class="kpi-val">48次</div><div class="kpi-label">QVIX>35+VRP>0(双重恐慌)</div></div><div class="kpi-card good"><div class="kpi-val">+4.3%</div><div class="kpi-label">双重恐慌后20d均值</div></div></div>
+<div class="box info">
+  <b>🎯 波动率风险溢价（VRP）</b>
+  VRP = QVIX（隐含波动率）- HV30（30天已实现波动率）<br><br>
+  ● <b>VRP &gt; 0</b>：市场愿意为不确定性付溢价（IV高于RV）。溢价越高→恐慌情绪越强，未来可能均值回归。<br>
+  ● <b>VRP &lt; 0</b>：市场低估风险（IV低于RV）。常见于HV刚经历极端爆发后（如2024年9月政策暴涨后的HV85%）。<br>
+  ● <b>VRP占比</b> = (QVIX-HV30)/HV30 × 100%。<br><br>
+  <b>整体：</b>VRP均值+0.6%，中位数+2.4%，69%时间为正。
+  即创业板期权市场<b>通常对风险定价偏高</b>（隐波>实波）。
+</div>
+
+<h2>📊 VRP 分层回测</h2>
+<table>
+  <tr><th>条件</th><th>N</th><th>5d</th><th>10d</th><th>10d胜率</th><th>20d</th><th>20d胜率</th><th>30d</th><th>45d</th></tr><tr><td style="font-weight:bold">VRP>0</td><td>601</td><td style="color:#4ade80">+0.5%</td><td style="color:#4ade80">+1.0%<br><small style="color:#94a3b8">W49%</small></td><td style="color:#4ade80">+2.2%<br><small style="color:#94a3b8">W47%</small></td><td style="color:#4ade80">+3.5%</td><td style="color:#4ade80">+4.9%</td></tr><tr><td style="font-weight:bold">VRP<0</td><td>253</td><td style="color:#4ade80">+0.3%</td><td style="color:#4ade80">+0.4%<br><small style="color:#94a3b8">W49%</small></td><td style="color:#f87171">-0.0%<br><small style="color:#94a3b8">W49%</small></td><td style="color:#f87171">-1.0%</td><td style="color:#f87171">-1.0%</td></tr></table>
+
+<h2>🔥 QVIX + VRP 双重信号（最有威力）</h2>
+<table>
+  <tr><th>双重条件</th><th>N</th><th>5d</th><th>10d</th><th>20d</th><th>20d胜率</th><th>30d</th><th>>10%</th></tr><tr><td style="color:#4ade80;font-weight:bold">QVIX>35 + VRP>0(恐慌溢价高)</td><td>48</td><td style="color:#4ade80">+1.8%</td><td style="color:#4ade80">+2.6%</td><td style="color:#4ade80">+4.3%<br><small style="color:#94a3b8">W65%</small></td><td>31%</td><td style="color:#4ade80">+4.2%</td></tr><tr><td style="color:#f87171;font-weight:bold">QVIX<25 + VRP<0(平静低估)</td><td>97</td><td style="color:#f87171">-1.0%</td><td style="color:#f87171">-1.6%</td><td style="color:#f87171">-2.5%<br><small style="color:#94a3b8">W35%</small></td><td>0%</td><td style="color:#f87171">-2.9%</td></tr><tr><td style="color:#facc15;font-weight:bold">QVIX>35 + VRP<0(恐慌但低估)</td><td>52</td><td style="color:#4ade80">+0.4%</td><td style="color:#4ade80">+1.6%</td><td style="color:#4ade80">+0.9%<br><small style="color:#94a3b8">W50%</small></td><td>12%</td><td style="color:#f87171">-1.2%</td></tr></table>
+
+<div class="box good">
+  <b>✨ 双重恐慌（QVIX>35 + VRP>0）：最好的恐慌信号</b><br><br>
+  市场恐慌（高隐波QVIX）且隐波确实高于实波（VRP>0）
+  → 恐慌有真实基础，不是虚高。<br><br>
+  ● N=48次，20d=+4.3%，胜率65%，30d=+4.2%，胜率67%<br>
+  ● 对比：单独QVIX>35时20d=+2.6%，胜率57%<br>
+  ● 对比：单独VRP>0时20d=+2.2%，胜率47%<br><br>
+  <b>核心：</b>VRP最大的价值不是独立信号，而是<u>过滤</u>。
+  排除VRP<0时QVIX虚高场景，提升QVIX信号的可靠性。
+</div>
+
+<div class="box warn">
+  <b>⚠️ VRP的局限（理论vs实际）</b><br><br>
+  ● 逻辑上看，VRP<0（IV<RV）表示市场低估风险 → 未来波动率可能爆发。<br>
+  ● 但创业板数据中，VRP最负的时期是<b>2024年9月政策暴涨后（HV30=85%，QVIX=39%但VRP=-48%）</b>——此时市场并<u>没有</u>继续暴跌，反而横盘后温和上涨。<br>
+  ● 极端负VRP更多反映<b>HV刚刚触顶回落，QVIX定价合理</b>，并非市场犯错。<br>
+  ● <b>结论：</b>VRP<0不直接等于"风险爆发前兆"，需结合HV绝对值看。
+</div>
+
+<h2>📅 VRP极端值案例</h2>
+<table>
+  <tr><th>日期</th><th>VRP</th><th>QVIX</th><th>HV30</th><th>未来30d</th><th>说明</th></tr><tr><td>2026-03-23</td><td style="color:#fb923c;font-weight:bold">+30.8%</td><td>57.4%</td><td>26.6%</td><td style="color:#4ade80">+17%</td><td>恐慌溢价极高</td></tr><tr><td>2026-03-24</td><td style="color:#fb923c;font-weight:bold">+23.5%</td><td>49.2%</td><td>25.7%</td><td style="color:#4ade80">+21%</td><td>恐慌溢价极高</td></tr><tr><td>2025-04-07</td><td style="color:#fb923c;font-weight:bold">+17.8%</td><td>58.2%</td><td>40.3%</td><td style="color:#4ade80">+13%</td><td>恐慌溢价极高</td></tr><tr><td>2025-08-20</td><td style="color:#fb923c;font-weight:bold">+16.6%</td><td>36.5%</td><td>19.9%</td><td style="color:#4ade80">+25%</td><td>恐慌溢价极高</td></tr><tr><td>2025-08-18</td><td style="color:#fb923c;font-weight:bold">+16.1%</td><td>36.5%</td><td>20.5%</td><td style="color:#4ade80">+24%</td><td>恐慌溢价极高</td></tr><tr><td>2025-08-25</td><td style="color:#fb923c;font-weight:bold">+15.4%</td><td>37.8%</td><td>22.4%</td><td style="color:#4ade80">+7%</td><td>恐慌溢价极高</td></tr><tr><td>2024-10-17</td><td style="color:#60a5fa;font-weight:bold">-45.8%</td><td>39.8%</td><td>85.6%</td><td style="color:#4ade80">+7%</td><td>恐慌低估</td></tr><tr><td>2024-10-16</td><td style="color:#60a5fa;font-weight:bold">-45.9%</td><td>39.8%</td><td>85.7%</td><td style="color:#4ade80">+8%</td><td>恐慌低估</td></tr><tr><td>2024-11-14</td><td style="color:#60a5fa;font-weight:bold">-47.5%</td><td>41.7%</td><td>89.2%</td><td style="color:#f87171">-5%</td><td>恐慌低估</td></tr><tr><td>2024-10-21</td><td style="color:#60a5fa;font-weight:bold">-48.0%</td><td>39.8%</td><td>87.8%</td><td style="color:#4ade80">+2%</td><td>恐慌低估</td></tr><tr><td>2024-11-04</td><td style="color:#60a5fa;font-weight:bold">-48.7%</td><td>39.8%</td><td>88.5%</td><td style="color:#4ade80">+1%</td><td>恐慌低估</td></tr><tr><td>2024-11-06</td><td style="color:#60a5fa;font-weight:bold">-49.1%</td><td>39.8%</td><td>88.9%</td><td style="color:#f87171">-3%</td><td>恐慌低估</td></tr>
+</table>
+
+<div class="box">
+  <b>📊 当前（2026-05-15）：VRP=+2.4%</b><br><br>
+  QVIX=35.3%，HV30=32.8%，VRP占+7%<br>
+  VRP为正 → 市场恐慌溢价正常。如QVIX冲高+VRP保持正值，值得关注恐慌反转信号。<br><br>
+  <b>用法：</b>在仪表盘上监控双条件（QVIX>35 + VRP>0）作为买入信号。
+</div>
+<footer>
+  CYB MDH Analysis &middot; baostock + 深交所 + 中证指数 &middot;
+  2026-05-17 20:08
+</footer>
+</div>
+</body>
+</html>
