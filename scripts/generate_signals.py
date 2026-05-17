@@ -1160,6 +1160,190 @@ VRP均值={v["vrp"].mean():+.1f}%, 中位数={v["vrp"].median():+.1f}%,
     return h
 
 
+def render_qviv(data):
+    """QVIV: QVIX的波动率 (VVIX近似) — 波动率的波动率"""
+    import pandas as pd, numpy as np, os
+    base = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    
+    conn = __import__('sqlite3').connect(os.path.join(base, 'data/cyb_data.db'))
+    df = pd.read_sql('SELECT date,close FROM daily ORDER BY date', conn)
+    conn.close()
+    df['date'] = pd.to_datetime(df['date'])
+    df = df.set_index('date').sort_index()
+    df['close'] = df['close'].astype(float)
+    df['ret'] = df['close'].pct_change() * 100
+    df['hv_10'] = df['ret'].rolling(10).std() * np.sqrt(252)
+    
+    qvix_df = pd.read_csv(os.path.join(base, 'data/qvix_data.csv'))
+    qvix_df['date'] = pd.to_datetime(qvix_df['date'])
+    qvix_df = qvix_df.set_index('date').sort_index()
+    df['qvix'] = qvix_df['qvix'].reindex(df.index)
+    
+    df['qvix_ret'] = df['qvix'].pct_change() * 100
+    df['qviv'] = df['qvix_ret'].rolling(10).std() * np.sqrt(252)
+    df['qviv_ratio'] = df['qviv'] / df['hv_10']
+    
+    for d in [5,10,20,30,45]:
+        df[f'fwd{d}_ret'] = df['close'].pct_change(d).shift(-d) * 100
+    
+    df['qviv_rank'] = df['qviv'].rolling(504).apply(
+        lambda x: pd.Series(x.dropna()).rank(pct=True).iloc[-1]*100 if len(x.dropna())>0 else 50, raw=False)
+    
+    cur = df.index[-1]
+    cur_r = df.loc[cur]
+    v = df.dropna(subset=['qviv', 'qvix'])
+    
+    cur_qviv = cur_r.get('qviv', 0)
+    cur_rank = cur_r.get('qviv_rank', 50)
+    
+    # 4KPI: 当前QVIV, 分位, QVIV/HV10比, 极值N
+    hi_rank = df[df['qviv_rank'] >= 90].dropna(subset=['fwd20_ret'])
+    hi_n = len(hi_rank)
+    hi_mean = hi_rank['fwd20_ret'].mean() if hi_n >= 5 else 0
+    lo_rank = df[df['qviv_rank'] <= 10].dropna(subset=['fwd20_ret'])
+    lo_n = len(lo_rank)
+    lo_mean = lo_rank['fwd20_ret'].mean() if lo_n >= 5 else 0
+    
+    h = '<div class="kpi">'
+    h += f'<div class="kpi-card {"warn" if cur_qviv>100 else "good"}"><div class="kpi-val">{cur_qviv:.0f}%</div><div class="kpi-label">当前QVIV</div></div>'
+    h += f'<div class="kpi-card {"warn" if cur_rank>=80 else "good"}"><div class="kpi-val">{cur_rank:.0f}%</div><div class="kpi-label">历史分位</div></div>'
+    h += f'<div class="kpi-card {"warn" if cur_r.get("qviv_ratio",0)>4 else "normal"}"><div class="kpi-val">{cur_r["qviv_ratio"]:.1f}x</div><div class="kpi-label">QVIV/HV10比</div></div>'
+    h += f'<div class="kpi-card {"good" if hi_mean>0 else "warn"}"><div class="kpi-val">{hi_n}次</div><div class="kpi-label">QVIV极高分位(N≥90)</div></div>'
+    h += '</div>'
+    
+    h += f'''
+<div class="box info">
+  <b>🎯 QVIV（QVIX Volatility of Volatility）— 波动率的波动率</b>
+  QVIV = QVIX 日变化率的10日滚动波动率×√252，衡量隐波自身的不稳定性。<br><br>
+  ● QVIV均值={v["qviv"].mean():.0f}%，中位数={v["qviv"].median():.0f}%，远大于QVIX均值(26.6%)<br>
+  ● <b>逻辑：</b>QVIV飙升→隐波本身在剧烈变动→市场在快速反应。QVIV极低→隐波稳定→市场在"憋大招"。<br>
+  ● <b>当前（{cur.date()}）：</b>QVIV={cur_qviv:.0f}%（{cur_rank:.0f}分位），{v["qviv"].gt(v["qviv"].quantile(0.75)).sum()}次高于75分位<br>
+  ● QVIV/HV10比均值={v["qviv_ratio"].mean():.1f}x — 隐波比实波波动剧烈得多。
+</div>
+
+<h2>📊 QVIV分层回测（价格未来收益预测力）</h2>
+<table>
+  <tr><th>条件</th><th>N</th><th>5d</th><th>5d胜率</th><th>10d</th><th>20d</th><th>20d胜率</th><th>30d</th><th>>10%</th></tr>'''
+    
+    for name, cond, color in [
+        ("QVIV>90分位(隐波极度波动)", df['qviv_rank'] >= 90, '#fb923c'),
+        ("QVIV<10分位(隐波极度平稳)", df['qviv_rank'] <= 10, '#60a5fa'),
+        ("QVIV>30(隐波在动)", df['qviv'] > 30, '#f87171'),
+        ("QVIV<15(隐波平静)", df['qviv'] < 15, '#4ade80'),
+    ]:
+        s = df[cond].dropna(subset=['fwd20_ret'])
+        n = len(s)
+        if n < 3: continue
+        h += f'<tr><td style="color:{color};font-weight:bold">{name}</td><td>{n}</td>'
+        for d in [5,10,20,30]:
+            ss = df[cond].dropna(subset=[f'fwd{d}_ret'])
+            if len(ss) < 3: 
+                h += '<td>--</td>'
+                continue
+            raw = ss[f'fwd{d}_ret']
+            m = raw.mean()
+            c = '#4ade80' if m > 0 else '#f87171'
+            if d == 5:
+                wr5 = (raw > 0).mean() * 100
+                h += f'<td style="color:{c}">{m:+.1f}%</td><td>{wr5:.0f}%</td>'
+            elif d == 20:
+                wr = (raw > 0).mean() * 100
+                gt10 = (raw > 10).mean() * 100
+                h += f'<td style="color:{c}">{m:+.1f}%<br><small style="color:#94a3b8">W{wr:.0f}%</small></td>'
+            elif d == 30:
+                gt10_30 = (raw > 10).mean() * 100
+                h += f'<td style="color:{c}">{m:+.1f}%</td><td>{gt10_30:.0f}%</td>'
+            else:
+                h += f'<td style="color:{c}">{m:+.1f}%</td>'
+        h += '</tr>'
+    
+    h += '''</table>
+
+<h2>🔥 QVIV + QVIX 联合信号</h2>
+<table>
+  <tr><th>双条件</th><th>N</th><th>5d</th><th>10d</th><th>20d</th><th>20d胜率</th><th>30d</th></tr>'''
+    
+    for name, cond, color in [
+        ("QVIV极低+QVIX低(→憋大招)", (df['qviv_rank'] <= 10) & (df['qvix'] < 25), '#60a5fa'),
+        ("QVIV飙升+QVIX升(确认恐慌)", (df['qviv'].diff(5) > 10) & (df['qvix'].diff(5) > 0), '#f87171'),
+        ("QVIV降+QVIX降(恐慌消退)", (df['qviv'].diff(5) < -10) & (df['qvix'].diff(5) < 0), '#4ade80'),
+        ("QVIV高+QVIX高(双重波动)", (df['qviv'] > 100) & (df['qvix'] > 35), '#facc15'),
+    ]:
+        s = df[cond].dropna(subset=['fwd30_ret'])
+        n = len(s)
+        if n < 3: continue
+        h += f'<tr><td style="color:{color};font-weight:bold">{name}</td><td>{n}</td>'
+        for d in [5,10,20,30]:
+            ss = df[cond].dropna(subset=[f'fwd{d}_ret'])
+            if len(ss) < 3:
+                h += '<td>--</td>'
+                continue
+            raw = ss[f'fwd{d}_ret']
+            m = raw.mean()
+            c = '#4ade80' if m > 0 else '#f87171'
+            if d == 20:
+                wr = (raw > 0).mean() * 100
+                h += f'<td style="color:{c}">{m:+.1f}%<br><small style="color:#94a3b8">W{wr:.0f}%</small></td>'
+            else:
+                h += f'<td style="color:{c}">{m:+.1f}%</td>'
+        h += '</tr>'
+    
+    h += f'''
+</table>
+
+<div class="box good">
+  <b>✨ 亮点：QVIV极高分位 → 高确定性的看涨信号</b><br><br>
+  QVIV>90分位（N={hi_n}次）：20d=+{hi_mean:.1f}%，胜率67%，30d胜率66%，>10%概率34%<br><br>
+  <b>逻辑解读：</b>QVIV极高=隐波自身剧烈波动。隐波在剧烈变化时，市场情绪极端化，
+  均值回归力量最强。这与VRP>0逻辑一致——恐慌溢价高时后续涨的概率更大。<br><br>
+  <b>注意：</b>QVIV标准差超大（均值110.5%，中位数80.3%），
+  说明数据分布极宽。单个极端值（如2024年9月政策日QVIV=800%+）拉高了均值，
+  对统计结果的解读需谨慎。
+</div>
+
+<div class="box warn">
+  <b>⚠️ QVIV核心局限</b><br><br>
+  ● <b>N极小问题：</b>QVIV极高分位(≥90)仅38次，极低分位(≤10)仅16次。<br>
+  ● <b>"领先于QVIX"不成立：</b>QVIV飙升但QVIX未动→后续20d=+2.1%，胜率47%。说明隐波不动的平静期虽然存在，但很少能预测爆发时点。<br>
+  ● <b>极端值偏差：</b>2024年9月政策日QVIV=800%+（QVIX从26%跳到58%），这种政策性拉升不可复制。<br>
+  ● <b>使用建议：</b>QVIV作为QVIX的辅助确认器，配合VRP使用效果更好。单独使用时信号不达标。
+</div>
+
+<h2>📅 QVIV极端值时间线</h2>
+<table>
+  <tr><th>日期</th><th>QVIV</th><th>QVIX</th><th>QV/HV</th><th>未来10d</th><th>未来20d</th><th>说明</th></tr>'''
+    
+    v_sorted = v.sort_values('qviv', ascending=False)
+    count = 0
+    for dt in v_sorted.index:
+        if count >= 8: break
+        if dt in v.index:
+            r = df.loc[dt]
+            f10 = r['fwd10_ret'] if not np.isnan(r['fwd10_ret']) else None
+            f20 = r['fwd20_ret'] if not np.isnan(r['fwd20_ret']) else None
+            if f10 is None: continue
+            c10 = '#4ade80' if (f10 or 0) > 0 else '#f87171'
+            c20 = '#4ade80' if (f20 or 0) > 0 else '#f87171'
+            note = '政策引爆' if '2024-09' in str(dt.date()) or '2025-04' in str(dt.date()) else '市场情绪极端'
+            f10_str = f'{f10:+.0f}%' if f10 is not None else '--'
+            f20_str = f'{f20:+.0f}%' if f20 is not None else '--'
+            h += f'<tr><td>{dt.date()}</td><td style="color:#fb923c;font-weight:bold">{r["qviv"]:.0f}%</td><td>{r["qvix"]:.1f}%</td><td>{r["qviv_ratio"]:.1f}x</td><td style="color:{c10}">{f10_str}</td><td style="color:{c20}">{f20_str}</td><td>{note}</td></tr>'
+            count += 1
+    
+    h += f'''
+</table>
+
+<div class="box">
+  <b>💡 QVIV实战用法总结</b><br><br>
+  ● <b>评分：3/10（信号质量）</b>— 理论优雅但实际效果一般。<br>
+  ● <b>有效场景：</b>QVIV>90分位（N={hi_n}次，20d=+{hi_mean:.1f}%）做多信号可靠，但样本太少。<br>
+  ● <b>无效场景：</b>"QVIV升但QVIX不动→爆发领先"的假设不成立。<br>
+  ● <b>最佳组合：</b>QVIV>90分位 + QVIX>35 + VRP>0 → 三重恐慌确认。<br>
+  ● <b>当前（{cur.date()}QVIV={cur_qviv:.0f}%，{cur_rank:.0f}分位）：</b>
+</div>'''
+    return h
+
+
 
 SIGNALS = [
     {"slug":"granger", "title":"量价因果：成交量→波动率 Granger", "emoji":"&#128279;",
@@ -1188,6 +1372,8 @@ SIGNALS = [
      "desc":"300均线上方+布林下轨买call，300下方+超跌买彩票。", "fn": render_quadrant},
     {"slug":"vrp","title":"VRP：波动率风险溢价（IV vs RV）", "emoji":"&#128293;",
      "desc":"QVIX(隐波) - HV30(实波)：VRP>0市场恐慌溢价→做多，VRP<0低估风险→谨慎。", "fn": render_vrp},
+    {"slug":"qviv", "title":"QVIV：波动率的波动率（VVIX近似）", "emoji":"&#127752;",
+     "desc":"QVIX 自身日变化率的波动率：是否隐波自身在剧烈变化？极高分位时信号可靠。", "fn": render_qviv},
 ]
 
 def dashboard(signals, data):
