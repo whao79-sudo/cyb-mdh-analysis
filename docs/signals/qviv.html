@@ -48,28 +48,28 @@ footer { text-align:center; color:#64748b; padding:30px 0; font-size:0.8em; }
   <h1>&#127752; QVIV：波动率的波动率（VVIX近似）</h1>
   <p class="subtitle">QVIX 自身日变化率的波动率：是否隐波自身在剧烈变化？极高分位时信号可靠。</p>
 </header>
-<div class="kpi"><div class="kpi-card warn"><div class="kpi-val">143%</div><div class="kpi-label">当前QVIV</div></div><div class="kpi-card good"><div class="kpi-val">71%</div><div class="kpi-label">历史分位</div></div><div class="kpi-card warn"><div class="kpi-val">4.7x</div><div class="kpi-label">QVIV/HV10比</div></div><div class="kpi-card good"><div class="kpi-val">43次</div><div class="kpi-label">QVIV极高分位(N≥90)</div></div></div>
+<div class="kpi"><div class="kpi-card good"><div class="kpi-val">nan%</div><div class="kpi-label">当前QVIV</div></div><div class="kpi-card good"><div class="kpi-val">nan%</div><div class="kpi-label">历史分位</div></div><div class="kpi-card normal"><div class="kpi-val">nanx</div><div class="kpi-label">QVIV/HV10比</div></div><div class="kpi-card warn"><div class="kpi-val">0次</div><div class="kpi-label">QVIV极高分位(N≥90)</div></div></div>
 <div class="box info">
   <b>🎯 QVIV（QVIX Volatility of Volatility）— 波动率的波动率</b>
   QVIV = QVIX 日变化率的10日滚动波动率×√252，衡量隐波自身的不稳定性。<br><br>
-  ● QVIV均值=111%，中位数=80%，远大于QVIX均值(26.6%)<br>
+  ● QVIV均值=112%，中位数=82%，远大于QVIX均值(26.6%)<br>
   ● <b>逻辑：</b>QVIV飙升→隐波本身在剧烈变动→市场在快速反应。QVIV极低→隐波稳定→市场在"憋大招"。<br>
-  ● <b>当前（2026-05-15）：</b>QVIV=143%（71分位），216次高于75分位<br>
-  ● QVIV/HV10比均值=4.4x — 隐波比实波波动剧烈得多。
+  ● <b>当前（2026-05-18）：</b>QVIV=nan%（nan分位），211次高于75分位<br>
+  ● QVIV/HV10比均值=4.5x — 隐波比实波波动剧烈得多。
 </div>
 
 <h2>📊 QVIV分层回测（价格未来收益预测力）</h2>
 <table>
-  <tr><th>条件</th><th>N</th><th>5d</th><th>5d胜率</th><th>10d</th><th>20d</th><th>20d胜率</th><th>30d</th><th>>10%</th></tr><tr><td style="color:#fb923c;font-weight:bold">QVIV>90分位(隐波极度波动)</td><td>43</td><td style="color:#4ade80">+0.3%</td><td>40%</td><td style="color:#4ade80">+1.2%</td><td style="color:#4ade80">+6.0%<br><small style="color:#94a3b8">W67%</small></td><td style="color:#4ade80">+5.6%</td><td>34%</td></tr><tr><td style="color:#60a5fa;font-weight:bold">QVIV<10分位(隐波极度平稳)</td><td>16</td><td style="color:#4ade80">+2.1%</td><td>65%</td><td style="color:#4ade80">+4.4%</td><td style="color:#4ade80">+7.7%<br><small style="color:#94a3b8">W100%</small></td><td style="color:#4ade80">+12.7%</td><td>56%</td></tr><tr><td style="color:#f87171;font-weight:bold">QVIV>30(隐波在动)</td><td>832</td><td style="color:#4ade80">+0.5%</td><td>50%</td><td style="color:#4ade80">+0.8%</td><td style="color:#4ade80">+1.5%<br><small style="color:#94a3b8">W48%</small></td><td style="color:#4ade80">+2.2%</td><td>17%</td></tr></table>
+  <tr><th>条件</th><th>N</th><th>5d</th><th>5d胜率</th><th>10d</th><th>20d</th><th>20d胜率</th><th>30d</th><th>>10%</th></tr><tr><td style="color:#f87171;font-weight:bold">QVIV>30(隐波在动)</td><td>808</td><td style="color:#4ade80">+0.5%</td><td>50%</td><td style="color:#4ade80">+0.9%</td><td style="color:#4ade80">+1.7%<br><small style="color:#94a3b8">W49%</small></td><td style="color:#4ade80">+2.4%</td><td>18%</td></tr></table>
 
 <h2>🔥 QVIV + QVIX 联合信号</h2>
 <table>
-  <tr><th>双条件</th><th>N</th><th>5d</th><th>10d</th><th>20d</th><th>20d胜率</th><th>30d</th></tr><tr><td style="color:#60a5fa;font-weight:bold">QVIV极低+QVIX低(→憋大招)</td><td>6</td><td style="color:#f87171">-0.2%</td><td style="color:#4ade80">+1.3%</td><td style="color:#4ade80">+6.2%<br><small style="color:#94a3b8">W100%</small></td><td style="color:#4ade80">+13.2%</td></tr><tr><td style="color:#f87171;font-weight:bold">QVIV飙升+QVIX升(确认恐慌)</td><td>177</td><td style="color:#4ade80">+0.5%</td><td style="color:#4ade80">+1.7%</td><td style="color:#4ade80">+3.3%<br><small style="color:#94a3b8">W54%</small></td><td style="color:#4ade80">+3.5%</td></tr><tr><td style="color:#4ade80;font-weight:bold">QVIV降+QVIX降(恐慌消退)</td><td>155</td><td style="color:#f87171">-0.1%</td><td style="color:#f87171">-0.6%</td><td style="color:#f87171">-0.2%<br><small style="color:#94a3b8">W42%</small></td><td style="color:#4ade80">+0.8%</td></tr><tr><td style="color:#facc15;font-weight:bold">QVIV高+QVIX高(双重波动)</td><td>71</td><td style="color:#4ade80">+1.7%</td><td style="color:#4ade80">+2.8%</td><td style="color:#4ade80">+3.8%<br><small style="color:#94a3b8">W63%</small></td><td style="color:#4ade80">+3.2%</td></tr>
+  <tr><th>双条件</th><th>N</th><th>5d</th><th>10d</th><th>20d</th><th>20d胜率</th><th>30d</th></tr><tr><td style="color:#f87171;font-weight:bold">QVIV飙升+QVIX升(确认恐慌)</td><td>172</td><td style="color:#4ade80">+0.5%</td><td style="color:#4ade80">+1.8%</td><td style="color:#4ade80">+3.5%<br><small style="color:#94a3b8">W55%</small></td><td style="color:#4ade80">+3.7%</td></tr><tr><td style="color:#4ade80;font-weight:bold">QVIV降+QVIX降(恐慌消退)</td><td>151</td><td style="color:#f87171">-0.0%</td><td style="color:#f87171">-0.4%</td><td style="color:#f87171">-0.2%<br><small style="color:#94a3b8">W42%</small></td><td style="color:#4ade80">+0.8%</td></tr><tr><td style="color:#facc15;font-weight:bold">QVIV高+QVIX高(双重波动)</td><td>71</td><td style="color:#4ade80">+1.7%</td><td style="color:#4ade80">+2.8%</td><td style="color:#4ade80">+3.8%<br><small style="color:#94a3b8">W63%</small></td><td style="color:#4ade80">+3.2%</td></tr>
 </table>
 
 <div class="box good">
   <b>✨ 亮点：QVIV极高分位 → 高确定性的看涨信号</b><br><br>
-  QVIV>90分位（N=43次）：20d=+6.0%，胜率67%，30d胜率66%，>10%概率34%<br><br>
+  QVIV>90分位（N=0次）：20d=+0.0%，胜率67%，30d胜率66%，>10%概率34%<br><br>
   <b>逻辑解读：</b>QVIV极高=隐波自身剧烈波动。隐波在剧烈变化时，市场情绪极端化，
   均值回归力量最强。这与VRP>0逻辑一致——恐慌溢价高时后续涨的概率更大。<br><br>
   <b>注意：</b>QVIV标准差超大（均值110.5%，中位数80.3%），
@@ -93,14 +93,14 @@ footer { text-align:center; color:#64748b; padding:30px 0; font-size:0.8em; }
 <div class="box">
   <b>💡 QVIV实战用法总结</b><br><br>
   ● <b>评分：3/10（信号质量）</b>— 理论优雅但实际效果一般。<br>
-  ● <b>有效场景：</b>QVIV>90分位（N=43次，20d=+6.0%）做多信号可靠，但样本太少。<br>
+  ● <b>有效场景：</b>QVIV>90分位（N=0次，20d=+0.0%）做多信号可靠，但样本太少。<br>
   ● <b>无效场景：</b>"QVIV升但QVIX不动→爆发领先"的假设不成立。<br>
   ● <b>最佳组合：</b>QVIV>90分位 + QVIX>35 + VRP>0 → 三重恐慌确认。<br>
-  ● <b>当前（2026-05-15QVIV=143%，71分位）：</b>
+  ● <b>当前（2026-05-18QVIV=nan%，nan分位）：</b>
 </div>
 <footer>
   CYB MDH Analysis &middot; baostock + 深交所 + 中证指数 &middot;
-  2026-05-18 00:20
+  2026-05-18 12:52
 </footer>
 </div>
 </body>
