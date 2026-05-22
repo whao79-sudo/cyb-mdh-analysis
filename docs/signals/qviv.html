@@ -54,17 +54,17 @@ footer { text-align:center; color:#64748b; padding:30px 0; font-size:0.8em; }
   QVIV = QVIX 日变化率的10日滚动波动率×√252，衡量隐波自身的不稳定性。<br><br>
   ● QVIV均值=112%，中位数=82%，远大于QVIX均值(26.6%)<br>
   ● <b>逻辑：</b>QVIV飙升→隐波本身在剧烈变动→市场在快速反应。QVIV极低→隐波稳定→市场在"憋大招"。<br>
-  ● <b>当前（2026-05-21）：</b>QVIV=nan%（nan分位），212次高于75分位<br>
+  ● <b>当前（2026-05-22）：</b>QVIV=nan%（nan分位），212次高于75分位<br>
   ● QVIV/HV10比均值=4.5x — 隐波比实波波动剧烈得多。
 </div>
 
 <h2>📊 QVIV分层回测（价格未来收益预测力）</h2>
 <table>
-  <tr><th>条件</th><th>N</th><th>5d</th><th>5d胜率</th><th>10d</th><th>20d</th><th>20d胜率</th><th>30d</th><th>>10%</th></tr><tr><td style="color:#f87171;font-weight:bold">QVIV>30(隐波在动)</td><td>811</td><td style="color:#4ade80">+0.5%</td><td>50%</td><td style="color:#4ade80">+0.9%</td><td style="color:#4ade80">+1.7%<br><small style="color:#94a3b8">W49%</small></td><td style="color:#4ade80">+2.5%</td><td>18%</td></tr></table>
+  <tr><th>条件</th><th>N</th><th>5d</th><th>5d胜率</th><th>10d</th><th>20d</th><th>20d胜率</th><th>30d</th><th>>10%</th></tr><tr><td style="color:#f87171;font-weight:bold">QVIV>30(隐波在动)</td><td>812</td><td style="color:#4ade80">+0.5%</td><td>50%</td><td style="color:#4ade80">+0.9%</td><td style="color:#4ade80">+1.7%<br><small style="color:#94a3b8">W49%</small></td><td style="color:#4ade80">+2.5%</td><td>18%</td></tr></table>
 
 <h2>🔥 QVIV + QVIX 联合信号</h2>
 <table>
-  <tr><th>双条件</th><th>N</th><th>5d</th><th>10d</th><th>20d</th><th>20d胜率</th><th>30d</th></tr><tr><td style="color:#f87171;font-weight:bold">QVIV飙升+QVIX升(确认恐慌)</td><td>172</td><td style="color:#4ade80">+0.5%</td><td style="color:#4ade80">+1.8%</td><td style="color:#4ade80">+3.5%<br><small style="color:#94a3b8">W55%</small></td><td style="color:#4ade80">+3.7%</td></tr><tr><td style="color:#4ade80;font-weight:bold">QVIV降+QVIX降(恐慌消退)</td><td>151</td><td style="color:#f87171">-0.0%</td><td style="color:#f87171">-0.4%</td><td style="color:#f87171">-0.2%<br><small style="color:#94a3b8">W43%</small></td><td style="color:#4ade80">+0.8%</td></tr><tr><td style="color:#facc15;font-weight:bold">QVIV高+QVIX高(双重波动)</td><td>71</td><td style="color:#4ade80">+1.6%</td><td style="color:#4ade80">+2.8%</td><td style="color:#4ade80">+3.8%<br><small style="color:#94a3b8">W63%</small></td><td style="color:#4ade80">+3.2%</td></tr>
+  <tr><th>双条件</th><th>N</th><th>5d</th><th>10d</th><th>20d</th><th>20d胜率</th><th>30d</th></tr><tr><td style="color:#f87171;font-weight:bold">QVIV飙升+QVIX升(确认恐慌)</td><td>172</td><td style="color:#4ade80">+0.5%</td><td style="color:#4ade80">+1.8%</td><td style="color:#4ade80">+3.5%<br><small style="color:#94a3b8">W55%</small></td><td style="color:#4ade80">+3.7%</td></tr><tr><td style="color:#4ade80;font-weight:bold">QVIV降+QVIX降(恐慌消退)</td><td>151</td><td style="color:#f87171">-0.0%</td><td style="color:#f87171">-0.4%</td><td style="color:#f87171">-0.1%<br><small style="color:#94a3b8">W43%</small></td><td style="color:#4ade80">+0.8%</td></tr><tr><td style="color:#facc15;font-weight:bold">QVIV高+QVIX高(双重波动)</td><td>71</td><td style="color:#4ade80">+1.6%</td><td style="color:#4ade80">+2.8%</td><td style="color:#4ade80">+3.8%<br><small style="color:#94a3b8">W63%</small></td><td style="color:#4ade80">+3.2%</td></tr>
 </table>
 
 <div class="box good">
@@ -96,11 +96,11 @@ footer { text-align:center; color:#64748b; padding:30px 0; font-size:0.8em; }
   ● <b>有效场景：</b>QVIV>90分位（N=0次，20d=+0.0%）做多信号可靠，但样本太少。<br>
   ● <b>无效场景：</b>"QVIV升但QVIX不动→爆发领先"的假设不成立。<br>
   ● <b>最佳组合：</b>QVIV>90分位 + QVIX>35 + VRP>0 → 三重恐慌确认。<br>
-  ● <b>当前（2026-05-21QVIV=nan%，nan分位）：</b>
+  ● <b>当前（2026-05-22QVIV=nan%，nan分位）：</b>
 </div>
 <footer>
   CYB MDH Analysis &middot; baostock + 深交所 + 中证指数 &middot;
-  2026-05-21 12:31
+  2026-05-22 12:06
 </footer>
 </div>
 </body>
