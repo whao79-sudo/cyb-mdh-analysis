@@ -48,7 +48,7 @@ footer { text-align:center; color:#64748b; padding:30px 0; font-size:0.8em; }
   <h1>&#128293; VRP：波动率风险溢价（IV vs RV）</h1>
   <p class="subtitle">QVIX(隐波) - HV30(实波)：VRP>0市场恐慌溢价→做多，VRP<0低估风险→谨慎。</p>
 </header>
-<div class="kpi"><div class="kpi-card good"><div class="kpi-val">+6.4%</div><div class="kpi-label">当前VRP(QVIX-HV30)</div></div><div class="kpi-card good"><div class="kpi-val">+23%</div><div class="kpi-label">VRP(%)</div></div><div class="kpi-card good"><div class="kpi-val">48次</div><div class="kpi-label">QVIX>35+VRP>0(双重恐慌)</div></div><div class="kpi-card good"><div class="kpi-val">+4.3%</div><div class="kpi-label">双重恐慌后20d均值</div></div></div>
+<div class="kpi"><div class="kpi-card bad"><div class="kpi-val">+nan%</div><div class="kpi-label">当前VRP(QVIX-HV30)</div></div><div class="kpi-card bad"><div class="kpi-val">+nan%</div><div class="kpi-label">VRP(%)</div></div><div class="kpi-card good"><div class="kpi-val">48次</div><div class="kpi-label">QVIX>35+VRP>0(双重恐慌)</div></div><div class="kpi-card good"><div class="kpi-val">+4.3%</div><div class="kpi-label">双重恐慌后20d均值</div></div></div>
 <div class="box info">
   <b>🎯 波动率风险溢价（VRP）</b>
   VRP = QVIX（隐含波动率）- HV30（30天已实现波动率）<br><br>
@@ -61,11 +61,11 @@ footer { text-align:center; color:#64748b; padding:30px 0; font-size:0.8em; }
 
 <h2>📊 VRP 分层回测</h2>
 <table>
-  <tr><th>条件</th><th>N</th><th>5d</th><th>10d</th><th>10d胜率</th><th>20d</th><th>20d胜率</th><th>30d</th><th>45d</th></tr><tr><td style="font-weight:bold">VRP>0</td><td>601</td><td style="color:#4ade80">+0.5%</td><td style="color:#4ade80">+1.0%<br><small style="color:#94a3b8">W50%</small></td><td style="color:#4ade80">+2.2%<br><small style="color:#94a3b8">W47%</small></td><td style="color:#4ade80">+3.7%</td><td style="color:#4ade80">+5.1%</td></tr><tr><td style="font-weight:bold">VRP<0</td><td>259</td><td style="color:#4ade80">+0.3%</td><td style="color:#4ade80">+0.5%<br><small style="color:#94a3b8">W49%</small></td><td style="color:#4ade80">+0.1%<br><small style="color:#94a3b8">W51%</small></td><td style="color:#f87171">-0.9%</td><td style="color:#f87171">-1.0%</td></tr></table>
+  <tr><th>条件</th><th>N</th><th>5d</th><th>10d</th><th>10d胜率</th><th>20d</th><th>20d胜率</th><th>30d</th><th>45d</th></tr><tr><td style="font-weight:bold">VRP>0</td><td>601</td><td style="color:#4ade80">+0.5%</td><td style="color:#4ade80">+1.0%<br><small style="color:#94a3b8">W50%</small></td><td style="color:#4ade80">+2.2%<br><small style="color:#94a3b8">W47%</small></td><td style="color:#4ade80">+3.7%</td><td style="color:#4ade80">+5.1%</td></tr><tr><td style="font-weight:bold">VRP<0</td><td>262</td><td style="color:#4ade80">+0.3%</td><td style="color:#4ade80">+0.5%<br><small style="color:#94a3b8">W49%</small></td><td style="color:#4ade80">+0.3%<br><small style="color:#94a3b8">W51%</small></td><td style="color:#f87171">-0.7%</td><td style="color:#f87171">-1.0%</td></tr></table>
 
 <h2>🔥 QVIX + VRP 双重信号（最有威力）</h2>
 <table>
-  <tr><th>双重条件</th><th>N</th><th>5d</th><th>10d</th><th>20d</th><th>20d胜率</th><th>30d</th><th>>10%</th></tr><tr><td style="color:#4ade80;font-weight:bold">QVIX>35 + VRP>0(恐慌溢价高)</td><td>48</td><td style="color:#4ade80">+1.7%</td><td style="color:#4ade80">+2.6%</td><td style="color:#4ade80">+4.3%<br><small style="color:#94a3b8">W65%</small></td><td>31%</td><td style="color:#4ade80">+4.2%</td></tr><tr><td style="color:#f87171;font-weight:bold">QVIX<25 + VRP<0(平静低估)</td><td>97</td><td style="color:#f87171">-1.0%</td><td style="color:#f87171">-1.6%</td><td style="color:#f87171">-2.5%<br><small style="color:#94a3b8">W35%</small></td><td>0%</td><td style="color:#f87171">-2.9%</td></tr><tr><td style="color:#facc15;font-weight:bold">QVIX>35 + VRP<0(恐慌但低估)</td><td>52</td><td style="color:#4ade80">+0.4%</td><td style="color:#4ade80">+1.6%</td><td style="color:#4ade80">+0.9%<br><small style="color:#94a3b8">W50%</small></td><td>12%</td><td style="color:#f87171">-1.2%</td></tr></table>
+  <tr><th>双重条件</th><th>N</th><th>5d</th><th>10d</th><th>20d</th><th>20d胜率</th><th>30d</th><th>>10%</th></tr><tr><td style="color:#4ade80;font-weight:bold">QVIX>35 + VRP>0(恐慌溢价高)</td><td>48</td><td style="color:#4ade80">+1.7%</td><td style="color:#4ade80">+2.7%</td><td style="color:#4ade80">+4.3%<br><small style="color:#94a3b8">W65%</small></td><td>31%</td><td style="color:#4ade80">+4.2%</td></tr><tr><td style="color:#f87171;font-weight:bold">QVIX<25 + VRP<0(平静低估)</td><td>97</td><td style="color:#f87171">-1.0%</td><td style="color:#f87171">-1.6%</td><td style="color:#f87171">-2.5%<br><small style="color:#94a3b8">W35%</small></td><td>0%</td><td style="color:#f87171">-2.9%</td></tr><tr><td style="color:#facc15;font-weight:bold">QVIX>35 + VRP<0(恐慌但低估)</td><td>52</td><td style="color:#4ade80">+0.4%</td><td style="color:#4ade80">+1.6%</td><td style="color:#4ade80">+0.9%<br><small style="color:#94a3b8">W50%</small></td><td>12%</td><td style="color:#f87171">-1.2%</td></tr></table>
 
 <div class="box good">
   <b>✨ 双重恐慌（QVIX>35 + VRP>0）：最好的恐慌信号</b><br><br>
@@ -92,14 +92,14 @@ footer { text-align:center; color:#64748b; padding:30px 0; font-size:0.8em; }
 </table>
 
 <div class="box">
-  <b>📊 当前（2026-05-25）：VRP=+6.4%</b><br><br>
-  QVIX=34.4%，HV30=28.0%，VRP占+23%<br>
+  <b>📊 当前（2026-05-28）：VRP=+nan%</b><br><br>
+  QVIX=nan%，HV30=26.5%，VRP占+nan%<br>
   VRP为正 → 市场恐慌溢价正常。如QVIX冲高+VRP保持正值，值得关注恐慌反转信号。<br><br>
   <b>用法：</b>在仪表盘上监控双条件（QVIX>35 + VRP>0）作为买入信号。
 </div>
 <footer>
   CYB MDH Analysis &middot; baostock + 深交所 + 中证指数 &middot;
-  2026-05-25 12:49
+  2026-05-28 12:49
 </footer>
 </div>
 </body>
