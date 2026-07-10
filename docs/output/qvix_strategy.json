@@ -1,8 +1,8 @@
 {
-  "latest_qvix": 39.3,
-  "latest_date": "2026-07-08",
-  "qvix_pct_60": 90,
-  "qvix_pct_all": 92,
+  "latest_qvix": 40.4,
+  "latest_date": "2026-07-10",
+  "qvix_pct_60": 95,
+  "qvix_pct_all": 94,
   "current_signal": "无信号",
   "buy_signal": false,
   "sell_signal": false,
@@ -57,6 +57,13 @@
   ],
   "recent_sell_signals": [
     {
+      "date": "2026-03-27",
+      "qvix": 27.4,
+      "pct": 50,
+      "fwd_delta_qvix": 2.76,
+      "opt_ret": 13.8
+    },
+    {
       "date": "2026-04-08",
       "qvix": 27.1,
       "pct": 43,
@@ -83,13 +90,6 @@
       "pct": 41,
       "fwd_delta_qvix": 5.66,
       "opt_ret": 28.3
-    },
-    {
-      "date": "2026-07-06",
-      "qvix": 33.5,
-      "pct": 58,
-      "fwd_delta_qvix": null,
-      "opt_ret": null
     }
   ]
 }
