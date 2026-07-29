@@ -1,11 +1,11 @@
 {
-  "latest_qvix": 36.3,
-  "latest_date": "2026-07-27",
-  "qvix_pct_60": 55,
-  "qvix_pct_all": 87,
-  "current_signal": "卖出期权(卖方)",
+  "latest_qvix": 47.5,
+  "latest_date": "2026-07-29",
+  "qvix_pct_60": 96,
+  "qvix_pct_all": 97,
+  "current_signal": "无信号",
   "buy_signal": false,
-  "sell_signal": true,
+  "sell_signal": false,
   "buy_backtest": {
     "total": 150,
     "avg_delta_qvix_10d": 0.92,
