@@ -1,8 +1,8 @@
 {
-  "latest_qvix": 33.1,
-  "latest_date": "2026-08-17",
-  "qvix_pct_60": 6,
-  "qvix_pct_all": 79,
+  "latest_qvix": 33.4,
+  "latest_date": "2026-08-18",
+  "qvix_pct_60": 10,
+  "qvix_pct_all": 80,
   "current_signal": "无信号",
   "buy_signal": false,
   "sell_signal": false,
