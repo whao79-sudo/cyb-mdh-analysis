@@ -1,10 +1,10 @@
 {
-  "latest_qvix": 34.6,
-  "latest_date": "2026-08-27",
-  "qvix_pct_60": 13,
-  "qvix_pct_all": 82,
-  "current_signal": "无信号",
-  "buy_signal": false,
+  "latest_qvix": 35.6,
+  "latest_date": "2026-08-28",
+  "qvix_pct_60": 20,
+  "qvix_pct_all": 84,
+  "current_signal": "买入期权",
+  "buy_signal": true,
   "sell_signal": false,
   "buy_backtest": {
     "total": 152,
@@ -19,13 +19,6 @@
     "win_rate": 62
   },
   "recent_buy_signals": [
-    {
-      "date": "2026-05-08",
-      "qvix": 26.6,
-      "pct": 28,
-      "fwd_delta_qvix": 6.34,
-      "opt_ret": 31.7
-    },
     {
       "date": "2026-08-12",
       "qvix": 34.7,
@@ -51,6 +44,13 @@
       "date": "2026-08-26",
       "qvix": 36.2,
       "pct": 26,
+      "fwd_delta_qvix": null,
+      "opt_ret": null
+    },
+    {
+      "date": "2026-08-28",
+      "qvix": 35.6,
+      "pct": 20,
       "fwd_delta_qvix": null,
       "opt_ret": null
     }
