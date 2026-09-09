@@ -1,15 +1,15 @@
 {
-  "latest_qvix": 34.5,
-  "latest_date": "2026-09-08",
+  "latest_qvix": 34.0,
+  "latest_date": "2026-09-09",
   "qvix_pct_60": 6,
-  "qvix_pct_all": 81,
+  "qvix_pct_all": 80,
   "current_signal": "无信号",
   "buy_signal": false,
   "sell_signal": false,
   "buy_backtest": {
-    "total": 153,
-    "avg_delta_qvix_10d": 0.93,
-    "avg_opt_ret_10d": 4.7,
+    "total": 154,
+    "avg_delta_qvix_10d": 0.91,
+    "avg_opt_ret_10d": 4.6,
     "win_rate": 58
   },
   "sell_backtest": {
