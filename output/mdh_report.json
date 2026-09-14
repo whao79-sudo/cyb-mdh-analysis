@@ -2,57 +2,57 @@
   "metadata": {
     "index": "创业板指 (sz.399006)",
     "data_start": "2018-03-05",
-    "data_end": "2026-09-11",
-    "trading_days": 2057,
-    "generated_at": "2026-09-11 13:42:43"
+    "data_end": "2026-09-14",
+    "trading_days": 2058,
+    "generated_at": "2026-09-14 15:57:36"
   },
   "latest_price": {
-    "date": "2026-09-11",
-    "close": 3322.0389,
-    "daily_change_pct": -0.49075575337620286
+    "date": "2026-09-14",
+    "close": 3285.5829,
+    "daily_change_pct": -1.097398347743614
   },
   "correlation": {
-    "volume_abs_return": 0.1601950718172581,
-    "turnover_abs_return": 0.10281493474515348
+    "volume_abs_return": 0.16014858216666786,
+    "turnover_abs_return": 0.1028089599391227
   },
   "garch_analysis": {
     "garch": {
-      "omega": 1877.1577405516443,
-      "alpha": 0.09954811430493014,
-      "beta": 0.8461051365535919,
-      "persistence": 0.945653250858522,
-      "aic": 27061.79696322769,
-      "bic": 27084.31103373399
+      "omega": 1887.094114812237,
+      "alpha": 0.09962017447121081,
+      "beta": 0.8455181387438465,
+      "persistence": 0.9451383132150574,
+      "aic": 27074.057230518367,
+      "bic": 27096.57324607698
     },
     "mdh_verification": {
-      "garch_persistence": 0.945653250858522,
-      "garch_x_persistence": 0.945653250858522,
+      "garch_persistence": 0.9451383132150574,
+      "garch_x_persistence": 0.9451383132150574,
       "persistence_change": 0.0,
       "mdh_supported": false,
-      "volume_coefficient": 8249.889504122475,
-      "volume_r2": 0.05839265369234936
+      "volume_coefficient": 8223.659707065575,
+      "volume_r2": 0.058239242847069383
     },
     "garch_x": {
-      "omega": 1877.1577405516443,
-      "alpha": 0.09954811430493014,
-      "beta": 0.8461051365535919,
-      "persistence": 0.945653250858522,
-      "volume_coef": 8249.889504122475,
-      "volume_r2": 0.05839265369234936,
-      "aic": 27061.79696322769,
-      "bic": 27084.31103373399
+      "omega": 1887.094114812237,
+      "alpha": 0.09962017447121081,
+      "beta": 0.8455181387438465,
+      "persistence": 0.9451383132150574,
+      "volume_coef": 8223.659707065575,
+      "volume_r2": 0.058239242847069383,
+      "aic": 27074.057230518367,
+      "bic": 27096.57324607698
     },
     "garch_turnover": {
-      "persistence": 0.945653250858522,
-      "turnover_coef": 3798.0901695170373,
-      "turnover_r2": 0.012379095272878837,
-      "aic": 27061.79696322769,
-      "bic": 27084.31103373399
+      "persistence": 0.9451383132150574,
+      "turnover_coef": 3788.5574723164436,
+      "turnover_r2": 0.012361338444460634,
+      "aic": 27074.057230518367,
+      "bic": 27096.57324607698
     },
     "volume_vs_turnover": {
       "better_predictor": "成交量",
-      "volume_r2": 0.05839265369234936,
-      "turnover_r2": 0.012379095272878837
+      "volume_r2": 0.058239242847069383,
+      "turnover_r2": 0.012361338444460634
     }
   },
   "granger_causality": {
@@ -64,43 +64,43 @@
     }
   },
   "harrv_analysis": {
-    "basic_r2": 0.17553668584024218,
-    "basic_rmse": 0.00030708425527403396,
-    "full_r2": 0.1767090121588366,
-    "full_rmse": 0.00030686585197226837,
-    "r2_improvement_pct": 0.6678525990067835,
-    "rmse_improvement_pct": 0.07112162151416485,
-    "volume_coefficient": 8.084248342310474e-06,
+    "basic_r2": 0.1767650995469482,
+    "basic_rmse": 0.0003068795608014585,
+    "full_r2": 0.17790785581824475,
+    "full_rmse": 0.00030666649261932476,
+    "r2_improvement_pct": 0.6464829732936344,
+    "rmse_improvement_pct": 0.06943055496342039,
+    "volume_coefficient": 8.554305607699764e-06,
     "volume_significant": "False",
     "model_basic_coefs": [
-      0.3355600490230182,
-      0.2590793097217417,
-      0.14333264059241238
+      0.33544153436448204,
+      0.2586428312983114,
+      0.1435830223033287
     ],
     "model_full_coefs": [
-      0.3342495988291893,
-      0.2584001949313848,
-      0.13723952892042623,
-      8.084248342310474e-06
+      0.33405790539742547,
+      0.25793534131415186,
+      0.13712925348278843,
+      8.554305607699764e-06
     ]
   },
   "pcr_analysis": {
     "basic_stats": {
-      "vol_pcr_mean": 0.8961134986225895,
-      "vol_pcr_std": 0.16704822598202818,
-      "oi_pcr_mean": 0.8987831955922864,
-      "oi_pcr_std": 0.2821780489886048,
+      "vol_pcr_mean": 0.8961951657458563,
+      "vol_pcr_std": 0.16722011439146783,
+      "oi_pcr_mean": 0.9002767955801104,
+      "oi_pcr_std": 0.2815006638509052,
       "vol_pcr_min": 0.4527,
       "vol_pcr_max": 1.6539,
       "oi_pcr_min": 0.4048,
       "oi_pcr_max": 1.8758
     },
     "correlation": {
-      "vol_pcr_close": 0.19350666159000354,
-      "vol_pcr_return": -0.21792366391422952,
-      "vol_pcr_volatility": 0.04940772355971769,
-      "oi_pcr_close": 0.6675423616657478,
-      "oi_pcr_return": 0.27456238529792976
+      "vol_pcr_close": 0.1931160607859288,
+      "vol_pcr_return": -0.2182147223803023,
+      "vol_pcr_volatility": 0.04913761865089882,
+      "oi_pcr_close": 0.6662296359385703,
+      "oi_pcr_return": 0.27333743138229977
     },
     "signals": {
       "低PCR(<0.7)_极度看涨": {
@@ -111,9 +111,9 @@
       },
       "低PCR(<0.8)_看涨": {
         "signal_count": 197,
-        "avg_5d_return": 1.0110145340951373,
-        "up_probability": 51.776649746192895,
-        "down_probability": 48.223350253807105
+        "avg_5d_return": 1.0288246502990088,
+        "up_probability": 52.28426395939086,
+        "down_probability": 47.71573604060914
       },
       "高PCR(>1.0)_看跌": {
         "signal_count": 162,
@@ -153,38 +153,38 @@
       }
     },
     "divergence": {
-      "divergence_count": 413,
-      "total_days": 721,
-      "divergence_pct": 57.28155339805825
+      "divergence_count": 412,
+      "total_days": 719,
+      "divergence_pct": 57.301808066759385
     }
   },
   "qvix_analysis": {
-    "corr_qvix_abs_ret": 0.49053816205286693,
-    "corr_log_qvix_log_vol": 0.6249735892940151,
-    "high_qvix_threshold": 39.224000000000004,
-    "low_qvix_threshold": 19.784,
+    "corr_qvix_abs_ret": 0.4896860078285819,
+    "corr_log_qvix_log_vol": 0.6246965175889817,
+    "high_qvix_threshold": 39.215,
+    "low_qvix_threshold": 19.785,
     "high_qvix_fwd_1d_vol": 2.627440876550647,
     "low_qvix_fwd_1d_vol": 0.9325532818711257,
     "high_qvix_fwd_5d_vol": 2.363875640476856,
     "low_qvix_fwd_5d_vol": 0.9261417591092131,
-    "all_mean_fwd_1d_vol": 1.3455665230186151,
+    "all_mean_fwd_1d_vol": 1.3446619613576176,
     "high_vr_fwd_5d_vol": 2.2951823759180923,
-    "all_mean_fwd_5d_vol": 1.3476527117939823,
-    "high_vr_ratio_p90": 1.5314725081854228,
+    "all_mean_fwd_5d_vol": 1.3474285708284073,
+    "high_vr_ratio_p90": 1.531463368675166,
     "dual_signal_fwd_1d_vol": 3.358769405449972,
     "dual_signal_count": 29,
     "either_signal_fwd_1d_vol": 2.2662690380297796,
     "either_signal_count": 155,
     "qvix_quantiles": {
-      "p5": 18.696,
-      "p25": 21.83,
-      "p50": 25.49,
-      "p75": 31.64,
-      "p90": 39.224000000000004,
-      "p95": 42.174
+      "p5": 18.6975,
+      "p25": 21.835,
+      "p50": 25.494999999999997,
+      "p75": 31.655,
+      "p90": 39.215,
+      "p95": 42.1725
     },
-    "latest_qvix": 34.76,
-    "latest_date": "2026-09-10",
-    "latest_percentile": 82.32804232804233
+    "latest_qvix": 34.7,
+    "latest_date": "2026-09-11",
+    "latest_percentile": 82.1353065539112
   }
 }
