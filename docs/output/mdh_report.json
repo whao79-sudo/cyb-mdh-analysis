@@ -4,7 +4,7 @@
     "data_start": "2018-03-05",
     "data_end": "2026-09-30",
     "trading_days": 2069,
-    "generated_at": "2026-09-30 16:01:33"
+    "generated_at": "2026-10-01 16:36:40"
   },
   "latest_price": {
     "date": "2026-09-30",
@@ -86,34 +86,34 @@
   },
   "pcr_analysis": {
     "basic_stats": {
-      "vol_pcr_mean": 0.895184551724138,
-      "vol_pcr_std": 0.16769813583048904,
-      "oi_pcr_mean": 0.9033064827586207,
-      "oi_pcr_std": 0.2784464842388706,
+      "vol_pcr_mean": 0.8949152892561983,
+      "vol_pcr_std": 0.167739415557088,
+      "oi_pcr_mean": 0.9030060606060606,
+      "oi_pcr_std": 0.2783721022321551,
       "vol_pcr_min": 0.4527,
       "vol_pcr_max": 1.6539,
       "oi_pcr_min": 0.4048,
       "oi_pcr_max": 1.8758
     },
     "correlation": {
-      "vol_pcr_close": 0.17032645753843248,
-      "vol_pcr_return": -0.21488531204734362,
-      "vol_pcr_volatility": 0.047005590818583354,
-      "oi_pcr_close": 0.6495618214559938,
-      "oi_pcr_return": 0.2764309159328273
+      "vol_pcr_close": 0.16871861071355093,
+      "vol_pcr_return": -0.2144448411509719,
+      "vol_pcr_volatility": 0.04820111957972174,
+      "oi_pcr_close": 0.6480241391849315,
+      "oi_pcr_return": 0.27646614288328514
     },
     "signals": {
       "低PCR(<0.7)_极度看涨": {
-        "signal_count": 61,
-        "avg_5d_return": 2.6425863201469575,
-        "up_probability": 62.295081967213115,
-        "down_probability": 37.704918032786885
+        "signal_count": 62,
+        "avg_5d_return": 2.4715929510945553,
+        "up_probability": 61.29032258064516,
+        "down_probability": 38.70967741935484
       },
       "低PCR(<0.8)_看涨": {
-        "signal_count": 200,
-        "avg_5d_return": 0.9572862389718404,
-        "up_probability": 52.0,
-        "down_probability": 48.0
+        "signal_count": 201,
+        "avg_5d_return": 0.912926593200329,
+        "up_probability": 51.741293532338304,
+        "down_probability": 48.258706467661696
       },
       "高PCR(>1.0)_看跌": {
         "signal_count": 162,
@@ -134,14 +134,14 @@
         "down_probability": 42.608695652173914
       },
       "近60日低PCR分位(<15%)": {
-        "signal_count": 112,
-        "avg_5d_return": 1.3672982524262416,
-        "up_probability": 52.67857142857143,
-        "down_probability": 47.32142857142857
+        "signal_count": 113,
+        "avg_5d_return": 1.284764616908293,
+        "up_probability": 52.21238938053098,
+        "down_probability": 47.78761061946903
       },
       "[旧]全量20%分位低PCR": {
         "signal_count": 142,
-        "avg_5d_return": 1.2712956948428649,
+        "avg_5d_return": 1.2155873637900356,
         "up_probability": 53.52112676056338,
         "down_probability": 46.478873239436616
       },
@@ -153,38 +153,38 @@
       }
     },
     "divergence": {
-      "divergence_count": 412,
-      "total_days": 720,
-      "divergence_pct": 57.22222222222222
+      "divergence_count": 413,
+      "total_days": 721,
+      "divergence_pct": 57.28155339805825
     }
   },
   "qvix_analysis": {
-    "corr_qvix_abs_ret": 0.48957223058794186,
-    "corr_log_qvix_log_vol": 0.6215210445828901,
-    "high_qvix_threshold": 39.078,
-    "low_qvix_threshold": 19.794,
+    "corr_qvix_abs_ret": 0.4892871883875591,
+    "corr_log_qvix_log_vol": 0.6212376623022502,
+    "high_qvix_threshold": 39.055,
+    "low_qvix_threshold": 19.795,
     "high_qvix_fwd_1d_vol": 2.6071581505046457,
     "low_qvix_fwd_1d_vol": 0.9254954139156985,
     "high_qvix_fwd_5d_vol": 2.3496118129094468,
     "low_qvix_fwd_5d_vol": 0.922726133398895,
-    "all_mean_fwd_1d_vol": 1.3482754053598707,
+    "all_mean_fwd_1d_vol": 1.3471063824412022,
     "high_vr_fwd_5d_vol": 2.2821644355777067,
-    "all_mean_fwd_5d_vol": 1.347864230649249,
-    "high_vr_ratio_p90": 1.5266877268341938,
+    "all_mean_fwd_5d_vol": 1.3481574151724147,
+    "high_vr_ratio_p90": 1.5255052407617713,
     "dual_signal_fwd_1d_vol": 3.358769405449972,
     "dual_signal_count": 29,
     "either_signal_fwd_1d_vol": 2.2474447417036254,
     "either_signal_count": 157,
     "qvix_quantiles": {
-      "p5": 18.711,
+      "p5": 18.7125,
       "p25": 21.88,
-      "p50": 25.53383805,
-      "p75": 31.665,
-      "p90": 39.078,
-      "p95": 42.159
+      "p50": 25.556919025,
+      "p75": 31.6625,
+      "p90": 39.055,
+      "p95": 42.1575
     },
-    "latest_qvix": 30.78,
-    "latest_date": "2026-09-29",
-    "latest_percentile": 72.67015706806282
+    "latest_qvix": 28.92,
+    "latest_date": "2026-09-30",
+    "latest_percentile": 66.21338912133892
   }
 }
